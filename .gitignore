@@ -114,3 +114,4 @@ dist
 src/build/
 *.DS_Store
 .env
+todo.txt

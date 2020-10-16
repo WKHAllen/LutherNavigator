@@ -1,0 +1,21 @@
+{
+  "name": "luthernavigator",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "cd src && npm run build",
+    "start": "cd src && npm start",
+    "postinstall": "cd src && npm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WKHAllen/LutherNavigator.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/WKHAllen/LutherNavigator/issues"
+  },
+  "homepage": "https://github.com/WKHAllen/LutherNavigator#readme"
+}
