@@ -33,6 +33,16 @@ app.use(express.static('static'));
 // Use routes
 app.use('/', routes.indexRoute);
 
+// Error 404 (not found)
+app.use((req, res) => {
+    res.status(404).render('404', { title: 'Not found' });
+});
+
+// Error 500 (internal server error)
+app.use((req, res) => {
+    res.status(500).render('500', { title: 'Internal server error' });
+});
+
 // Initialize the database
 initDB().then(() => {
 	// Listen for connections
