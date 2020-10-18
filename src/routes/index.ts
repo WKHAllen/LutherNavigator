@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as services from '../services';
 
-export var router = Router();
+export const router = Router();
 
 // Index page
 router.get('/', async(req, res) => {

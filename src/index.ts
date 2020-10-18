@@ -3,6 +3,7 @@ import * as hbs        from 'express-handlebars';
 import * as enforce    from 'express-sslify';
 import * as bodyParser from 'body-parser';
 import * as routes     from './routes';
+import { initDB }      from './services';
 
 // Environment variables
 const debug = Boolean(Number(process.env.DEBUG));
@@ -32,9 +33,12 @@ app.use(express.static('static'));
 // Use routes
 app.use('/', routes.indexRoute);
 
-// Listen for connections
-app.listen(port, () => {
-	console.log(`App running on port ${port}`);
+// Initialize the database
+initDB().then(() => {
+	// Listen for connections
+	app.listen(port, () => {
+		console.log(`App running on port ${port}`);
+	});
 });
 
 export = app;
