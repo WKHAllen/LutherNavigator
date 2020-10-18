@@ -1,3 +1,11 @@
-h1 {
+#content {
+	height: 100vh;
+	line-height: 100vh;
 	text-align: center;
+}
+
+#content h1 {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: normal;
 }

@@ -2,6 +2,7 @@ import * as express    from 'express';
 import * as hbs        from 'express-handlebars';
 import * as enforce    from 'express-sslify';
 import * as bodyParser from 'body-parser';
+import * as routes     from './routes';
 
 // Environment variables
 const debug = Boolean(Number(process.env.DEBUG));
@@ -28,10 +29,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Include static directory for css and js files
 app.use(express.static('static'));
 
-// Routes
-app.get('/', (req, res) => {
-	res.render('index');
-});
+// Use routes
+app.use('/', routes.indexRoute);
 
 // Listen for connections
 app.listen(port, () => {
