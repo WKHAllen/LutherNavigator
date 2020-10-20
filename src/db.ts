@@ -26,7 +26,7 @@ export class DB {
 	}
 
 	// Execute a SQL query
-	async execute(stmt: string, params: any[] = []): Promise<any> {
+	async execute(stmt: string, params: any[] = []): Promise<any[]> {
 		let paramCount = 0;
 		while (stmt.includes('?')) {
 			stmt = stmt.replace('?', `$${++paramCount}`);
@@ -47,9 +47,9 @@ export class DB {
 	}
 
 	// Execute multiple SQL queries, each one right after the last
-	async executeMany(stmts: string[]): Promise<any[]> {
+	async executeMany(stmts: string[]): Promise<any[][]> {
 		const client = await this.pool.connect();
-		let reses: any[] = [];
+		let reses: any[][] = [];
 
 		for (let stmt of stmts) {
 			let res: QueryResult<any>;
