@@ -48,3 +48,7 @@ We are not using any frameworks on the frontend, as we don't expect to need them
 ### Backend
 
 Our backend is divided into routes and services. The routes handle the routing and rendering. Routes will, if necessary, make use of the services. The services make database queries. We do this using the NPM package [pg](https://www.npmjs.com/package/pg).
+
+## Deployment
+
+The application is deployed to [Heroku](https://heroku.com/). It can be found at [luthernavigator.com](https://www.luthernavigator.com/).
