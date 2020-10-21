@@ -1,7 +1,7 @@
 {
   "name": "luthernavigator",
   "version": "0.1.0",
-  "description": "",
+  "description": "The Luther Navigator project seeks to provide students a way to share their experiences abroad.",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
