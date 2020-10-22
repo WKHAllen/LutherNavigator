@@ -2,20 +2,20 @@ import { Pool, Query, QueryResult } from 'pg';
 
 // If an error is thrown, provide information on the error
 function logError(stmt: string, params: any[], res: QueryResult<any>, err: Error) {
-	console.log('\n\n######### ERROR #########\n\n');
-	console.log('\nStatement:');
-	console.log(stmt);
-	console.log('\nParameters:');
-	console.log(params);
-	console.log('\nResponse: ');
-	console.log(res);
-	console.log('\nError:');
+	console.error('\n\n######### ERROR #########\n\n');
+	console.error('\nStatement:');
+	console.error(stmt);
+	console.error('\nParameters:');
+	console.error(params);
+	console.error('\nResponse: ');
+	console.error(res);
+	console.error('\nError:');
 	throw err;
 }
 
 // Control the database through a single object
 export class DB {
-	pool: Pool;
+	private pool: Pool;
 
 	constructor(dbURL: string, max: number = 20) {
 		this.pool = new Pool({

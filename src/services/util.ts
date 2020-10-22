@@ -6,5 +6,4 @@ export const maxDBClients = 20;
 
 // Database object
 const mainDB = new db.DB(dbURL, maxDBClients);
-
 export default mainDB;
