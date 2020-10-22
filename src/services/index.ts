@@ -1,4 +1,4 @@
-import { mainDB } from './util';
+import mainDB from './util';
 
 // Index page services
 export module IndexServices {

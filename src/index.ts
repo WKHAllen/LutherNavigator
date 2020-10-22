@@ -3,7 +3,7 @@ import * as hbs        from 'express-handlebars';
 import * as enforce    from 'express-sslify';
 import * as bodyParser from 'body-parser';
 import * as routes     from './routes';
-import { initDB }      from './services';
+import initDB          from './dbinit';
 
 // Environment variables
 const debug = Boolean(Number(process.env.DEBUG));
