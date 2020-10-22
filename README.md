@@ -38,7 +38,7 @@ Make the run script executable: `chmod +x ./run.sh`. Use `./run.sh` to build and
 ## Stack
 
 * Database: PostgreSQL
-* Backend: TypeScript
+* Backend: TypeScript (4.0.3)
 * Frontend: HTML/CSS/JS
 
 ### Frontend
