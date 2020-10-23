@@ -39,8 +39,14 @@ app.use((req, res) => {
 });
 
 // Error 500 (internal server error)
-app.use((req, res) => {
-    res.status(500).render('500', { title: 'Internal server error' });
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+	const options = !debug ? {} : {
+		name: err.name,
+		message: err.message,
+		stack: err.stack
+	};
+	res.status(500).render('500', Object.assign(options, { title: 'Internal server error' }));
+	console.error(err.stack);
 });
 
 // Initialize the database

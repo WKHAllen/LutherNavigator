@@ -27,3 +27,17 @@ p {
 	vertical-align: middle;
 	line-height: normal;
 }
+
+.err-info {
+	padding: 16px 32px;
+}
+
+.err-info .err-header {
+	font-size: 1.5rem;
+	font-weight: 500;
+}
+
+.err-info code {
+	color: red;
+	font-weight: 600;
+}
