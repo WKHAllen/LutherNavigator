@@ -1,4 +1,4 @@
-import { Pool, Query, QueryResult } from 'pg';
+import { Pool, QueryResult } from 'pg';
 
 // If an error is thrown, provide information on the error
 function logError(stmt: string, params: any[], res: QueryResult<any>, err: Error) {
