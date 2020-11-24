@@ -75,22 +75,5 @@ export class DB {
 				resolve(reses);
 			});
 		});
-		// const client = await this.pool.connect();
-		// let reses: any[][] = [];
-
-		// for (let stmt of stmts) {
-		// 	let res: QueryResult<any>;
-
-		// 	try {
-		// 		res = await client.query(stmt);
-		// 	} catch (err) {
-		// 		logError(stmt, [], res, err);
-		// 	}
-
-		// 	reses.push(res.rows);
-		// }
-
-		// client.release();
-		// return reses;
 	}
 }
