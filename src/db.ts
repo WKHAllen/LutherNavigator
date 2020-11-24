@@ -1,7 +1,7 @@
-import { Pool, QueryResult } from 'pg';
+import * as mysql from 'mysql';
 
 // If an error is thrown, provide information on the error
-function logError(stmt: string, params: any[], res: QueryResult<any>, err: Error) {
+function logError(stmt: string, params: any[], res: any, err: Error) {
 	console.error('\n\n######### ERROR #########\n\n');
 	console.error('\nStatement:');
 	console.error(stmt);
@@ -13,57 +13,84 @@ function logError(stmt: string, params: any[], res: QueryResult<any>, err: Error
 	throw err;
 }
 
+async function doQuery(conn: mysql.PoolConnection, stmt: string): Promise<[any, mysql.FieldInfo[]]> {
+	return new Promise((resolve, reject) => {
+		conn.query(stmt, (err, results, fields) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve([results, fields]);
+			}
+		});
+	});
+}
+
 // Control the database through a single object
 export class DB {
-	private pool: Pool;
+	private pool: mysql.Pool;
 
-	constructor(dbURL: string, max: number = 20) {
-		this.pool = new Pool({
-			connectionString: dbURL,
-			ssl: { rejectUnauthorized: false },
-			max: max
-		});
+	constructor(dbURL: string) {
+		this.pool = mysql.createPool(dbURL);
 	}
 
 	// Execute a SQL query
 	async execute(stmt: string, params: any[] = []): Promise<any[]> {
-		let paramCount = 0;
-		while (stmt.includes('?')) {
-			stmt = stmt.replace('?', `$${++paramCount}`);
-		}
+		return new Promise((resolve) => {
+			this.pool.query(stmt, params, (err, results, fields) => {
+				if (err) {
+					logError(stmt, params, results, err);
+				}
 
-		const client = await this.pool.connect();
-		let res: QueryResult<any>;
-
-		try {
-			res = await client.query(stmt, params);
-		} catch (err) {
-			logError(stmt, params, res, err);
-		} finally {
-			client.release();
-		}
-
-		return res.rows;
+				resolve(results);
+			});
+		});
 	}
 
 	// Execute multiple SQL queries, each one right after the last
 	async executeMany(stmts: string[]): Promise<any[][]> {
-		const client = await this.pool.connect();
-		let reses: any[][] = [];
+		return new Promise((resolve) => {
+			this.pool.getConnection(async(err, conn) => {
+				if (err) {
+					conn.release();
+					logError('', [], null, err);
+					resolve([]);
+				}
 
-		for (let stmt of stmts) {
-			let res: QueryResult<any>;
+				let reses: any[][] = [];
 
-			try {
-				res = await client.query(stmt);
-			} catch (err) {
-				logError(stmt, [], res, err);
-			}
+				for (const stmt of stmts) {
+					let results: any;
+					let fields: mysql.FieldInfo[];
 
-			reses.push(res.rows);
-		}
+					try {
+						[results, fields] = await doQuery(conn, stmt);
+					} catch (err) {
+						logError(stmt, [], results, err);
+					} finally {
+						reses.push(results);
+					}
+				}
 
-		client.release();
-		return reses;
+				conn.release();
+				resolve(reses);
+			});
+		});
+		// const client = await this.pool.connect();
+		// let reses: any[][] = [];
+
+		// for (let stmt of stmts) {
+		// 	let res: QueryResult<any>;
+
+		// 	try {
+		// 		res = await client.query(stmt);
+		// 	} catch (err) {
+		// 		logError(stmt, [], res, err);
+		// 	}
+
+		// 	reses.push(res.rows);
+		// }
+
+		// client.release();
+		// return reses;
 	}
 }

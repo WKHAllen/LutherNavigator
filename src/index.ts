@@ -19,8 +19,8 @@ if (!debug) {
 
 // Use view engine
 app.engine('.html', hbs({
-    extname:       '.html',
-    defaultLayout: 'default'
+	extname:       '.html',
+	defaultLayout: 'default'
 }));
 app.set('view engine', '.html');
 
@@ -35,7 +35,7 @@ app.use('/', routes.indexRoute);
 
 // Error 404 (not found)
 app.use((req, res) => {
-    res.status(404).render('404', { title: 'Not found' });
+	res.status(404).render('404', { title: 'Not found' });
 });
 
 // Error 500 (internal server error)
