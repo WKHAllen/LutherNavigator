@@ -1,49 +1,51 @@
+from typing import Dict
+
 import env
 import os
 
 
-def parseDbUrl(url: str) -> dict:
-	hostStartIdx = url.index("@") + 1
-	hostEndIdx = url[hostStartIdx : ].index("/")
-	host = url[hostStartIdx : hostStartIdx + hostEndIdx]
+def parse_db_url(url: str) -> Dict:
+    host_start_idx = url.index("@") + 1
+    host_end_idx = url[host_start_idx:].index("/")
+    host = url[host_start_idx : host_start_idx + host_end_idx]
 
-	userStartIdx = url.index("mysql://") + 8
-	userEndIdx = url[userStartIdx:].index(":")
-	user = url[userStartIdx : userStartIdx + userEndIdx]
+    user_start_idx = url.index("mysql://") + 8
+    user_end_idx = url[user_start_idx:].index(":")
+    user = url[user_start_idx : user_start_idx + user_end_idx]
 
-	passwordStartIdx = userStartIdx + userEndIdx + 1
-	passwordEndIdx = hostStartIdx - 1
-	password = url[passwordStartIdx : passwordEndIdx]
+    password_start_idx = user_start_idx + user_end_idx + 1
+    password_end_idx = host_start_idx - 1
+    password = url[password_start_idx:password_end_idx]
 
-	reconnect = url.find("reconnect=true") != -1
+    reconnect = url.find("reconnect=true") != -1
 
-	nameStartIdx = hostStartIdx + hostEndIdx + 1
-	if reconnect:
-	    nameEndIdx = url.index("?")
-	else:
-	    nameEndIdx = len(url)
-	name = url[nameStartIdx : nameEndIdx]
+    name_start_idx = host_start_idx + host_end_idx + 1
+    if reconnect:
+        name_end_idx = url.index("?")
+    else:
+        name_end_idx = len(url)
+    name = url[name_start_idx:name_end_idx]
 
-	return {
-		"host":      host,
-		"user":      user,
-		"password":  password,
-		"reconnect": reconnect,
-		"name":      name
-	}
+    return {
+        "host": host,
+        "user": user,
+        "password": password,
+        "reconnect": reconnect,
+        "name": name,
+    }
 
 
 def main() -> None:
-	envars = env.getEnv(".env")
-	args = parseDbUrl(envars["DATABASE_URL"])
+    envars = env.getEnv(".env")
+    args = parse_db_url(envars["DATABASE_URL"])
 
-	cmd = f"mysql --host={args['host']} --user={args['user']} --password={args['password']}"
-	if args["reconnect"]:
-		cmd += " --reconnect"
-	cmd += f" {args['name']}"
+    cmd = f"mysql --host={args['host']} --user={args['user']} --password={args['password']}"
+    if args["reconnect"]:
+        cmd += " --reconnect"
+    cmd += f" {args['name']}"
 
-	os.system(cmd)
+    os.system(cmd)
 
 
 if __name__ == "__main__":
-	main()
+    main()
