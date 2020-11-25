@@ -36,7 +36,7 @@ def parse_db_url(url: str) -> Dict:
 
 
 def main() -> None:
-    envars = env.getEnv(".env")
+    envars = env.get_env(".env")
     args = parse_db_url(envars["DATABASE_URL"])
 
     cmd = f"mysql --host={args['host']} --user={args['user']} --password={args['password']}"
