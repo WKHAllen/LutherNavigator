@@ -1,29 +1,29 @@
 import os
 
 
-def loadEnv(filename: str) -> None:
-	with open(filename, "r") as f:
-		for line in f:
-			line = line.strip()
-			eqIdx = line.find("=")
+def load_env(filename: str) -> None:
+    with open(filename, "r") as f:
+        for line in f:
+            line = line.strip()
+            eq_idx = line.find("=")
 
-			if eqIdx != -1:
-				key = line[ : eqIdx]
-				value = line[eqIdx + 1 : ]
-				os.environ[key] = value
+            if eq_idx != -1:
+                key = line[:eq_idx]
+                value = line[eq_idx + 1 :]
+                os.environ[key] = value
 
 
-def getEnv(filename: str) -> dict:
-	env = {}
+def get_env(filename: str) -> dict:
+    env = {}
 
-	with open(filename, "r") as f:
-		for line in f:
-			line = line.strip()
-			eqIdx = line.find("=")
+    with open(filename, "r") as f:
+        for line in f:
+            line = line.strip()
+            eq_idx = line.find("=")
 
-			if eqIdx != -1:
-				key = line[ : eqIdx]
-				value = line[eqIdx + 1 : ]
-				env[key] = value
+            if eq_idx != -1:
+                key = line[:eq_idx]
+                value = line[eq_idx + 1 :]
+                env[key] = value
 
-	return env
+    return env
