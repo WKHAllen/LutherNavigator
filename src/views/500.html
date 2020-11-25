@@ -2,11 +2,12 @@
 <p class="center">An internal server error occurred</p>
 
 {{#if name}}
-	<div class="err-info">
-		<div><span class="err-header">Type:</span> <code>{{name}}</code></div>
-		<div><span class="err-header">Message:</span> <code>{{message}}</code></div>
-		<div><span class="err-header">Stack trace:</span><br>
-			<code>{{stack}}</code>
-		</div>
-	</div>
+<div class="err-info">
+  <div><span class="err-header">Type:</span> <code>{{name}}</code></div>
+  <div><span class="err-header">Message:</span> <code>{{message}}</code></div>
+  <div>
+    <span class="err-header">Stack trace:</span><br />
+    <code>{{stack}}</code>
+  </div>
+</div>
 {{/if}}

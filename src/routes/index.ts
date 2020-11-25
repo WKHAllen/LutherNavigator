@@ -1,10 +1,10 @@
-import { Router } from 'express';
-import * as services from '../services';
+import { Router } from "express";
+import * as services from "../services";
 
 export const router = Router();
 
 // Index page
-router.get('/', async(req, res) => {
-	const message = await services.IndexServices.getMessage();
-	res.render('index', { message });
+router.get("/", async (req, res) => {
+  const message = await services.IndexServices.getMessage();
+  res.render("index", { message });
 });

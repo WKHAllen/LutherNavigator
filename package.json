@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "cd src && npm run build",
+    "format": "cd src && npm run format",
+    "formatcode": "cd src && npm run formatcode",
+    "formatscripts": "cd src && npm run formatscripts",
     "start": "cd src && npm start",
     "postinstall": "cd src && npm install"
   },
