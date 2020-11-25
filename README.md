@@ -52,3 +52,17 @@ Our backend is divided into routes and services. The routes handle the routing a
 ## Deployment
 
 The application is deployed to [Heroku](https://heroku.com/). It can be found at [luthernavigator.com](https://www.luthernavigator.com/).
+
+## Code Formatting
+
+The codebase is developed in a style-consistent manner. Black and Prettier are used for formatting Python and CSS/HTML/TypeScript code respectively.
+
+Commands:
+
+- CSS/HTML/TypeScript: `prettier --write --print-width 79`
+- Python: `black --line-length 79`
+
+Variable naming conventions:
+
+- Python: `snake_case`
+- TypeScript: `camelCase`
