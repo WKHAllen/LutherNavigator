@@ -2,10 +2,10 @@ import csv
 import os
 import sys
 
+import mysql.connector
+
 import env
 import db
-
-import mysql.connector
 
 from typing import List
 
