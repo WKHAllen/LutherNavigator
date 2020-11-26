@@ -66,3 +66,9 @@ Variable and Function naming conventions:
 
 - Python: `snake_case`
 - TypeScript: `camelCase`
+
+Import Statements
+
+- Direct `import` statements first, followed by `from` imports
+- Order: Built-in, Local, External (same order for `from` imports)
+- At each level, separate imports with a newline
