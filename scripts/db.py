@@ -1,7 +1,6 @@
-from typing import Dict
-
 import env
 import os
+from typing import Dict
 
 
 def parse_db_url(url: str) -> Dict:

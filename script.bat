@@ -1,2 +1,2 @@
 @echo off
-python scripts/%1.py
+python scripts/%1.py %*
