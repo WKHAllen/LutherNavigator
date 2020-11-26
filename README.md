@@ -62,7 +62,13 @@ Commands:
 - CSS/HTML/TypeScript: `prettier --write --print-width 79`
 - Python: `black --line-length 79`
 
-Variable naming conventions:
+Variable and Function naming conventions:
 
 - Python: `snake_case`
 - TypeScript: `camelCase`
+
+Import Statements
+
+- Direct `import` statements first, followed by `from` imports
+- Order: Standard Library, Related Third Party, Local (same order for `from` imports)
+- At each level, separate imports with a newline and sort them alphabetically

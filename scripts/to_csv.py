@@ -1,19 +1,22 @@
+import csv
+import os
+import sys
+
+import mysql.connector
+
 import env
 import db
-import sys
-import os
-import csv
-import mysql.connector
+
 from typing import List
 
 
-def getColumns(cur, table: str) -> List[str]:
+def get_columns(cur, table: str) -> List[str]:
     cur.execute(f"SHOW COLUMNS FROM {table};")
     columns = [column[0] for column in cur]
     return columns
 
 
-def saveTable(outfile: str, table: str, fields: List[str] = None) -> None:
+def save_table(outfile: str, table: str, fields: List[str] = None) -> None:
     envars = env.get_env(".env")
     args = db.parse_db_url(envars["DATABASE_URL"])
 
@@ -30,7 +33,7 @@ def saveTable(outfile: str, table: str, fields: List[str] = None) -> None:
     else:
         field_str = ", ".join(fields)
 
-    columns = getColumns(cur, table)
+    columns = get_columns(cur, table)
     cur.execute(f"SELECT {field_str} FROM {table};")
 
     with open(outfile, "w", newline="") as csvfile:
@@ -56,7 +59,7 @@ def main():
     table = args[1]
     fields = args[2:]
 
-    saveTable(outfile, table, fields)
+    save_table(outfile, table, fields)
 
 
 if __name__ == "__main__":
