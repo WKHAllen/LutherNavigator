@@ -1,9 +1,12 @@
+import csv
+import os
+import sys
+
 import env
 import db
-import sys
-import os
-import csv
+
 import mysql.connector
+
 from typing import List
 
 
