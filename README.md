@@ -70,5 +70,5 @@ Variable and Function naming conventions:
 Import Statements
 
 - Direct `import` statements first, followed by `from` imports
-- Order: Built-in, Local, External (same order for `from` imports)
+- Order: Standard Library, Related Third Party, Local (same order for `from` imports)
 - At each level, separate imports with a newline and sort them alphabetically
