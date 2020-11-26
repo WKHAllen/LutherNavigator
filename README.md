@@ -62,7 +62,7 @@ Commands:
 - CSS/HTML/TypeScript: `prettier --write --print-width 79`
 - Python: `black --line-length 79`
 
-Variable naming conventions:
+Variable and Function naming conventions:
 
 - Python: `snake_case`
 - TypeScript: `camelCase`
