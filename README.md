@@ -37,7 +37,7 @@ Make the run script executable: `chmod +x ./run.sh`. Use `./run.sh` to build and
 
 ## Stack
 
-* Database: PostgreSQL
+* Database: MySQL
 * Backend: TypeScript (4.0.3)
 * Frontend: HTML 5, CSS 3 (+ [Bootstrap](https://getbootstrap.com/)), JS (ES6)
 
@@ -47,7 +47,7 @@ We are not using any frameworks on the frontend, as we don't expect to need them
 
 ### Backend
 
-Our backend is divided into routes and services. The routes handle the routing and rendering. Routes will, if necessary, make use of the services. The services make database queries. We do this using the NPM package [pg](https://www.npmjs.com/package/pg).
+Our backend is divided into routes and services. The routes handle the routing and rendering. Routes will, if necessary, make use of the services. The services make database queries. We do this using the NPM package [mysql](https://www.npmjs.com/package/mysql).
 
 ## Deployment
 
