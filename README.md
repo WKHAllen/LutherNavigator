@@ -31,9 +31,13 @@ We have provided scripts to build and run the application. The built application
 
 The `run` command will execute `run.bat`, which will build and run the project locally.
 
-### Other
+### Building Locally
 
 Make the run script executable: `chmod +x ./run.sh`. Use `./run.sh` to build and run the project locally.
+
+### Database
+
+MySQL database can be interfaced with by running `./script.sh db` (`chmod +x ./script.sh` to make it executable).
 
 ## Stack
 
