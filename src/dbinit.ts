@@ -42,7 +42,7 @@ export default async function initDB() {
     CREATE TABLE IF NOT EXISTS Post (
       id           CHAR(4)       NOT NULL,
       userID       CHAR(4)       NOT NULL,
-      content      VARCHAR(1024) NOT NULL,
+      content      VARCHAR(750)  NOT NULL,
       imageID      CHAR(4)       NOT NULL,
       location     VARCHAR(255)  NOT NULL,
       program      VARCHAR(255)  NOT NULL,
