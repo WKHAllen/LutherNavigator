@@ -11,9 +11,9 @@ export default async function initDB() {
   // Create tables
   const imageTable = `
     CREATE TABLE IF NOT EXISTS Image (
-      id           CHAR(4)      NOT NULL,
-      data         MEDIUMBLOB   NOT NULL,
-      registerTime INT UNSIGNED NOT NULL,
+      id           CHAR(4)           NOT NULL,
+      data         VARBINARY(262144) NOT NULL,
+      registerTime INT UNSIGNED      NOT NULL,
 
       PRIMARY KEY (id)
     );
@@ -25,7 +25,7 @@ export default async function initDB() {
       lastname      VARCHAR(63)  NOT NULL,
       email         VARCHAR(63)  NOT NULL,
       password      VARCHAR(255) NOT NULL,
-      verified      BOOL         DEFAULT FALSE,
+      verified      BOOL         NOT NULL DEFAULT FALSE,
       admin         BOOL         NOT NULL,
       imageID       CHAR(4),
       joinTime      INT UNSIGNED NOT NULL,
