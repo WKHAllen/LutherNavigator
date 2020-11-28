@@ -52,10 +52,23 @@ export default async function initDB(): Promise<void> {
       PRIMARY KEY (id)
     );
   `;
-  const LocationTypeTable = `
+  const locationTypeTable = `
     CREATE TABLE IF NOT EXISTS LocationType (
       id   INT         NOT NULL,
       name VARCHAR(63) NOT NULL,
+
+      PRIMARY KEY (id)
+    );
+  `;
+  const ratingTable = `
+    CREATE TABLE IF NOT EXISTS Rating (
+      id            INT     NOT NULL,
+      general       TINYINT NOT NULL,
+      cost          TINYINT,
+      quality       TINYINT,
+      safety        TINYINT,
+      cleanliness   TINYINT,
+      guestServices TINYINT,
 
       PRIMARY KEY (id)
     );
@@ -93,7 +106,7 @@ export default async function initDB(): Promise<void> {
       location       VARCHAR(255)  NOT NULL,
       locationTypeID INT           NOT NULL,
       program        VARCHAR(255)  NOT NULL,
-      rating         TINYINT       NOT NULL,
+      ratingID       INT           NOT NULL,
       threeWords     VARCHAR(63)   NOT NULL,
       createTime     INT UNSIGNED  NOT NULL,
       editTime       INT UNSIGNED,
@@ -107,13 +120,17 @@ export default async function initDB(): Promise<void> {
         REFERENCES Image (id),
       
       FOREIGN KEY (locationTypeID)
-        REFERENCES LocationType (id)
+        REFERENCES LocationType (id),
+
+      FOREIGN KEY (ratingID)
+        REFERENCES Rating (id)
     );
   `;
   await mainDB.executeMany([
     imageTable,
     userStatusTable,
-    LocationTypeTable,
+    locationTypeTable,
+    ratingTable,
     userTable,
     postTable,
   ]);
@@ -142,7 +159,13 @@ export default async function initDB(): Promise<void> {
   await populateTable(
     "UserStatus",
     "name",
-    ["Student", "Alum", "Staff", "Parent", "Other"],
+    [
+      "Student",
+      "Alum",
+      "Staff",
+      "Parent",
+      "Other"
+    ],
     true
   );
   await populateTable(
