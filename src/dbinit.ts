@@ -159,12 +159,7 @@ export default async function initDB(): Promise<void> {
   await populateTable(
     "UserStatus",
     "name",
-    [
-      "Student",
-      "Alum",
-      "Faculty/Staff",
-      "Parent"
-    ],
+    ["Student", "Alum", "Faculty/Staff", "Parent"],
     true
   );
   await populateTable(
@@ -185,10 +180,4 @@ export default async function initDB(): Promise<void> {
     ],
     true
   );
-
-  const rows = await mainDB.execute("SELECT id FROM Main;");
-  const message = "Hello, world!";
-  if (rows.length === 0) {
-    await mainDB.execute("INSERT INTO Main (message) VALUES (?);", [message]);
-  }
 }
