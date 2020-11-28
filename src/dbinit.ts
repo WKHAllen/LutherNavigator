@@ -162,9 +162,8 @@ export default async function initDB(): Promise<void> {
     [
       "Student",
       "Alum",
-      "Staff",
-      "Parent",
-      "Other"
+      "Faculty/Staff",
+      "Parent"
     ],
     true
   );
