@@ -1,19 +1,45 @@
 import mainDB from "./services/util";
 
+// Asynchronously sleep
 async function wait(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
 
+// Populate a static table
+export async function populateTable(
+  table: string,
+  column: string,
+  values: any[]
+): Promise<void> {
+  const rows = await mainDB.execute(`SELECT ${column} from ${table}`);
+  if (rows.length === 0) {
+    const queryValues = values.map(
+      (value, index) => `(${index + 1}, '${value}')`
+    );
+    const queryValuesStr = queryValues.join(", ");
+    const query = `INSERT INTO ${table} (id, ${column}) VALUES ${queryValuesStr};`;
+    await mainDB.execute(query);
+  }
+}
+
 // Initialize the database
-export default async function initDB() {
+export default async function initDB(): Promise<void> {
   // Create tables
   const imageTable = `
     CREATE TABLE IF NOT EXISTS Image (
       id           CHAR(4)           NOT NULL,
       data         VARBINARY(262144) NOT NULL,
       registerTime INT UNSIGNED      NOT NULL,
+
+      PRIMARY KEY (id)
+    );
+  `;
+  const userStatusTable = `
+    CREATE TABLE IF NOT EXISTS UserStatus (
+      id   INT         NOT NULL,
+      name VARCHAR(63) NOT NULL,
 
       PRIMARY KEY (id)
     );
@@ -25,6 +51,7 @@ export default async function initDB() {
       lastname      VARCHAR(63)  NOT NULL,
       email         VARCHAR(63)  NOT NULL,
       password      VARCHAR(255) NOT NULL,
+      statusID      INT          NOT NULL,
       verified      BOOL         NOT NULL DEFAULT FALSE,
       admin         BOOL         NOT NULL,
       imageID       CHAR(4),
@@ -35,7 +62,10 @@ export default async function initDB() {
       PRIMARY KEY (id),
 
       FOREIGN KEY (imageID)
-        REFERENCES Image (id)
+        REFERENCES Image (id),
+
+      FOREIGN KEY (statusID)
+        REFERENCES UserStatus (id)
     );
   `;
   const postTable = `
@@ -47,7 +77,6 @@ export default async function initDB() {
       location     VARCHAR(255)  NOT NULL,
       program      VARCHAR(255)  NOT NULL,
       rating       TINYINT       NOT NULL,
-      bestPlaceFor VARCHAR(255)  NOT NULL,
       threeWords   VARCHAR(63)   NOT NULL,
       createTime   INT UNSIGNED  NOT NULL,
       editTime     INT UNSIGNED,
@@ -61,7 +90,13 @@ export default async function initDB() {
         REFERENCES Image (id)
     );
   `;
-  await mainDB.executeMany([imageTable, userTable, postTable]);
+  await mainDB.executeMany([
+    imageTable,
+    userStatusTable,
+    userTable,
+    postTable,
+  ]);
+  await wait(1000);
 
   // Create triggers
   // ClearDB does not support triggers :/
@@ -82,7 +117,15 @@ export default async function initDB() {
   // `;
   // await mainDB.executeMany([userDeleteTrigger, postDeleteTrigger]);
 
-  await wait(1000);
+  // Populate static tables
+  await populateTable("UserStatus", "name", [
+    "Student",
+    "Alum",
+    "Staff",
+    "Parent",
+    "Other",
+  ]);
+
   const rows = await mainDB.execute("SELECT id FROM Main;");
   const message = "Hello, world!";
   if (rows.length === 0) {
