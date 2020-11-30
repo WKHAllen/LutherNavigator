@@ -12,6 +12,7 @@ export module LocationTypeService {
   export async function getLocations(): Promise<LocationType[]> {
     const sql = `SELECT id, name FROM LocationType ORDER BY id;`;
     const rows: LocationType[] = await mainDB.execute(sql);
+
     return rows;
   }
 
@@ -20,6 +21,7 @@ export module LocationTypeService {
     const sql = `SELECT name FROM LocationType WHERE id = ?;`;
     const params = [locationID];
     const rows: LocationType[] = await mainDB.execute(sql, params);
+
     return rows[0].name;
   }
 
@@ -28,6 +30,7 @@ export module LocationTypeService {
     const sql = `SELECT id FROM LocationType WHERE id = ?;`;
     const params = [locationID];
     const rows: LocationType[] = await mainDB.execute(sql, params);
+
     return rows.length > 0;
   }
 }

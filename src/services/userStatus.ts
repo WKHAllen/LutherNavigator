@@ -12,6 +12,7 @@ export module UserStatusService {
   export async function getStatuses(): Promise<UserStatus[]> {
     const sql = `SELECT id, name FROM UserStatus ORDER BY id;`;
     const rows: UserStatus[] = await mainDB.execute(sql);
+
     return rows;
   }
 
@@ -20,6 +21,7 @@ export module UserStatusService {
     const sql = `SELECT name FROM UserStatus WHERE id = ?;`;
     const params = [statusID];
     const rows: UserStatus[] = await mainDB.execute(sql, params);
+
     return rows[0].name;
   }
 
@@ -28,6 +30,7 @@ export module UserStatusService {
     const sql = `SELECT id FROM UserStatus WHERE id = ?;`;
     const params = [statusID];
     const rows: UserStatus[] = await mainDB.execute(sql, params);
+
     return rows.length > 0;
   }
 }
