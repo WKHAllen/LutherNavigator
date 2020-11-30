@@ -25,6 +25,7 @@ export module ImageService {
     const sql = `SELECT id FROM Image WHERE id = ?;`;
     const params = [imageID];
     const rows = await mainDB.execute(sql, params);
+
     return rows.length > 0;
   }
 
@@ -33,6 +34,7 @@ export module ImageService {
     const sql = `SELECT * from Image WHERE id = ?;`;
     const params = [imageID];
     const rows: Image[] = await mainDB.execute(sql, params);
+
     return rows[0];
   }
 
