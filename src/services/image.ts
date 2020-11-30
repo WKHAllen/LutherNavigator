@@ -18,12 +18,20 @@ export module ImageService {
     await mainDB.execute(sql, params);
 
     return imageID;
-  }
+	}
+	
+	// Get an image from the database
+	export async function getImage(imageID: string): Promise<Image> {
+		const sql = `SELECT * from Image WHERE id = ?;`;
+		const params = [imageID];
+		const rows: Image[] = await mainDB.execute(sql, params);
+		return rows[0];
+	}
 
   // Delete an image
-  export async function deleteImage(id: string): Promise<void> {
+  export async function deleteImage(imageID: string): Promise<void> {
     const sql = `DELETE FROM Image WHERE id = ?;`;
-    const params = [id];
+    const params = [imageID];
     await mainDB.execute(sql, params);
   }
 }
