@@ -134,7 +134,6 @@ export default async function initDB(): Promise<void> {
     userTable,
     postTable,
   ]);
-  await wait(1000);
 
   // Create triggers
   // ClearDB does not support triggers :/
@@ -154,6 +153,8 @@ export default async function initDB(): Promise<void> {
   //   DELETE FROM Image WHERE id = OLD.imageID;
   // `;
   // await mainDB.executeMany([userDeleteTrigger, postDeleteTrigger]);
+
+  await wait(1000);
 
   // Populate static tables
   await populateTable(
