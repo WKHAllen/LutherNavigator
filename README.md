@@ -27,15 +27,13 @@ $ git clone https://github.com/WKHAllen/LutherNavigator.git
 
 We have provided scripts to build and run the application. The built application can be accessed at [localhost:3000](http://localhost:3000/).
 
-### Windows
+The `run` command will execute `run.bat`, which will build and run the project locally. Or, on a different operating system, make the run script executable: `chmod +x ./run.sh`, and use `./run.sh` to run the project locally.
 
-The `run` command will execute `run.bat`, which will build and run the project locally.
+## Testing the Project
 
-### Building Locally
+We're using [jest](https://www.npmjs.com/package/jest) to test the application. To test it locally, use `script test` on Windows, or `./script.sh test` on other operating systems.
 
-Make the run script executable: `chmod +x ./run.sh`. Use `./run.sh` to build and run the project locally.
-
-### Database
+## Database
 
 MySQL database can be interfaced with by running `./script.sh db` (`chmod +x ./script.sh` to make it executable).
 

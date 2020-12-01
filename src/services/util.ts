@@ -21,7 +21,7 @@ export async function newID(): Promise<string> {
       if (err) {
         reject(err);
       } else {
-        let base64ID = buffer.toString("base64").slice(0, length);
+        let base64ID = buffer.toString("base64").slice(0, idLength);
         while (base64ID.includes("/")) base64ID = base64ID.replace("/", "-");
         while (base64ID.includes("+")) base64ID = base64ID.replace("+", "_");
         resolve(base64ID);

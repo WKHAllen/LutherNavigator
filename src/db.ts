@@ -37,7 +37,7 @@ export class DB {
   }
 
   // Execute a SQL query
-  async execute(stmt: string, params: any[] = []): Promise<any[]> {
+  public async execute(stmt: string, params: any[] = []): Promise<any[]> {
     return new Promise((resolve) => {
       this.pool.query(stmt, params, (err, results, fields) => {
         if (err) {
@@ -50,7 +50,7 @@ export class DB {
   }
 
   // Execute multiple SQL queries, each one right after the last
-  async executeMany(stmts: string[]): Promise<any[][]> {
+  public async executeMany(stmts: string[]): Promise<any[][]> {
     return new Promise((resolve) => {
       this.pool.getConnection(async (err, conn) => {
         if (err) {
@@ -76,6 +76,18 @@ export class DB {
 
         conn.release();
         resolve(reses);
+      });
+    });
+  }
+
+  public async close(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.pool.end((err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
       });
     });
   }
