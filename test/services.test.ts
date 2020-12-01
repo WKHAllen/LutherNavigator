@@ -1,7 +1,8 @@
-import mainDB from "../src/services/util";
+import mainDB, { getTime } from "../src/services/util";
 import initDB from "../src/dbinit";
 import { UserStatusService } from "../src/services/userStatus";
 import { LocationTypeService } from "../src/services/locationType";
+import { ImageService } from "../src/services/image";
 
 // Setup
 beforeAll(
@@ -25,7 +26,7 @@ test("User status", async () => {
     { id: 2, name: "Alum" },
     { id: 3, name: "Faculty/Staff" },
     { id: 4, name: "Parent" },
-    { id: 1000, name: "Other" }
+    { id: 1000, name: "Other" },
   ]);
 
   // Get status names
@@ -55,15 +56,15 @@ test("Location type", async () => {
     { id: 1, name: "Hotel" },
     { id: 2, name: "Hostel" },
     { id: 3, name: "B&B/Inn" },
-		{ id: 4, name: "Cafe/Bakery" },
-		{ id: 5, name: "Bar/Pub" },
-		{ id: 6, name: "Restaurant" },
-		{ id: 7, name: "Museum" },
-		{ id: 8, name: "Arts venue" },
-		{ id: 9, name: "Sports venue" },
-		{ id: 10, name: "Cultural attraction" },
-		{ id: 11, name: "Historical attraction" },
-    { id: 1000, name: "Other" }
+    { id: 4, name: "Cafe/Bakery" },
+    { id: 5, name: "Bar/Pub" },
+    { id: 6, name: "Restaurant" },
+    { id: 7, name: "Museum" },
+    { id: 8, name: "Arts venue" },
+    { id: 9, name: "Sports venue" },
+    { id: 10, name: "Cultural attraction" },
+    { id: 11, name: "Historical attraction" },
+    { id: 1000, name: "Other" },
   ]);
 
   // Get location name
@@ -83,4 +84,34 @@ test("Location type", async () => {
   expect(validLocation).toBe(true);
   validLocation = await LocationTypeService.validLocation(999);
   expect(validLocation).toBe(false);
+});
+
+// Test image service
+test("Image", async () => {
+  const buf = Buffer.from("Hello, image test!");
+
+  // Create image
+  const imageID = await ImageService.createImage(buf);
+  expect(imageID.length).toBe(4);
+
+  // Check image exists
+  let imageExists = await ImageService.imageExists(imageID);
+  expect(imageExists).toBe(true);
+
+  // Get image
+  let image = await ImageService.getImage(imageID);
+  expect(image.id).toBe(imageID);
+  expect(image.data.toString()).toBe(buf.toString());
+  expect(image.registerTime - getTime()).toBeLessThanOrEqual(3);
+
+  // Get missing image
+  image = await ImageService.getImage("!!!!");
+  expect(image).toBe(undefined);
+
+  // Delete image
+  await ImageService.deleteImage(imageID);
+
+  // Check image is gone
+  imageExists = await ImageService.imageExists(imageID);
+  expect(imageExists).toBe(false);
 });
