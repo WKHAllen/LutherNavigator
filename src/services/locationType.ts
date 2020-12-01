@@ -22,7 +22,7 @@ export module LocationTypeService {
     const params = [locationID];
     const rows: LocationType[] = await mainDB.execute(sql, params);
 
-    return rows[0].name;
+    return rows[0]?.name;
   }
 
   // Check if a location is valid
