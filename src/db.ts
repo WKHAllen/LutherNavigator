@@ -51,7 +51,10 @@ export class DB {
   }
 
   // Execute multiple SQL queries, each one right after the last
-  public async executeMany(stmts: string[], params: any[][] = []): Promise<any[][]> {
+  public async executeMany(
+    stmts: string[],
+    params: any[][] = []
+  ): Promise<any[][]> {
     return new Promise((resolve) => {
       this.pool.getConnection(async (err, conn) => {
         if (err) {

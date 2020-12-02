@@ -4,6 +4,7 @@ import initDB from "../src/dbinit";
 import { UserStatusService } from "../src/services/userStatus";
 import { LocationTypeService } from "../src/services/locationType";
 import { ImageService } from "../src/services/image";
+import { RatingService } from "../src/services/rating";
 
 // Setup
 beforeAll(
@@ -116,4 +117,36 @@ test("Image", async () => {
   // Check image is gone
   imageExists = await ImageService.imageExists(imageID);
   expect(imageExists).toBe(false);
+});
+
+// Test rating service
+test("Rating", async () => {
+  const rating = {
+    general: 1,
+    cost: 3,
+    safety: 7,
+  };
+
+  // Create rating
+  const ratingID = await RatingService.createRating(rating);
+  expect(ratingID % 10).toBe(1);
+
+  // Check rating exists
+  let ratingExists = await RatingService.ratingExists(ratingID);
+  expect(ratingExists).toBe(true);
+
+  // Get rating
+  let rating2 = await RatingService.getRating(ratingID);
+  expect(rating2).toMatchObject(rating);
+
+  // Get missing rating
+  rating2 = await RatingService.getRating(0);
+  expect(rating2).toBe(undefined);
+
+  // Delete rating
+  await RatingService.deleteRating(ratingID);
+
+  // Check rating is gone
+  ratingExists = await RatingService.ratingExists(ratingID);
+  expect(ratingExists).toBe(false);
 });
