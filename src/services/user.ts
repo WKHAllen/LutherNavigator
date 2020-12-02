@@ -104,6 +104,7 @@ export module UserService {
     return true;
   }
 
+  // Get the name of a user's status
   export async function getUserStatusName(userID: string): Promise<string> {
     const sql = `SELECT statusID FROM User WHERE id = ?;`;
     const params = [userID];
@@ -115,6 +116,7 @@ export module UserService {
     return statusName;
   }
 
+  // Check if a user is verified
   export async function isVerified(userID: string): Promise<boolean> {
     const sql = `SELECT verified FROM User WHERE id = ?;`;
     const params = [userID];
@@ -123,6 +125,17 @@ export module UserService {
     return rows[0]?.verified;
   }
 
+  // Set a user's verification status
+  export async function setVerified(
+    userID: string,
+    verified: boolean = true
+  ): Promise<void> {
+    const sql = `UPDATE User SET verified = ? WHERE id = ?;`;
+    const params = [verified, userID];
+    await mainDB.execute(sql, params);
+  }
+
+  // Check if a user is an admin
   export async function isAdmin(userID: string): Promise<boolean> {
     const sql = `SELECT admin FROM User WHERE id = ?;`;
     const params = [userID];
@@ -131,6 +144,17 @@ export module UserService {
     return rows[0]?.admin;
   }
 
+  // Set a user's admin status
+  export async function setAdmin(
+    userID: string,
+    admin: boolean = true
+  ): Promise<void> {
+    const sql = `UPDATE User SET admin = ? WHERE id = ?;`;
+    const params = [admin, userID];
+    await mainDB.execute(sql, params);
+  }
+
+  // Get a user's image
   export async function getUserImage(userID: string): Promise<Image> {
     const sql = `SELECT imageID from User WHERE id = ?;`;
     const params = [userID];
@@ -142,6 +166,7 @@ export module UserService {
     return image;
   }
 
+  // Set a user's image
   export async function setUserImage(
     userID: string,
     imageData: Buffer
