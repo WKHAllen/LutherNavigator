@@ -46,7 +46,7 @@ export module RatingService {
   export async function ratingExists(ratingID: string): Promise<boolean> {
     const sql = `SELECT id FROM Rating WHERE id = ?;`;
     const params = [ratingID];
-    const rows = await mainDB.execute(sql, params);
+    const rows: Rating[] = await mainDB.execute(sql, params);
 
     return rows.length > 0;
   }
@@ -55,7 +55,7 @@ export module RatingService {
   export async function getRating(ratingID: string): Promise<Rating> {
     const sql = `SELECT * FROM Rating WHERE id = ?;`;
     const params = [ratingID];
-    const rows = await mainDB.execute(sql, params);
+    const rows: Rating[] = await mainDB.execute(sql, params);
 
     return rows[0];
   }

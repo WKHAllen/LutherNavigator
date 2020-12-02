@@ -35,7 +35,7 @@ test("Util", async () => {
   expect(same).toBe(true);
 
   // Check invalid password
-  same = await checkPassword(password + '4', hash);
+  same = await checkPassword(password + "4", hash);
   expect(same).toBe(false);
 });
 

@@ -54,7 +54,7 @@ export module UserService {
   export async function userExists(userID: string): Promise<boolean> {
     const sql = `SELECT id FROM User WHERE id = ?;`;
     const params = [userID];
-    const rows = await mainDB.execute(sql, params);
+    const rows: User[] = await mainDB.execute(sql, params);
 
     return rows.length > 0;
   }
@@ -63,7 +63,7 @@ export module UserService {
   export async function getUser(userID: string): Promise<User> {
     const sql = `SELECT * FROM User WHERE id = ?;`;
     const params = [userID];
-    const rows = await mainDB.execute(sql, params);
+    const rows: User[] = await mainDB.execute(sql, params);
 
     return rows[0];
   }

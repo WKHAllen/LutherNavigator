@@ -24,7 +24,7 @@ export module ImageService {
   export async function imageExists(imageID: string): Promise<boolean> {
     const sql = `SELECT id FROM Image WHERE id = ?;`;
     const params = [imageID];
-    const rows = await mainDB.execute(sql, params);
+    const rows: Image[] = await mainDB.execute(sql, params);
 
     return rows.length > 0;
   }
