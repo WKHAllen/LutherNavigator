@@ -29,7 +29,7 @@ export module ImageService {
     return rows.length > 0;
   }
 
-  // Get an image from the database
+  // Get an image
   export async function getImage(imageID: string): Promise<Image> {
     const sql = `SELECT * from Image WHERE id = ?;`;
     const params = [imageID];

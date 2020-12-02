@@ -40,14 +40,23 @@ export module RatingService {
     const rows = await mainDB.execute(sql, values);
 
     return rows[0]?.id;
-	}
+  }
 
-	// Get a rating
-	export async function getRating(ratingID: number): Promise<Rating> {
-		const sql = `SELECT * FROM Rating WHERE id = ?;`
-		const params = [ratingID];
-		const rows = await mainDB.execute(sql, params);
+  // Check if a rating exists
+  export async function ratingExists(ratingID: number): Promise<boolean> {
+    const sql = `SELECT id FROM Rating WHERE id = ?;`;
+    const params = [ratingID];
+    const rows = await mainDB.execute(sql, params);
 
-		return rows[0];
-	}
+    return rows.length > 0;
+  }
+
+  // Get a rating
+  export async function getRating(ratingID: number): Promise<Rating> {
+    const sql = `SELECT * FROM Rating WHERE id = ?;`;
+    const params = [ratingID];
+    const rows = await mainDB.execute(sql, params);
+
+    return rows[0];
+  }
 }
