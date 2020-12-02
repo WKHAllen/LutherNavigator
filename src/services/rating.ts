@@ -11,7 +11,34 @@ export interface Rating {
   guestServices: number | null;
 }
 
+// Rating parameters
+export interface RatingParams {
+  general: number;
+  cost?: number;
+  quality?: number;
+  safety?: number;
+  cleanliness?: number;
+  guestService?: number;
+}
+
 // Rating services
 export module RatingService {
-	
+  // Create a rating
+  export async function createRating(rating: RatingParams): Promise<number> {
+    const cols = Object.keys(rating);
+    const values = Object.values(rating);
+
+    const sql = `
+			INSERT INTO Rating (
+				${cols.join(", ")}
+			) VALUES (
+				${"?, ".repeat(values.length).slice(0, -2)}
+			);
+
+			SELECT LAST_INSERT_ID() AS id;
+		`;
+    const rows = await mainDB.execute(sql, values);
+
+    return rows[0]?.id;
+  }
 }
