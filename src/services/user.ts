@@ -15,3 +15,8 @@ export interface User {
   lastLoginTime: number | null;
   lastPostTime: number | null;
 }
+
+// User service
+export module UserService {
+  
+}

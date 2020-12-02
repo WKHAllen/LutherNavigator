@@ -108,6 +108,7 @@ export default async function initDB(): Promise<void> {
       program        VARCHAR(255)  NOT NULL,
       ratingID       CHAR(4)       NOT NULL,
       threeWords     VARCHAR(63)   NOT NULL,
+      approved       BOOL          NOT NULL DEFAULT FALSE,
       createTime     INT UNSIGNED  NOT NULL,
       editTime       INT UNSIGNED,
 
