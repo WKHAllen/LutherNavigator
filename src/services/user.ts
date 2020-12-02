@@ -4,6 +4,8 @@ import mainDB, {
   hashPassword,
   checkPassword,
 } from "./util";
+import { UserStatusService } from "./userStatus";
+import { Image, ImageService } from "./image";
 
 // User architecture
 export interface User {
@@ -100,5 +102,43 @@ export module UserService {
     await mainDB.execute(sql, params);
 
     return true;
+  }
+
+  export async function getStatusName(userID: string): Promise<string> {
+    const sql = `SELECT statusID FROM User WHERE id = ?;`;
+    const params = [userID];
+    const rows = await mainDB.execute(sql, params);
+
+    const statusID = rows[0]?.statusID;
+    const statusName = await UserStatusService.getStatusName(statusID);
+
+    return statusName;
+  }
+
+  export async function isVerified(userID: string): Promise<boolean> {
+    const sql = `SELECT verified FROM User WHERE id = ?;`;
+    const params = [userID];
+    const rows = await mainDB.execute(sql, params);
+
+    return rows[0]?.verified;
+  }
+
+  export async function isAdmin(userID: string): Promise<boolean> {
+    const sql = `SELECT admin FROM User WHERE id = ?;`;
+    const params = [userID];
+    const rows = await mainDB.execute(sql, params);
+
+    return rows[0]?.admin;
+  }
+
+  export async function getImage(userID: string): Promise<Image> {
+    const sql = `SELECT imageID from User WHERE id = ?;`;
+    const params = [userID];
+    const rows = await mainDB.execute(sql, params);
+
+    const imageID = rows[0]?.imageID;
+    const image = await ImageService.getImage(imageID);
+
+    return image;
   }
 }
