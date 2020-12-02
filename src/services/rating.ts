@@ -28,18 +28,17 @@ export module RatingService {
     const cols = Object.keys(rating);
     const values = Object.values(rating);
 
-    const sql = `
-			INSERT INTO Rating (
-				${cols.join(", ")}
-			) VALUES (
-				${"?, ".repeat(values.length).slice(0, -2)}
-			);
+    const sql1 = `
+      INSERT INTO Rating (
+        ${cols.join(", ")}
+      ) VALUES (
+        ${"?, ".repeat(values.length).slice(0, -2)}
+      );
+    `;
+    const sql2 = `SELECT LAST_INSERT_ID() AS id;`;
+    const rows = await mainDB.executeMany([sql1, sql2], [values]);
 
-			SELECT LAST_INSERT_ID() AS id;
-		`;
-    const rows = await mainDB.execute(sql, values);
-
-    return rows[0]?.id;
+    return rows[1][0]?.id;
   }
 
   // Check if a rating exists

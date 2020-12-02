@@ -15,10 +15,11 @@ function logError(stmt: string, params: any[], res: any, err: Error) {
 
 async function doQuery(
   conn: mysql.PoolConnection,
-  stmt: string
+  stmt: string,
+  params: any[]
 ): Promise<[any, mysql.FieldInfo[]]> {
   return new Promise((resolve, reject) => {
-    conn.query(stmt, (err, results, fields) => {
+    conn.query(stmt, params, (err, results, fields) => {
       if (err) {
         reject(err);
       } else {
@@ -50,7 +51,7 @@ export class DB {
   }
 
   // Execute multiple SQL queries, each one right after the last
-  public async executeMany(stmts: string[]): Promise<any[][]> {
+  public async executeMany(stmts: string[], params: any[][] = []): Promise<any[][]> {
     return new Promise((resolve) => {
       this.pool.getConnection(async (err, conn) => {
         if (err) {
@@ -61,14 +62,14 @@ export class DB {
 
         let reses: any[][] = [];
 
-        for (const stmt of stmts) {
+        for (let i = 0; i < stmts.length; i++) {
           let results: any;
           let fields: mysql.FieldInfo[];
 
           try {
-            [results, fields] = await doQuery(conn, stmt);
+            [results, fields] = await doQuery(conn, stmts[i], params[i] || []);
           } catch (err) {
-            logError(stmt, [], results, err);
+            logError(stmts[i], params[i] || [], results, err);
           } finally {
             reses.push(results);
           }
