@@ -1,3 +1,4 @@
+import * as crypto from "crypto";
 import mainDB, { getTime } from "../src/services/util";
 import initDB from "../src/dbinit";
 import { UserStatusService } from "../src/services/userStatus";
@@ -88,7 +89,8 @@ test("Location type", async () => {
 
 // Test image service
 test("Image", async () => {
-  const buf = Buffer.from("Hello, image test!");
+  const len = Math.floor(Math.random() * 63) + 1;
+  const buf = crypto.randomBytes(len);
 
   // Create image
   const imageID = await ImageService.createImage(buf);
