@@ -1,9 +1,11 @@
 import * as db from "../db";
 import * as crypto from "crypto";
+import * as bcrypt from "bcrypt";
 
 // Constants
 export const dbURL = process.env.DATABASE_URL;
 const idLength = 4;
+const saltRounds = 12;
 
 // Database object
 const mainDB = new db.DB(dbURL);
@@ -43,4 +45,36 @@ export async function newUniqueID(table: string): Promise<string> {
   }
 
   return base64ID;
+}
+
+// Hash a password
+export async function hashPassword(
+  password: string,
+  rounds: number = saltRounds
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    bcrypt.hash(password, rounds, (err, hash) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(hash);
+      }
+    });
+  });
+}
+
+// Check if passwords match
+export async function checkPassword(
+  password: string,
+  hash: string
+): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(password, hash, (err, same) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(same);
+      }
+    });
+  });
 }

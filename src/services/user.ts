@@ -1,4 +1,4 @@
-import mainDB from "./util";
+import mainDB, { getTime, newUniqueID, hashPassword } from "./util";
 
 // User architecture
 export interface User {
@@ -18,5 +18,35 @@ export interface User {
 
 // User service
 export module UserService {
-  
+  // Create a user
+  export async function createUser(
+    firstname: string,
+    lastname: string,
+    email: string,
+    password: string,
+    statusID: number
+  ): Promise<string> {
+    const userID = await newUniqueID("User");
+    const hashedPassword = await hashPassword(password);
+
+    const sql = `
+      INSERT INTO User (
+        id, firstname, lastname, email, password, statusID, joinTime
+      ) VALUES (
+        ?, ?, ?, ?, ?, ?, ?
+      );
+    `;
+    const params = [
+      userID,
+      firstname,
+      lastname,
+      email,
+      hashedPassword,
+      statusID,
+      getTime(),
+    ];
+    await mainDB.execute(sql, params);
+
+    return userID;
+  }
 }

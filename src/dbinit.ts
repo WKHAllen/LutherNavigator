@@ -82,7 +82,7 @@ export default async function initDB(): Promise<void> {
       password      VARCHAR(255) NOT NULL,
       statusID      INT          NOT NULL,
       verified      BOOL         NOT NULL DEFAULT FALSE,
-      admin         BOOL         NOT NULL,
+      admin         BOOL         NOT NULL DEFAULT FALSE,
       imageID       CHAR(4),
       joinTime      INT UNSIGNED NOT NULL,
       lastLoginTime INT UNSIGNED,
