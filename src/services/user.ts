@@ -1,4 +1,9 @@
-import mainDB, { getTime, newUniqueID, hashPassword } from "./util";
+import mainDB, {
+  getTime,
+  newUniqueID,
+  hashPassword,
+  checkPassword,
+} from "./util";
 
 // User architecture
 export interface User {
@@ -73,5 +78,27 @@ export module UserService {
     const sql = `DELETE FROM User WHERE id = ?;`;
     const params = [userID];
     await mainDB.execute(sql, params);
+  }
+
+  // Log a user in
+  export async function login(
+    email: string,
+    password: string
+  ): Promise<boolean> {
+    let sql = `SELECT password FROM User WHERE email = ?;`;
+    let params: any[] = [email];
+    let rows = await mainDB.execute(sql, params);
+
+    const hash = rows[0]?.password || "";
+    const same = await checkPassword(password, hash);
+    if (rows.length === 0 || !same) {
+      return false;
+    }
+
+    sql = `UPDATE User SET lastLoginTime = ? WHERE email = ?;`;
+    params = [getTime(), email];
+    await mainDB.execute(sql, params);
+
+    return true;
   }
 }
