@@ -59,4 +59,11 @@ export module RatingService {
 
     return rows[0];
   }
+
+  // Delete a rating
+  export async function deleteRating(ratingID: number): Promise<void> {
+    const sql = `DELETE FROM Rating WHERE id = ?;`;
+    const params = [ratingID];
+    await mainDB.execute(sql, params);
+  }
 }
