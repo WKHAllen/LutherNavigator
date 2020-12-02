@@ -1,5 +1,9 @@
 import * as crypto from "crypto";
-import mainDB, { getTime } from "../src/services/util";
+import mainDB, {
+  getTime,
+  hashPassword,
+  checkPassword,
+} from "../src/services/util";
 import initDB from "../src/dbinit";
 import { UserStatusService } from "../src/services/userStatus";
 import { LocationTypeService } from "../src/services/locationType";
@@ -17,6 +21,22 @@ beforeAll(
 // Teardown
 afterAll(() => {
   mainDB.close();
+});
+
+// Test util functions
+test("Util", async () => {
+  // Hash password
+  const password = "password123";
+  const hash = await hashPassword(password);
+  expect(hash).not.toBe(password);
+
+  // Check hashed password
+  let same = await checkPassword(password, hash);
+  expect(same).toBe(true);
+
+  // Check invalid password
+  same = await checkPassword(password + '4', hash);
+  expect(same).toBe(false);
 });
 
 // Test user status service
