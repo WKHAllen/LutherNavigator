@@ -62,7 +62,7 @@ export default async function initDB(): Promise<void> {
   `;
   const ratingTable = `
     CREATE TABLE IF NOT EXISTS Rating (
-      id            INT     NOT NULL AUTO_INCREMENT,
+      id            CHAR(4) NOT NULL,
       general       TINYINT NOT NULL,
       cost          TINYINT,
       quality       TINYINT,
@@ -106,7 +106,7 @@ export default async function initDB(): Promise<void> {
       location       VARCHAR(255)  NOT NULL,
       locationTypeID INT           NOT NULL,
       program        VARCHAR(255)  NOT NULL,
-      ratingID       INT           NOT NULL,
+      ratingID       CHAR(4)       NOT NULL,
       threeWords     VARCHAR(63)   NOT NULL,
       createTime     INT UNSIGNED  NOT NULL,
       editTime       INT UNSIGNED,

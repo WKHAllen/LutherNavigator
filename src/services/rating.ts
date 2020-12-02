@@ -1,8 +1,8 @@
-import mainDB from "./util";
+import mainDB, { newUniqueID } from "./util";
 
 // Rating architecture
 export interface Rating {
-  id: number;
+  id: string;
   general: number;
   cost: number | null;
   quality: number | null;
@@ -24,25 +24,26 @@ export interface RatingParams {
 // Rating services
 export module RatingService {
   // Create a rating
-  export async function createRating(rating: RatingParams): Promise<number> {
+  export async function createRating(rating: RatingParams): Promise<string> {
+    const ratingID = await newUniqueID("Rating");
     const cols = Object.keys(rating);
     const values = Object.values(rating);
 
-    const sql1 = `
+    const sql = `
       INSERT INTO Rating (
-        ${cols.join(", ")}
+        id, ${cols.join(", ")}
       ) VALUES (
-        ${"?, ".repeat(values.length).slice(0, -2)}
+        ?, ${"?, ".repeat(values.length).slice(0, -2)}
       );
     `;
-    const sql2 = `SELECT LAST_INSERT_ID() AS id;`;
-    const rows = await mainDB.executeMany([sql1, sql2], [values]);
+    const params = [ratingID, ...values];
+    await mainDB.execute(sql, params);
 
-    return rows[1][0]?.id;
+    return ratingID;
   }
 
   // Check if a rating exists
-  export async function ratingExists(ratingID: number): Promise<boolean> {
+  export async function ratingExists(ratingID: string): Promise<boolean> {
     const sql = `SELECT id FROM Rating WHERE id = ?;`;
     const params = [ratingID];
     const rows = await mainDB.execute(sql, params);
@@ -51,7 +52,7 @@ export module RatingService {
   }
 
   // Get a rating
-  export async function getRating(ratingID: number): Promise<Rating> {
+  export async function getRating(ratingID: string): Promise<Rating> {
     const sql = `SELECT * FROM Rating WHERE id = ?;`;
     const params = [ratingID];
     const rows = await mainDB.execute(sql, params);
@@ -60,7 +61,7 @@ export module RatingService {
   }
 
   // Delete a rating
-  export async function deleteRating(ratingID: number): Promise<void> {
+  export async function deleteRating(ratingID: string): Promise<void> {
     const sql = `DELETE FROM Rating WHERE id = ?;`;
     const params = [ratingID];
     await mainDB.execute(sql, params);

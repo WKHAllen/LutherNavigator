@@ -129,7 +129,7 @@ test("Rating", async () => {
 
   // Create rating
   const ratingID = await RatingService.createRating(rating);
-  expect(ratingID % 10).toBe(1);
+  expect(ratingID.length).toBe(4);
 
   // Check rating exists
   let ratingExists = await RatingService.ratingExists(ratingID);
@@ -140,7 +140,7 @@ test("Rating", async () => {
   expect(rating2).toMatchObject(rating);
 
   // Get missing rating
-  rating2 = await RatingService.getRating(0);
+  rating2 = await RatingService.getRating("!!!!");
   expect(rating2).toBe(undefined);
 
   // Delete rating
