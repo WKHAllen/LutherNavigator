@@ -229,16 +229,33 @@ test("User", async () => {
   expect(success).toBe(false);
 
   // Get user status name
+  const userStatusName = await UserService.getUserStatusName(userID);
+  const statusName = await UserStatusService.getStatusName(statusID);
+  expect(userStatusName).toBe(statusName);
 
-  // Get user image
+  // Get null user image
+  let userImage = await UserService.getUserImage(userID);
+  expect(userImage).toBe(null);
 
   // Set user image
+  const len = Math.floor(Math.random() * 63) + 1;
+  const buf = crypto.randomBytes(len);
+  await UserService.setUserImage(userID, buf);
 
   // Get new user image
+  userImage = await UserService.getUserImage(userID);
+  user = await UserService.getUser(userID);
+  expect(userImage.id).toBe(user.imageID);
+  expect(userImage.data.toString()).toBe(buf.toString());
+  expect(userImage.registerTime - getTime()).toBeLessThanOrEqual(3);
 
   // Check if user is verified
+  let verified = await UserService.isVerified(userID);
+  expect(verified).toBe(false);
 
   // Check if user is an admin
+  let admin = await UserService.isAdmin(userID);
+  expect(admin).toBe(false);
 
   // Delete user
 
