@@ -104,7 +104,7 @@ export module UserService {
     return true;
   }
 
-  export async function getStatusName(userID: string): Promise<string> {
+  export async function getUserStatusName(userID: string): Promise<string> {
     const sql = `SELECT statusID FROM User WHERE id = ?;`;
     const params = [userID];
     const rows = await mainDB.execute(sql, params);
@@ -131,7 +131,7 @@ export module UserService {
     return rows[0]?.admin;
   }
 
-  export async function getImage(userID: string): Promise<Image> {
+  export async function getUserImage(userID: string): Promise<Image> {
     const sql = `SELECT imageID from User WHERE id = ?;`;
     const params = [userID];
     const rows = await mainDB.execute(sql, params);

@@ -9,6 +9,7 @@ import { UserStatusService } from "../src/services/userStatus";
 import { LocationTypeService } from "../src/services/locationType";
 import { ImageService } from "../src/services/image";
 import { RatingService } from "../src/services/rating";
+import { UserService } from "../src/services/user";
 
 // Setup
 beforeAll(
@@ -169,4 +170,77 @@ test("Rating", async () => {
   // Check rating is gone
   ratingExists = await RatingService.ratingExists(ratingID);
   expect(ratingExists).toBe(false);
+});
+
+// Test user service
+test("User", async () => {
+  const firstname = "Martin";
+  const lastname = "Luther";
+  const email = "lumart01@luther.edu";
+  const password = "password123";
+  const statusID = 1; // Student
+
+  // Create user
+  const userID = await UserService.createUser(
+    firstname,
+    lastname,
+    email,
+    password,
+    statusID
+  );
+  expect(userID.length).toBe(4);
+
+  // Check user exists
+  let userExists = await UserService.userExists(userID);
+  expect(userExists).toBe(true);
+
+  // Get user
+  let user = await UserService.getUser(userID);
+  expect(user.id).toBe(userID);
+  expect(user.firstname).toBe(firstname);
+  expect(user.lastname).toBe(lastname);
+  expect(user.email).toBe(email);
+  expect(user.statusID).toBe(statusID);
+  expect(user.verified).toBe(false);
+  expect(user.admin).toBe(false);
+  expect(user.imageID).toBe(null);
+  expect(user.joinTime - getTime()).toBeLessThanOrEqual(3);
+  expect(user.lastLoginTime).toBe(null);
+  expect(user.lastPostTime).toBe(null);
+
+  // Check passwords match
+  const same = await checkPassword(password, user.password);
+  expect(same).toBe(true);
+
+  // Log user in
+  let success = await UserService.login(email, password);
+  expect(success).toBe(true);
+
+  // Check last login timestamp has changed
+  user = await UserService.getUser(userID);
+  expect(user.lastLoginTime - getTime()).toBeLessThanOrEqual(3);
+
+  // Attempt login with invalid email
+  success = await UserService.login(email + "a", password);
+  expect(success).toBe(false);
+
+  // Attempt login with invalid password
+  success = await UserService.login(email, password + "a");
+  expect(success).toBe(false);
+
+  // Get user status name
+
+  // Get user image
+
+  // Set user image
+
+  // Get new user image
+
+  // Check if user is verified
+
+  // Check if user is an admin
+
+  // Delete user
+
+  // Check user is gone
 });
