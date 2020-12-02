@@ -50,11 +50,28 @@ export module UserService {
     return userID;
   }
 
+  // Check if a user exists
+  export async function userExists(userID: string): Promise<boolean> {
+    const sql = `SELECT id FROM User WHERE id = ?;`;
+    const params = [userID];
+    const rows = await mainDB.execute(sql, params);
+
+    return rows.length > 0;
+  }
+
+  // Get a user
   export async function getUser(userID: string): Promise<User> {
     const sql = `SELECT * FROM User WHERE id = ?;`;
     const params = [userID];
     const rows = await mainDB.execute(sql, params);
 
     return rows[0];
+  }
+
+  // Delete a user
+  export async function deleteUser(userID: string): Promise<void> {
+    const sql = `DELETE FROM User WHERE id = ?;`;
+    const params = [userID];
+    await mainDB.execute(sql, params);
   }
 }
