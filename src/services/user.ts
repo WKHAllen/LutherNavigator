@@ -49,4 +49,12 @@ export module UserService {
 
     return userID;
   }
+
+  export async function getUser(userID: string): Promise<User> {
+    const sql = `SELECT * FROM User WHERE id = ?;`;
+    const params = [userID];
+    const rows = await mainDB.execute(sql, params);
+
+    return rows[0];
+  }
 }
