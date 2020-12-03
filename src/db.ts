@@ -2,14 +2,8 @@ import * as mysql from "mysql";
 
 // If an error is thrown, provide information on the error
 function logError(stmt: string, params: any[], res: any, err: Error) {
-  console.error("\n\n######### ERROR #########\n\n");
-  console.error("\nStatement:");
-  console.error(stmt);
-  console.error("\nParameters:");
-  console.error(params);
-  console.error("\nResponse: ");
-  console.error(res);
-  console.error("\nError:");
+  const msg = `\n\n######### ERROR #########\n\n\nStatement:\n${stmt}\n\nParameters:\n${params}\n\nResponse:\n${res}\n\nError:`;
+  console.error(msg);
   throw err;
 }
 

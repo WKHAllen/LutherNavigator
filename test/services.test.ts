@@ -249,6 +249,11 @@ test("User", async () => {
   expect(userImage.data.toString()).toBe(buf.toString());
   expect(userImage.registerTime - getTime()).toBeLessThanOrEqual(3);
 
+  // Delete user image
+  await UserService.deleteUserImage(userID);
+  userImage = await UserService.getUserImage(userID);
+  expect(userImage).toBe(undefined);
+
   // Check if user is verified
   let verified = await UserService.isVerified(userID);
   expect(verified).toBeFalsy();
