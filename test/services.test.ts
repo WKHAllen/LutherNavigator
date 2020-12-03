@@ -183,6 +183,10 @@ test("User", async () => {
   const password = "password123";
   const statusID = 1; // Student
 
+  // Make sure the email address is unique
+  let uniqueEmail = await UserService.uniqueEmail(email);
+  expect(uniqueEmail).toBe(true);
+
   // Create user
   const userID = await UserService.createUser(
     firstname,
@@ -196,6 +200,10 @@ test("User", async () => {
   // Check user exists
   let userExists = await UserService.userExists(userID);
   expect(userExists).toBe(true);
+
+  // Check the email has now been registered
+  uniqueEmail = await UserService.uniqueEmail(email);
+  expect(uniqueEmail).toBe(false);
 
   // Get user
   let user = await UserService.getUser(userID);
@@ -281,4 +289,8 @@ test("User", async () => {
   // Check user is gone
   userExists = await UserService.userExists(userID);
   expect(userExists).toBe(false);
+
+  // Check the email is no longer registered
+  uniqueEmail = await UserService.uniqueEmail(email);
+  expect(uniqueEmail).toBe(true);
 });
