@@ -4,8 +4,9 @@ import * as bcrypt from "bcrypt";
 
 // Constants
 export const dbURL = process.env.DATABASE_URL;
-const idLength = 4;
-const saltRounds = 12;
+export const idLength = 4;
+export const sessionIDLength = 16;
+export const saltRounds = 12;
 
 // Database object
 const mainDB = new db.DB(dbURL);
@@ -17,13 +18,13 @@ export function getTime(): number {
 }
 
 // Generate a new ID
-export async function newID(): Promise<string> {
+export async function newID(len: number = idLength): Promise<string> {
   return new Promise((resolve, reject) => {
-    crypto.randomBytes(idLength, (err, buffer) => {
+    crypto.randomBytes(len, (err, buffer) => {
       if (err) {
         reject(err);
       } else {
-        let base64ID = buffer.toString("base64").slice(0, idLength);
+        let base64ID = buffer.toString("base64").slice(0, len);
         while (base64ID.includes("/")) base64ID = base64ID.replace("/", "-");
         while (base64ID.includes("+")) base64ID = base64ID.replace("+", "_");
         resolve(base64ID);
