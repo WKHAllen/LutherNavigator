@@ -34,7 +34,10 @@ export async function newID(len: number = idLength): Promise<string> {
 }
 
 // Generate a new unique ID for a table
-export async function newUniqueID(table: string): Promise<string> {
+export async function newUniqueID(
+  table: string,
+  len: number = idLength
+): Promise<string> {
   let base64ID = await newID();
 
   const sql = `SELECT id FROM ${table} WHERE id = ?;`;

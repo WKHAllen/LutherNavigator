@@ -23,7 +23,7 @@ export interface User {
   lastPostTime: number | null;
 }
 
-// User service
+// User services
 export module UserService {
   // Create a user
   export async function createUser(
