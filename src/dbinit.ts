@@ -127,6 +127,18 @@ export default async function initDB(): Promise<void> {
         REFERENCES Rating (id)
     );
   `;
+  const sessionTable = `
+    CREATE TABLE IF NOT EXISTS Session (
+      id         CHAR(16)     NOT NULL,
+      userID     CHAR(4)      NOT NULL,
+      createTime INT UNSIGNED NOT NULL,
+
+      PRIMARY KEY (id),
+
+      FOREIGN KEY (userID)
+        REFERENCES User (id)
+    );
+  `;
   await mainDB.executeMany([
     imageTable,
     userStatusTable,
@@ -134,6 +146,7 @@ export default async function initDB(): Promise<void> {
     ratingTable,
     userTable,
     postTable,
+    sessionTable,
   ]);
 
   // Create triggers
