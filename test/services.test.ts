@@ -294,3 +294,6 @@ test("User", async () => {
   uniqueEmail = await UserService.uniqueEmail(email);
   expect(uniqueEmail).toBe(true);
 });
+
+// Test session service
+test("Session", async () => {});

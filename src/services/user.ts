@@ -88,7 +88,7 @@ export module UserService {
   export async function uniqueEmail(email: string): Promise<boolean> {
     const sql = `SELECT email FROM User WHERE email = ?;`;
     const params = [email];
-    const rows = await mainDB.execute(sql, params);
+    const rows: User[] = await mainDB.execute(sql, params);
 
     return rows.length === 0;
   }
@@ -100,7 +100,7 @@ export module UserService {
   ): Promise<boolean> {
     let sql = `SELECT password FROM User WHERE email = ?;`;
     let params: any[] = [email];
-    let rows = await mainDB.execute(sql, params);
+    let rows: User[] = await mainDB.execute(sql, params);
 
     const hash = rows[0]?.password || "";
     const same = await checkPassword(password, hash);
@@ -119,7 +119,7 @@ export module UserService {
   export async function getUserStatusName(userID: string): Promise<string> {
     const sql = `SELECT statusID FROM User WHERE id = ?;`;
     const params = [userID];
-    const rows = await mainDB.execute(sql, params);
+    const rows: User[] = await mainDB.execute(sql, params);
 
     const statusID = rows[0]?.statusID;
     const statusName = await UserStatusService.getStatusName(statusID);
@@ -131,7 +131,7 @@ export module UserService {
   export async function isVerified(userID: string): Promise<boolean> {
     const sql = `SELECT verified FROM User WHERE id = ?;`;
     const params = [userID];
-    const rows = await mainDB.execute(sql, params);
+    const rows: User[] = await mainDB.execute(sql, params);
 
     return rows[0]?.verified;
   }
@@ -150,7 +150,7 @@ export module UserService {
   export async function isAdmin(userID: string): Promise<boolean> {
     const sql = `SELECT admin FROM User WHERE id = ?;`;
     const params = [userID];
-    const rows = await mainDB.execute(sql, params);
+    const rows: User[] = await mainDB.execute(sql, params);
 
     return rows[0]?.admin;
   }
@@ -169,7 +169,7 @@ export module UserService {
   export async function getUserImage(userID: string): Promise<Image> {
     const sql = `SELECT imageID from User WHERE id = ?;`;
     const params = [userID];
-    const rows = await mainDB.execute(sql, params);
+    const rows: User[] = await mainDB.execute(sql, params);
 
     const imageID = rows[0]?.imageID;
     const image = await ImageService.getImage(imageID);
@@ -184,7 +184,7 @@ export module UserService {
   ): Promise<void> {
     let sql = `SELECT imageID from User WHERE id = ?;`;
     let params = [userID];
-    const rows = await mainDB.execute(sql, params);
+    const rows: User[] = await mainDB.execute(sql, params);
 
     const imageID = rows[0]?.imageID;
     await ImageService.deleteImage(imageID);
@@ -199,7 +199,7 @@ export module UserService {
   export async function deleteUserImage(userID: string): Promise<void> {
     let sql = `SELECT imageID from User WHERE id = ?;`;
     let params = [userID];
-    const rows = await mainDB.execute(sql, params);
+    const rows: User[] = await mainDB.execute(sql, params);
 
     sql = `UPDATE User SET imageID = ? WHERE id = ?`;
     params = [null, userID];
