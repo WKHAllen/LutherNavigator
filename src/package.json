@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "format": "npm run formatcode && npm run formatscripts",
-    "formatcode": "prettier --write --print-width 79 **/*.ts views/**/*.html static/css/*.css static/js/*.js ../test/**/*.ts",
+    "formatcode": "../node_modules/prettier/bin-prettier.js --write --print-width 79 **/*.ts views/**/*.html static/css/*.css static/js/*.js ../test/**/*.ts",
     "formatscripts": "black --line-length 79 ../scripts/",
     "start": "npm run build && ts-node ./build/index.js",
     "postinstall": "npm run build"
