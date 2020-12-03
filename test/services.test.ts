@@ -201,8 +201,8 @@ test("User", async () => {
   expect(user.lastname).toBe(lastname);
   expect(user.email).toBe(email);
   expect(user.statusID).toBe(statusID);
-  expect(user.verified).toBe(false);
-  expect(user.admin).toBe(false);
+  expect(user.verified).toBeFalsy();
+  expect(user.admin).toBeFalsy();
   expect(user.imageID).toBe(null);
   expect(user.joinTime - getTime()).toBeLessThanOrEqual(3);
   expect(user.lastLoginTime).toBe(null);
@@ -235,7 +235,7 @@ test("User", async () => {
 
   // Get null user image
   let userImage = await UserService.getUserImage(userID);
-  expect(userImage).toBe(null);
+  expect(userImage).toBe(undefined);
 
   // Set user image
   const len = Math.floor(Math.random() * 63) + 1;
@@ -251,13 +251,26 @@ test("User", async () => {
 
   // Check if user is verified
   let verified = await UserService.isVerified(userID);
-  expect(verified).toBe(false);
+  expect(verified).toBeFalsy();
+
+  // Set user to verified
+  UserService.setVerified(userID);
+  verified = await UserService.isVerified(userID);
+  expect(verified).toBeTruthy();
 
   // Check if user is an admin
   let admin = await UserService.isAdmin(userID);
-  expect(admin).toBe(false);
+  expect(admin).toBeFalsy();
+
+  // Make user an admin
+  await UserService.setAdmin(userID);
+  admin = await UserService.isAdmin(userID);
+  expect(admin).toBeTruthy();
 
   // Delete user
+  await UserService.deleteUser(userID);
 
   // Check user is gone
+  userExists = await UserService.userExists(userID);
+  expect(userExists).toBe(false);
 });
