@@ -84,6 +84,15 @@ export module UserService {
     await deleteUserImage(userID);
   }
 
+  // Make sure an email address is not yet in use
+  export async function uniqueEmail(email: string): Promise<boolean> {
+    const sql = `SELECT email FROM User WHERE email = ?;`;
+    const params = [email];
+    const rows = await mainDB.execute(sql, params);
+
+    return rows.length === 0;
+  }
+
   // Log a user in
   export async function login(
     email: string,
