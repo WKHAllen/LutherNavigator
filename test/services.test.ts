@@ -11,6 +11,9 @@ import { ImageService } from "../src/services/image";
 import { RatingService } from "../src/services/rating";
 import { UserService } from "../src/services/user";
 
+// Timeout after 10 seconds
+jest.setTimeout(10000);
+
 // Setup
 beforeAll(
   async () =>
@@ -259,7 +262,7 @@ test("User", async () => {
   expect(verified).toBeFalsy();
 
   // Set user to verified
-  UserService.setVerified(userID);
+  await UserService.setVerified(userID);
   verified = await UserService.isVerified(userID);
   expect(verified).toBeTruthy();
 
