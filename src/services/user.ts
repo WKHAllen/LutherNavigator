@@ -80,6 +80,8 @@ export module UserService {
     const sql = `DELETE FROM User WHERE id = ?;`;
     const params = [userID];
     await mainDB.execute(sql, params);
+
+    await deleteUserImage(userID);
   }
 
   // Log a user in
@@ -181,6 +183,20 @@ export module UserService {
 
     sql = `UPDATE User SET imageID = ? WHERE id = ?`;
     params = [newImageID, userID];
+    await mainDB.execute(sql, params);
+  }
+
+  // Delete a user's image
+  export async function deleteUserImage(userID: string): Promise<void> {
+    let sql = `SELECT imageID from User WHERE id = ?;`;
+    let params = [userID];
+    const rows = await mainDB.execute(sql, params);
+
+    const imageID = rows[0]?.imageID;
+    await ImageService.deleteImage(imageID);
+
+    sql = `UPDATE User SET imageID = ? WHERE id = ?`;
+    params = [null, userID];
     await mainDB.execute(sql, params);
   }
 }
