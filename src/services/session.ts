@@ -51,6 +51,15 @@ export module SessionService {
     await mainDB.execute(sql, params);
   }
 
+  // Get all of a user's sessions
+  export async function getUserSessions(userID: string): Promise<Session[]> {
+    const sql = `SELECT * FROM Session WHERE userID = ? ORDER BY createTime;`;
+    const params = [userID];
+    const rows: Session[] = await mainDB.execute(sql, params);
+
+    return rows;
+  }
+
   // Delete all of a user's sessions
   export async function deleteUserSessions(userID: string): Promise<void> {
     const sql = `DELETE FROM Session WHERE userID = ?;`;

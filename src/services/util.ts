@@ -38,13 +38,13 @@ export async function newUniqueID(
   table: string,
   len: number = idLength
 ): Promise<string> {
-  let base64ID = await newID();
+  let base64ID = await newID(len);
 
   const sql = `SELECT id FROM ${table} WHERE id = ?;`;
   let rows = await mainDB.execute(sql, [base64ID]);
 
   while (rows.length > 0) {
-    base64ID = await newID();
+    base64ID = await newID(len);
     rows = await mainDB.execute(sql, [base64ID]);
   }
 

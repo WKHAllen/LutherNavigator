@@ -10,6 +10,7 @@ import { LocationTypeService } from "../src/services/locationType";
 import { ImageService } from "../src/services/image";
 import { RatingService } from "../src/services/rating";
 import { UserService } from "../src/services/user";
+import { SessionService } from "../src/services/session";
 
 // Timeout after 10 seconds
 jest.setTimeout(10000);
@@ -296,4 +297,64 @@ test("User", async () => {
 });
 
 // Test session service
-test("Session", async () => {});
+test("Session", async () => {
+  const firstname = "Martin";
+  const lastname = "Luther";
+  const email = "lumart01@luther.edu";
+  const password = "password123";
+  const statusID = 1; // Student
+
+  const userID = await UserService.createUser(
+    firstname,
+    lastname,
+    email,
+    password,
+    statusID
+  );
+
+  // Create session
+  const sessionID = await SessionService.createSession(userID);
+  expect(sessionID.length).toBe(16);
+
+  // Check session exists
+  let sessionExists = await SessionService.sessionExists(sessionID);
+  expect(sessionExists).toBe(true);
+
+  // Get session
+  const session = await SessionService.getSession(sessionID);
+  expect(session.id).toBe(sessionID);
+  expect(session.userID).toBe(userID);
+  expect(session.createTime - getTime()).toBeLessThanOrEqual(3);
+
+  // Get userID by sessionID
+  const sessionUserID = await SessionService.getUserBySessionID(sessionID);
+  expect(sessionUserID).toBe(userID);
+
+  // Get all sessions
+  const sessionID2 = await SessionService.createSession(userID);
+  let sessions = await SessionService.getUserSessions(userID);
+  expect(sessions.length).toBe(2);
+  expect(sessions[0].id).toBe(sessionID);
+  expect(sessions[1].id).toBe(sessionID2);
+
+  // Delete all sessions
+  await SessionService.deleteUserSessions(userID);
+  sessions = await SessionService.getUserSessions(userID);
+  expect(sessions.length).toBe(0);
+  sessionExists = await SessionService.sessionExists(sessionID);
+  expect(sessionExists).toBe(false);
+  sessionExists = await SessionService.sessionExists(sessionID2);
+  expect(sessionExists).toBe(false);
+
+  // Delete session
+  const sessionID3 = await SessionService.createSession(userID);
+  sessionExists = await SessionService.sessionExists(sessionID3);
+  expect(sessionExists).toBe(true);
+  await SessionService.deleteSession(sessionID3);
+
+  // Check session is gone
+  sessionExists = await SessionService.sessionExists(sessionID3);
+  expect(sessionExists).toBe(false);
+
+  await UserService.deleteUser(userID);
+});
