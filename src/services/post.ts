@@ -176,4 +176,23 @@ export module PostService {
     const imageID = rows[0]?.imageID;
     await ImageService.deleteImage(imageID);
   }
+
+  // Check if a post has been approved
+  export async function isApproved(postID: string): Promise<boolean> {
+    const sql = `SELECT approved FROM Post WHERE id = ?;`;
+    const params = [postID];
+    const rows: Post[] = await mainDB.execute(sql, params);
+
+    return !!rows[0]?.approved;
+  }
+
+  // Set a post's approved status
+  export async function setApproved(
+    postID: string,
+    approved: boolean = true
+  ): Promise<void> {
+    const sql = `UPDATE Post SET approved = ? WHERE id = ?;`;
+    const params = [approved, postID];
+    await mainDB.execute(sql, params);
+  }
 }

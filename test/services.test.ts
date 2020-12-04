@@ -421,8 +421,6 @@ test("Post", async () => {
   expect(post.createTime - getTime()).toBeLessThanOrEqual(3);
   expect(post.editTime).toBe(null);
 
-  
-
   // Delete post
   await PostService.deletePost(postID);
 
