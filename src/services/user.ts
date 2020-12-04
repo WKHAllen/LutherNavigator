@@ -138,7 +138,7 @@ export module UserService {
     const params = [userID];
     const rows: User[] = await mainDB.execute(sql, params);
 
-    return rows[0]?.verified;
+    return !!rows[0]?.verified;
   }
 
   // Set a user's verification status
@@ -157,7 +157,7 @@ export module UserService {
     const params = [userID];
     const rows: User[] = await mainDB.execute(sql, params);
 
-    return rows[0]?.admin;
+    return !!rows[0]?.admin;
   }
 
   // Set a user's admin status
