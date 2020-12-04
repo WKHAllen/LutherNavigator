@@ -78,11 +78,12 @@ export module UserService {
 
   // Delete a user
   export async function deleteUser(userID: string): Promise<void> {
+    await deleteUserImage(userID);
+
     const sql = `DELETE FROM User WHERE id = ?;`;
     const params = [userID];
     await mainDB.execute(sql, params);
 
-    await deleteUserImage(userID);
     await SessionService.deleteUserSessions(userID);
   }
 
