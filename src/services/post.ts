@@ -1,6 +1,7 @@
 import mainDB, { getTime, newUniqueID } from "./util";
 import { Image, ImageService } from "./image";
-import { RatingParams, RatingService } from "./rating";
+import { Rating, RatingParams, RatingService } from "./rating";
+import { User, UserService } from "./user";
 
 // Post architecture
 export interface Post {
@@ -94,6 +95,30 @@ export module PostService {
     sql = `DELETE FROM Post WHERE id = ?;`;
     params = [postID];
     await mainDB.execute(sql, params);
+  }
+
+  // Get the user who made the post
+  export async function getPostUser(postID: string): Promise<User> {
+    const sql = `SELECT userID FROM Post WHERE id = ?;`;
+    const params = [postID];
+    const rows: Post[] = await mainDB.execute(sql, params);
+
+    const userID = rows[0]?.userID;
+    const user = await UserService.getUser(userID);
+
+    return user;
+  }
+
+  // Get a post's rating
+  export async function getPostRating(postID: string): Promise<Rating> {
+    const sql = `SELECT ratingID FROM Post WHERE id = ?;`;
+    const params = [postID];
+    const rows: Post[] = await mainDB.execute(sql, params);
+
+    const ratingID = rows[0]?.ratingID;
+    const rating = await RatingService.getRating(ratingID);
+
+    return rating;
   }
 
   // Delete all of a user's posts
