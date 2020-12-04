@@ -11,6 +11,7 @@ import { ImageService } from "../src/services/image";
 import { RatingService } from "../src/services/rating";
 import { UserService } from "../src/services/user";
 import { SessionService } from "../src/services/session";
+import { PostService } from "../src/services/post";
 
 // Timeout after 10 seconds
 jest.setTimeout(10000);
@@ -268,21 +269,21 @@ test("User", async () => {
 
   // Check if user is verified
   let verified = await UserService.isVerified(userID);
-  expect(verified).toBeFalsy();
+  expect(verified).toBe(false);
 
   // Set user to verified
   await UserService.setVerified(userID);
   verified = await UserService.isVerified(userID);
-  expect(verified).toBeTruthy();
+  expect(verified).toBe(true);
 
   // Check if user is an admin
   let admin = await UserService.isAdmin(userID);
-  expect(admin).toBeFalsy();
+  expect(admin).toBe(false);
 
   // Make user an admin
   await UserService.setAdmin(userID);
   admin = await UserService.isAdmin(userID);
-  expect(admin).toBeTruthy();
+  expect(admin).toBe(true);
 
   // Delete user
   await UserService.deleteUser(userID);
@@ -355,6 +356,79 @@ test("Session", async () => {
   // Check session is gone
   sessionExists = await SessionService.sessionExists(sessionID3);
   expect(sessionExists).toBe(false);
+
+  await UserService.deleteUser(userID);
+});
+
+// Test post service
+test("Post", async () => {
+  const firstname = "Martin";
+  const lastname = "Luther";
+  const email = "lumart01@luther.edu";
+  const password = "password123";
+  const statusID = 1; // Student
+
+  const userID = await UserService.createUser(
+    firstname,
+    lastname,
+    email,
+    password,
+    statusID
+  );
+
+  const content = "Hello, post!";
+  const location = "Mabe's Pizza";
+  const locationTypeID = 6; // Restaurant
+  const program = "N/A";
+  const threeWords = "Absolutely amazing pizza";
+
+  const len = Math.floor(Math.random() * 63) + 1;
+  const buf = crypto.randomBytes(len);
+
+  const rating = {
+    general: 1,
+    cost: 3,
+    safety: 7,
+  };
+
+  // Create post
+  const postID = await PostService.createPost(
+    userID,
+    content,
+    buf,
+    location,
+    locationTypeID,
+    program,
+    rating,
+    threeWords
+  );
+  expect(postID.length).toBe(4);
+
+  // Check post exists
+  let postExists = await PostService.postExists(postID);
+  expect(postExists).toBe(true);
+
+  // Get post
+  const post = await PostService.getPost(postID);
+  expect(post.id).toBe(postID);
+  expect(post.userID).toBe(userID);
+  expect(post.content).toBe(content);
+  expect(post.location).toBe(location);
+  expect(post.locationTypeID).toBe(locationTypeID);
+  expect(post.program).toBe(program);
+  expect(post.threeWords).toBe(threeWords);
+  expect(post.approved).toBeFalsy();
+  expect(post.createTime - getTime()).toBeLessThanOrEqual(3);
+  expect(post.editTime).toBe(null);
+
+  
+
+  // Delete post
+  await PostService.deletePost(postID);
+
+  // Check post is gone
+  postExists = await PostService.postExists(postID);
+  expect(postExists).toBe(false);
 
   await UserService.deleteUser(userID);
 });

@@ -191,13 +191,14 @@ export module UserService {
     let params = [userID];
     const rows: User[] = await mainDB.execute(sql, params);
 
-    const imageID = rows[0]?.imageID;
-    await ImageService.deleteImage(imageID);
     const newImageID = await ImageService.createImage(imageData);
 
     sql = `UPDATE User SET imageID = ? WHERE id = ?`;
     params = [newImageID, userID];
     await mainDB.execute(sql, params);
+
+    const imageID = rows[0]?.imageID;
+    await ImageService.deleteImage(imageID);
   }
 
   // Delete a user's image

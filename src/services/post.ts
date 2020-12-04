@@ -86,15 +86,14 @@ export module PostService {
     let params = [postID];
     let rows: Post[] = await mainDB.execute(sql, params);
 
-    const imageID = rows[0]?.imageID;
-    const ratingID = rows[0]?.ratingID;
-
-    await ImageService.deleteImage(imageID);
-    await RatingService.deleteRating(ratingID);
-
     sql = `DELETE FROM Post WHERE id = ?;`;
     params = [postID];
     await mainDB.execute(sql, params);
+
+    const imageID = rows[0]?.imageID;
+    const ratingID = rows[0]?.ratingID;
+    await ImageService.deleteImage(imageID);
+    await RatingService.deleteRating(ratingID);
   }
 
   // Get the user who made the post
@@ -168,12 +167,13 @@ export module PostService {
     let params = [postID];
     const rows: Post[] = await mainDB.execute(sql, params);
 
-    const imageID = rows[0]?.imageID;
-    await ImageService.deleteImage(imageID);
     const newImageID = await ImageService.createImage(imageData);
 
     sql = `UPDATE Post SET imageID = ? WHERE id = ?`;
     params = [newImageID, postID];
     await mainDB.execute(sql, params);
+
+    const imageID = rows[0]?.imageID;
+    await ImageService.deleteImage(imageID);
   }
 }
