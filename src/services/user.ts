@@ -6,6 +6,7 @@ import mainDB, {
 } from "./util";
 import { UserStatusService } from "./userStatus";
 import { Image, ImageService } from "./image";
+import { SessionService } from "./session";
 
 // User architecture
 export interface User {
@@ -82,6 +83,7 @@ export module UserService {
     await mainDB.execute(sql, params);
 
     await deleteUserImage(userID);
+    await SessionService.deleteUserSessions(userID);
   }
 
   // Make sure an email address is not yet in use
