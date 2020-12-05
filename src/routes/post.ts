@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { PostService, UserStatusService } from '../services';
+import { PostService, UserStatusService } from "../services";
 
 export const postRouter = Router();
 
@@ -17,6 +17,6 @@ postRouter.get("/:postID", async (req, res) => {
     program: post.program,
     createTime: post.createTime,
     threeWords: post.threeWords,
-    content: post.content
+    content: post.content,
   });
 });
