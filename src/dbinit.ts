@@ -62,7 +62,7 @@ export default async function initDB(): Promise<void> {
   `;
   const ratingTable = `
     CREATE TABLE IF NOT EXISTS Rating (
-      id            INT     NOT NULL,
+      id            CHAR(4) NOT NULL,
       general       TINYINT NOT NULL,
       cost          TINYINT,
       quality       TINYINT,
@@ -82,7 +82,7 @@ export default async function initDB(): Promise<void> {
       password      VARCHAR(255) NOT NULL,
       statusID      INT          NOT NULL,
       verified      BOOL         NOT NULL DEFAULT FALSE,
-      admin         BOOL         NOT NULL,
+      admin         BOOL         NOT NULL DEFAULT FALSE,
       imageID       CHAR(4),
       joinTime      INT UNSIGNED NOT NULL,
       lastLoginTime INT UNSIGNED,
@@ -106,8 +106,9 @@ export default async function initDB(): Promise<void> {
       location       VARCHAR(255)  NOT NULL,
       locationTypeID INT           NOT NULL,
       program        VARCHAR(255)  NOT NULL,
-      ratingID       INT           NOT NULL,
+      ratingID       CHAR(4)       NOT NULL,
       threeWords     VARCHAR(63)   NOT NULL,
+      approved       BOOL          NOT NULL DEFAULT FALSE,
       createTime     INT UNSIGNED  NOT NULL,
       editTime       INT UNSIGNED,
 
@@ -126,6 +127,18 @@ export default async function initDB(): Promise<void> {
         REFERENCES Rating (id)
     );
   `;
+  const sessionTable = `
+    CREATE TABLE IF NOT EXISTS Session (
+      id         CHAR(16)     NOT NULL,
+      userID     CHAR(4)      NOT NULL,
+      createTime INT UNSIGNED NOT NULL,
+
+      PRIMARY KEY (id),
+
+      FOREIGN KEY (userID)
+        REFERENCES User (id)
+    );
+  `;
   await mainDB.executeMany([
     imageTable,
     userStatusTable,
@@ -133,6 +146,7 @@ export default async function initDB(): Promise<void> {
     ratingTable,
     userTable,
     postTable,
+    sessionTable,
   ]);
 
   // Create triggers
