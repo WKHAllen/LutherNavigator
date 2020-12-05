@@ -131,9 +131,28 @@ export module PostService {
 
   // Delete all of a user's posts
   export async function deleteUserPosts(userID: string): Promise<void> {
-    const sql = `DELETE FROM Post WHERE userID = ?;`;
-    const params = [userID];
+    let sql = `SELECT imageID, ratingID FROM Post WHERE userID = ?;`;
+    let params = [userID];
+    const rows: Post[] = await mainDB.execute(sql, params);
+
+    sql = `DELETE FROM Post WHERE userID = ?;`;
+    params = [userID];
     await mainDB.execute(sql, params);
+
+    const imageIDs = rows.map((post) => `'${post.imageID}'`);
+    const ratingIDs = rows.map((post) => `'${post.ratingID}'`);
+
+    if (imageIDs.length > 0) {
+      sql = `DELETE FROM Image WHERE id IN (${imageIDs.join(", ")});`;
+      params = [];
+      await mainDB.execute(sql, params);
+    }
+
+    if (ratingIDs.length > 0) {
+      sql = `DELETE FROM Rating WHERE id IN (${ratingIDs.join(", ")});`;
+      params = [];
+      await mainDB.execute(sql, params);
+    }
   }
 
   // Get a post's text content
