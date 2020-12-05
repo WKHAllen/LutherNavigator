@@ -13,6 +13,12 @@ import { UserService } from "../src/services/user";
 import { SessionService } from "../src/services/session";
 import { PostService } from "../src/services/post";
 
+async function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 // Timeout after 10 seconds
 jest.setTimeout(10000);
 
@@ -332,6 +338,7 @@ test("Session", async () => {
   expect(sessionUserID).toBe(userID);
 
   // Get all sessions
+  await wait(1000);
   const sessionID2 = await SessionService.createSession(userID);
   let sessions = await SessionService.getUserSessions(userID);
   expect(sessions.length).toBe(2);
@@ -460,11 +467,49 @@ test("Post", async () => {
   approved = await PostService.isApproved(postID);
   expect(approved).toBe(true);
 
+  // Get all user posts
+  const postID2 = await PostService.createPost(
+    userID,
+    content,
+    buf,
+    location,
+    locationTypeID,
+    program,
+    rating,
+    threeWords
+  );
+  let posts = await PostService.getUserPosts(userID);
+  expect(posts.length).toBe(2);
+  expect(posts[0].id).toBe(postID);
+  expect(posts[1].id).toBe(postID2);
+
+  // Delete all user posts
+  await PostService.deleteUserPosts(userID);
+  posts = await PostService.getUserPosts(userID);
+  expect(posts.length).toBe(0);
+  postExists = await PostService.postExists(postID);
+  expect(postExists).toBe(false);
+  postExists = await PostService.postExists(postID2);
+  expect(postExists).toBe(false);
+
   // Delete post
-  await PostService.deletePost(postID);
+  await wait(1000);
+  const postID3 = await PostService.createPost(
+    userID,
+    content,
+    buf,
+    location,
+    locationTypeID,
+    program,
+    rating,
+    threeWords
+  );
+  postExists = await PostService.postExists(postID3);
+  expect(postExists).toBe(true);
+  await PostService.deletePost(postID3);
 
   // Check post is gone
-  postExists = await PostService.postExists(postID);
+  postExists = await PostService.postExists(postID3);
   expect(postExists).toBe(false);
 
   await UserService.deleteUser(userID);

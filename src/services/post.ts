@@ -122,7 +122,7 @@ export module PostService {
 
   // Get all of a user's posts
   export async function getUserPosts(userID: string): Promise<Post[]> {
-    const sql = `SELECT * FROM Post WHERE userID = ?;`;
+    const sql = `SELECT * FROM Post WHERE userID = ? ORDER BY createTime;`;
     const params = [userID];
     const rows: Post[] = await mainDB.execute(sql, params);
 
