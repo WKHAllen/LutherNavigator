@@ -34,7 +34,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("static"));
 
 // Use routes
-app.use("/", routes.indexRoute);
+app.use("/", routes.indexRouter);
+app.use("/post", routes.postRouter);
 
 // Error 404 (not found)
 app.use((req, res) => {
