@@ -1,2 +1,3 @@
 // Export routes
-export { router as indexRoute } from "./routes/index";
+export * from "./routes/index";
+export * from "./routes/post";

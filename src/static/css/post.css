@@ -1,0 +1,26 @@
+.clearfix::after {
+	content: "";
+	clear: both;
+	display: table;
+}
+body {
+	margin: 0px 20px;
+}
+h1 {
+    font-size: 36pt;
+	padding: 20px 0px 0px 0px;
+}
+h4,
+p {
+    margin: 10px 0px;
+}
+.tagline {
+    text-align: center;
+    margin: 10px 0px 50px 0px;
+}
+.post,
+#content {
+	display: block;
+	margin: 70px 50px;
+	/* 	padding: 20px; */
+}
