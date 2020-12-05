@@ -421,6 +421,45 @@ test("Post", async () => {
   expect(post.createTime - getTime()).toBeLessThanOrEqual(3);
   expect(post.editTime).toBe(null);
 
+  // Get post user
+  const postUser = await PostService.getPostUser(postID);
+  const user = await UserService.getUser(userID);
+  expect(postUser).toMatchObject(user);
+
+  // Get post rating
+  const postRating = await PostService.getPostRating(postID);
+  expect(postRating).toMatchObject(rating);
+
+  // Get post content
+  const postContent = await PostService.getPostContent(postID);
+  expect(postContent).toBe(content);
+
+  // Set post content
+  const newContent = "Goodbye, post!";
+  await PostService.setPostContent(postID, newContent);
+  const newPostContent = await PostService.getPostContent(postID);
+  expect(newPostContent).toBe(newContent);
+
+  // Get post image
+  const postImage = await PostService.getPostImage(postID);
+  expect(postImage.data.toString()).toBe(buf.toString());
+
+  // Set post image
+  const newLen = Math.floor(Math.random() * 63) + 1;
+  const newBuf = crypto.randomBytes(newLen);
+  await PostService.setPostImage(postID, newBuf);
+  const newPostImage = await PostService.getPostImage(postID);
+  expect(newPostImage.data.toString()).toBe(newBuf.toString());
+
+  // Check approved
+  let approved = await PostService.isApproved(postID);
+  expect(approved).toBe(false);
+
+  // Set approved
+  await PostService.setApproved(postID);
+  approved = await PostService.isApproved(postID);
+  expect(approved).toBe(true);
+
   // Delete post
   await PostService.deletePost(postID);
 
