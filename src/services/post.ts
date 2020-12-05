@@ -120,6 +120,15 @@ export module PostService {
     return rating;
   }
 
+  // Get all of a user's posts
+  export async function getUserPosts(userID: string): Promise<Post[]> {
+    const sql = `SELECT * FROM Post WHERE userID = ?;`;
+    const params = [userID];
+    const rows: Post[] = await mainDB.execute(sql, params);
+
+    return rows;
+  }
+
   // Delete all of a user's posts
   export async function deleteUserPosts(userID: string): Promise<void> {
     const sql = `DELETE FROM Post WHERE userID = ?;`;
