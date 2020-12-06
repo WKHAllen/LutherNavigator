@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "cd src && npm run build",
+    "document": "npm run documentcode",
+    "documentcode": "./node_modules/typedoc/bin/typedoc --out docs src/*.ts src/services src/routes --theme ./node_modules/typedoc-neo-theme/bin/default",
     "format": "cd src && npm run format",
     "formatcode": "cd src && npm run formatcode",
     "formatscripts": "cd src && npm run formatscripts",
@@ -20,5 +22,14 @@
   "bugs": {
     "url": "https://github.com/WKHAllen/LutherNavigator/issues"
   },
-  "homepage": "https://github.com/WKHAllen/LutherNavigator#readme"
+  "homepage": "https://github.com/WKHAllen/LutherNavigator#readme",
+  "devDependencies": {
+    "@types/jest": "^26.0.15",
+    "jest": "^26.6.3",
+    "prettier": "^2.2.1",
+    "ts-jest": "^26.4.4",
+    "typedoc": "^0.19.2",
+    "typedoc-neo-theme": "^1.0.10",
+    "typescript": "^4.1.2"
+  }
 }

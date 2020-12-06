@@ -11,13 +11,21 @@ async function wait(ms: number): Promise<void> {
 export async function populateTable(
   table: string,
   column: string,
-  values: any[]
+  values: any[],
+  other: boolean = false,
+  otherID: number = 1000
 ): Promise<void> {
   const rows = await mainDB.execute(`SELECT ${column} from ${table}`);
+
   if (rows.length === 0) {
-    const queryValues = values.map(
+    let queryValues = values.map(
       (value, index) => `(${index + 1}, '${value}')`
     );
+
+    if (other) {
+      queryValues.push(`(${otherID}, 'Other')`);
+    }
+
     const queryValuesStr = queryValues.join(", ");
     const query = `INSERT INTO ${table} (id, ${column}) VALUES ${queryValuesStr};`;
     await mainDB.execute(query);
@@ -44,6 +52,27 @@ export default async function initDB(): Promise<void> {
       PRIMARY KEY (id)
     );
   `;
+  const locationTypeTable = `
+    CREATE TABLE IF NOT EXISTS LocationType (
+      id   INT         NOT NULL,
+      name VARCHAR(63) NOT NULL,
+
+      PRIMARY KEY (id)
+    );
+  `;
+  const ratingTable = `
+    CREATE TABLE IF NOT EXISTS Rating (
+      id            CHAR(4) NOT NULL,
+      general       TINYINT NOT NULL,
+      cost          TINYINT,
+      quality       TINYINT,
+      safety        TINYINT,
+      cleanliness   TINYINT,
+      guestServices TINYINT,
+
+      PRIMARY KEY (id)
+    );
+  `;
   const userTable = `
     CREATE TABLE IF NOT EXISTS User (
       id            CHAR(4)      NOT NULL,
@@ -53,7 +82,7 @@ export default async function initDB(): Promise<void> {
       password      VARCHAR(255) NOT NULL,
       statusID      INT          NOT NULL,
       verified      BOOL         NOT NULL DEFAULT FALSE,
-      admin         BOOL         NOT NULL,
+      admin         BOOL         NOT NULL DEFAULT FALSE,
       imageID       CHAR(4),
       joinTime      INT UNSIGNED NOT NULL,
       lastLoginTime INT UNSIGNED,
@@ -70,16 +99,18 @@ export default async function initDB(): Promise<void> {
   `;
   const postTable = `
     CREATE TABLE IF NOT EXISTS Post (
-      id           CHAR(4)       NOT NULL,
-      userID       CHAR(4)       NOT NULL,
-      content      VARCHAR(750)  NOT NULL,
-      imageID      CHAR(4)       NOT NULL,
-      location     VARCHAR(255)  NOT NULL,
-      program      VARCHAR(255)  NOT NULL,
-      rating       TINYINT       NOT NULL,
-      threeWords   VARCHAR(63)   NOT NULL,
-      createTime   INT UNSIGNED  NOT NULL,
-      editTime     INT UNSIGNED,
+      id             CHAR(4)       NOT NULL,
+      userID         CHAR(4)       NOT NULL,
+      content        VARCHAR(750)  NOT NULL,
+      imageID        CHAR(4)       NOT NULL,
+      location       VARCHAR(255)  NOT NULL,
+      locationTypeID INT           NOT NULL,
+      program        VARCHAR(255)  NOT NULL,
+      ratingID       CHAR(4)       NOT NULL,
+      threeWords     VARCHAR(63)   NOT NULL,
+      approved       BOOL          NOT NULL DEFAULT FALSE,
+      createTime     INT UNSIGNED  NOT NULL,
+      editTime       INT UNSIGNED,
 
       PRIMARY KEY (id),
 
@@ -87,16 +118,36 @@ export default async function initDB(): Promise<void> {
         REFERENCES User (id),
 
       FOREIGN KEY (imageID)
-        REFERENCES Image (id)
+        REFERENCES Image (id),
+      
+      FOREIGN KEY (locationTypeID)
+        REFERENCES LocationType (id),
+
+      FOREIGN KEY (ratingID)
+        REFERENCES Rating (id)
+    );
+  `;
+  const sessionTable = `
+    CREATE TABLE IF NOT EXISTS Session (
+      id         CHAR(16)     NOT NULL,
+      userID     CHAR(4)      NOT NULL,
+      createTime INT UNSIGNED NOT NULL,
+
+      PRIMARY KEY (id),
+
+      FOREIGN KEY (userID)
+        REFERENCES User (id)
     );
   `;
   await mainDB.executeMany([
     imageTable,
     userStatusTable,
+    locationTypeTable,
+    ratingTable,
     userTable,
     postTable,
+    sessionTable,
   ]);
-  await wait(1000);
 
   // Create triggers
   // ClearDB does not support triggers :/
@@ -117,18 +168,31 @@ export default async function initDB(): Promise<void> {
   // `;
   // await mainDB.executeMany([userDeleteTrigger, postDeleteTrigger]);
 
-  // Populate static tables
-  await populateTable("UserStatus", "name", [
-    "Student",
-    "Alum",
-    "Staff",
-    "Parent",
-    "Other",
-  ]);
+  await wait(1000);
 
-  const rows = await mainDB.execute("SELECT id FROM Main;");
-  const message = "Hello, world!";
-  if (rows.length === 0) {
-    await mainDB.execute("INSERT INTO Main (message) VALUES (?);", [message]);
-  }
+  // Populate static tables
+  await populateTable(
+    "UserStatus",
+    "name",
+    ["Student", "Alum", "Faculty/Staff", "Parent"],
+    true
+  );
+  await populateTable(
+    "LocationType",
+    "name",
+    [
+      "Hotel",
+      "Hostel",
+      "B&B/Inn",
+      "Cafe/Bakery",
+      "Bar/Pub",
+      "Restaurant",
+      "Museum",
+      "Arts venue",
+      "Sports venue",
+      "Cultural attraction",
+      "Historical attraction",
+    ],
+    true
+  );
 }
