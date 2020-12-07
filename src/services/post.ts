@@ -1,9 +1,16 @@
+/**
+ * Services for the post table.
+ * @packageDocumentation
+ */
+
 import mainDB, { getTime, newUniqueID } from "./util";
 import { Image, ImageService } from "./image";
 import { Rating, RatingParams, RatingService } from "./rating";
 import { User, UserService } from "./user";
 
-// Post architecture
+/**
+ * Post architecture.
+ */
 export interface Post {
   id: string;
   userID: string;
@@ -19,9 +26,23 @@ export interface Post {
   editTime: number | null;
 }
 
-// Post services
+/**
+ * Post services.
+ */
 export module PostService {
-  // Create a post
+  /**
+   * Create a post.
+   * 
+   * @param userID The ID of the user making the post.
+   * @param content The text content of the post.
+   * @param imageData The binary data of the image associated with the post.
+   * @param location The post's location.
+   * @param locationTypeID The type ID of location.
+   * @param program The program the user is in.
+   * @param rating The user's rating of the location.
+   * @param threeWords Three words to describe the location.
+   * @returns The new post's ID.
+   */
   export async function createPost(
     userID: string,
     content: string,
@@ -62,7 +83,12 @@ export module PostService {
     return postID;
   }
 
-  // Check if a post exists
+  /**
+   * Check if a post exists.
+   * 
+   * @param postID A post's ID.
+   * @returns Whether or not the post exists.
+   */
   export async function postExists(postID: string): Promise<boolean> {
     const sql = `SELECT id FROM Post WHERE id = ?;`;
     const params = [postID];
@@ -71,7 +97,12 @@ export module PostService {
     return rows.length > 0;
   }
 
-  // Get a post
+  /**
+   * Get a post.
+   * 
+   * @param postID A post's ID.
+   * @returns The post.
+   */
   export async function getPost(postID: string): Promise<Post> {
     const sql = `SELECT * FROM Post WHERE id = ?;`;
     const params = [postID];
@@ -80,7 +111,11 @@ export module PostService {
     return rows[0];
   }
 
-  // Delete a post
+  /**
+   * Delete a post.
+   * 
+   * @param postID A post's ID.
+   */
   export async function deletePost(postID: string): Promise<void> {
     let sql = `SELECT imageID, ratingID FROM Post WHERE id = ?;`;
     let params = [postID];
@@ -96,7 +131,12 @@ export module PostService {
     await RatingService.deleteRating(ratingID);
   }
 
-  // Get the user who made the post
+  /**
+   * Get the user who made the post.
+   * 
+   * @param postID A post's ID.
+   * @returns The user who made the post.
+   */
   export async function getPostUser(postID: string): Promise<User> {
     const sql = `SELECT userID FROM Post WHERE id = ?;`;
     const params = [postID];
@@ -108,7 +148,12 @@ export module PostService {
     return user;
   }
 
-  // Get a post's rating
+  /**
+   * Get a post's rating.
+   * 
+   * @param postID A post's ID.
+   * @returns The post's rating.
+   */
   export async function getPostRating(postID: string): Promise<Rating> {
     const sql = `SELECT ratingID FROM Post WHERE id = ?;`;
     const params = [postID];
@@ -120,7 +165,12 @@ export module PostService {
     return rating;
   }
 
-  // Get all of a user's posts
+  /**
+   * Get all of a user's posts.
+   * 
+   * @param userID A user's ID.
+   * @returns A list of all posts made by the user.
+   */
   export async function getUserPosts(userID: string): Promise<Post[]> {
     const sql = `SELECT * FROM Post WHERE userID = ? ORDER BY createTime;`;
     const params = [userID];
@@ -129,7 +179,11 @@ export module PostService {
     return rows;
   }
 
-  // Delete all of a user's posts
+  /**
+   * Delete all of a user's posts.
+   * 
+   * @param userID A user's ID.
+   */
   export async function deleteUserPosts(userID: string): Promise<void> {
     let sql = `SELECT imageID, ratingID FROM Post WHERE userID = ?;`;
     let params = [userID];
@@ -155,7 +209,12 @@ export module PostService {
     }
   }
 
-  // Get a post's text content
+  /**
+   * Get a post's text content.
+   * 
+   * @param postID A post's ID.
+   * @returns The post's text content.
+   */
   export async function getPostContent(postID: string): Promise<string> {
     const sql = `SELECT content FROM Post WHERE id = ?;`;
     const params = [postID];
@@ -164,7 +223,12 @@ export module PostService {
     return rows[0]?.content;
   }
 
-  // Set a post's text content
+  /**
+   * Set a post's text content.
+   * 
+   * @param postID A post's ID.
+   * @param content The new text content of a post.
+   */
   export async function setPostContent(
     postID: string,
     content: string
@@ -174,7 +238,12 @@ export module PostService {
     await mainDB.execute(sql, params);
   }
 
-  // Get a post's image
+  /**
+   * Get a post's image.
+   * 
+   * @param postID A post's ID.
+   * @returns The image associated with the post.
+   */
   export async function getPostImage(postID: string): Promise<Image> {
     const sql = `SELECT imageID from Post WHERE id = ?;`;
     const params = [postID];
@@ -186,7 +255,12 @@ export module PostService {
     return image;
   }
 
-  // Set a post's image
+  /**
+   * Set a post's image.
+   * 
+   * @param postID A post's ID.
+   * @param imageData The new binary image data.
+   */
   export async function setPostImage(
     postID: string,
     imageData: Buffer
@@ -205,7 +279,12 @@ export module PostService {
     await ImageService.deleteImage(imageID);
   }
 
-  // Check if a post has been approved
+  /**
+   * Check if a post has been approved.
+   * 
+   * @param postID A post's ID.
+   * @returns Whether or not the post has been approved by an admin.
+   */
   export async function isApproved(postID: string): Promise<boolean> {
     const sql = `SELECT approved FROM Post WHERE id = ?;`;
     const params = [postID];
@@ -214,7 +293,12 @@ export module PostService {
     return !!rows[0]?.approved;
   }
 
-  // Set a post's approved status
+  /**
+   * Set a post's approved status.
+   * 
+   * @param postID A post's ID.
+   * @param approved Approved status.
+   */
   export async function setApproved(
     postID: string,
     approved: boolean = true
