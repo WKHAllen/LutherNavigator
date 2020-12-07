@@ -1,3 +1,8 @@
+/**
+ * Index file for the project.
+ * @packageDocumentation
+ */
+
 import * as express from "express";
 import * as hbs from "express-handlebars";
 import * as enforce from "express-sslify";
@@ -5,11 +10,19 @@ import * as bodyParser from "body-parser";
 import * as routes from "./routes";
 import initDB from "./dbinit";
 
-// Environment variables
-const debug = Boolean(Number(process.env.DEBUG));
-const port = Number(process.env.PORT);
+/**
+ * Debug/production environment
+ */
+const debug = !!parseInt(process.env.DEBUG);
 
-// Create express app
+/**
+ * Port number to use
+ */
+const port = parseInt(process.env.PORT);
+
+/**
+ * Express app
+ */
 const app = express();
 
 // Enforce HTTPS
@@ -75,4 +88,5 @@ initDB().then(() => {
   });
 });
 
+// Export the express app
 export = app;
