@@ -1,6 +1,14 @@
+/**
+ * Post routes.
+ * @packageDocumentation
+ */
+
 import { Router } from "express";
 import { PostService, UserStatusService } from "../services";
 
+/**
+ * The post router.
+ */
 export const postRouter = Router();
 
 // Post page
