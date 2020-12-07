@@ -1,12 +1,27 @@
+/**
+ * Database helper.
+ * @packageDocumentation
+ */
+
 import * as mysql from "mysql";
 
-// If an error is thrown, provide information on the error
+/**
+ * If an error is thrown, provide information on the error.
+ */ 
 function logError(stmt: string, params: any[], res: any, err: Error) {
   const msg = `\n\n######### ERROR #########\n\n\nStatement:\n${stmt}\n\nParameters:\n${params}\n\nResponse:\n${res}\n\nError:`;
   console.error(msg);
   throw err;
 }
 
+/**
+ * Perform a database query asynchronously.
+ * 
+ * @param conn MySQL connection.
+ * @param stmt SQL statement.
+ * @param params Values to be inserted into the statement.
+ * @returns Query results and field information.
+ */
 async function doQuery(
   conn: mysql.PoolConnection,
   stmt: string,
@@ -23,15 +38,32 @@ async function doQuery(
   });
 }
 
-// Control the database through a single object
+/**
+ * Control the database through a single object.
+ */
 export class DB {
+  /**
+   * Connection pool.
+   */
   private pool: mysql.Pool;
 
+  /**
+   * Database controller constructor.
+   * 
+   * @param dbURL Database connection URL.
+   * @returns Database controller object.
+   */
   constructor(dbURL: string) {
     this.pool = mysql.createPool(dbURL);
   }
 
-  // Execute a SQL query
+  /**
+   * Execute a SQL query.
+   * 
+   * @param stmt SQL statement.
+   * @param params Values to be inserted into the statement.
+   * @returns Query results.
+   */
   public async execute(stmt: string, params: any[] = []): Promise<any[]> {
     return new Promise((resolve) => {
       this.pool.query(stmt, params, (err, results, fields) => {
@@ -44,7 +76,13 @@ export class DB {
     });
   }
 
-  // Execute multiple SQL queries, each one right after the last
+  /**
+   * Execute multiple SQL queries, each one right after the last
+   * 
+   * @param stmts SQL statement.
+   * @param params Values to be inserted into the statement.
+   * @returns Results of all queries.
+   */
   public async executeMany(
     stmts: string[],
     params: any[][] = []
@@ -78,6 +116,9 @@ export class DB {
     });
   }
 
+  /**
+   * Close the connection to the database.
+   */
   public async close(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.pool.end((err) => {

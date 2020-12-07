@@ -11,17 +11,17 @@ import * as routes from "./routes";
 import initDB from "./dbinit";
 
 /**
- * Debug/production environment
+ * Debug/production environment.
  */
 const debug = !!parseInt(process.env.DEBUG);
 
 /**
- * Port number to use
+ * Port number to use.
  */
 const port = parseInt(process.env.PORT);
 
 /**
- * Express app
+ * Express app.
  */
 const app = express();
 
