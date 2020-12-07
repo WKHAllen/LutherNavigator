@@ -1,6 +1,13 @@
+/**
+ * Services for the rating table.
+ * @packageDocumentation
+ */
+
 import mainDB, { newUniqueID } from "./util";
 
-// Rating architecture
+/**
+ * Rating architecture.
+ */
 export interface Rating {
   id: string;
   general: number;
@@ -11,7 +18,9 @@ export interface Rating {
   guestServices: number | null;
 }
 
-// Rating parameters
+/**
+ * Rating parameters.
+ */
 export interface RatingParams {
   general: number;
   cost?: number;
@@ -21,9 +30,16 @@ export interface RatingParams {
   guestService?: number;
 }
 
-// Rating services
+/**
+ * Rating services.
+ */
 export module RatingService {
-  // Create a rating
+  /**
+   * Create a rating.
+   * 
+   * @param rating The user's rating.
+   * @returns The new rating's ID.
+   */
   export async function createRating(rating: RatingParams): Promise<string> {
     const ratingID = await newUniqueID("Rating");
     const cols = Object.keys(rating);
@@ -42,7 +58,12 @@ export module RatingService {
     return ratingID;
   }
 
-  // Check if a rating exists
+  /**
+   * Check if a rating exists.
+   * 
+   * @param ratingID A rating's ID.
+   * @returns Whether or not the rating exists.
+   */
   export async function ratingExists(ratingID: string): Promise<boolean> {
     const sql = `SELECT id FROM Rating WHERE id = ?;`;
     const params = [ratingID];
@@ -51,7 +72,12 @@ export module RatingService {
     return rows.length > 0;
   }
 
-  // Get a rating
+  /**
+   * Get a rating.
+   * 
+   * @param ratingID A rating's ID.
+   * @returns The rating.
+   */
   export async function getRating(ratingID: string): Promise<Rating> {
     const sql = `SELECT * FROM Rating WHERE id = ?;`;
     const params = [ratingID];
@@ -60,7 +86,11 @@ export module RatingService {
     return rows[0];
   }
 
-  // Delete a rating
+  /**
+   * Delete a rating.
+   * 
+   * @param ratingID A rating's ID.
+   */
   export async function deleteRating(ratingID: string): Promise<void> {
     const sql = `DELETE FROM Rating WHERE id = ?;`;
     const params = [ratingID];
