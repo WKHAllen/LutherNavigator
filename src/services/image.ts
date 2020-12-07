@@ -22,7 +22,7 @@ export module ImageService {
    * Create an image.
    * 
    * @param data Image binary data.
-   * @returns New image's ID.
+   * @returns The new image's ID.
    */
   export async function createImage(data: Buffer): Promise<string> {
     const imageID = await newUniqueID("Image");
@@ -37,7 +37,7 @@ export module ImageService {
   /**
    * Check if an image exists.
    * 
-   * @param imageID Image's ID.
+   * @param imageID An image's ID.
    * @returns Whether or not the image exists.
    */
   export async function imageExists(imageID: string): Promise<boolean> {
@@ -51,7 +51,7 @@ export module ImageService {
   /**
    * Get an image.
    * 
-   * @param imageID Image's ID.
+   * @param imageID An image's ID.
    * @returns The image.
    */
   export async function getImage(imageID: string): Promise<Image> {
@@ -65,7 +65,7 @@ export module ImageService {
   /**
    * Delete an image.
    * 
-   * @param imageID Image's ID.
+   * @param imageID An image's ID.
    */
   export async function deleteImage(imageID: string): Promise<void> {
     const sql = `DELETE FROM Image WHERE id = ?;`;
