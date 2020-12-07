@@ -1,23 +1,53 @@
+/**
+ * Utilities for services.
+ * @packageDocumentation
+ */
+
 import * as db from "../db";
 import * as crypto from "crypto";
 import * as bcrypt from "bcrypt";
 
-// Constants
+/**
+ * Database connection URL.
+ */
 export const dbURL = process.env.DATABASE_URL;
+
+/**
+ * Standard length of an ID.
+ */
 export const idLength = 4;
+
+/**
+ * Length of a session ID.
+ */
 export const sessionIDLength = 16;
+
+/**
+ * Number of salt rounds for bcrypt to use.
+ */
 export const saltRounds = 12;
 
-// Database object
+/**
+ * Database object.
+ */
 const mainDB = new db.DB(dbURL);
 export default mainDB;
 
-// Get the current timestamp
+/**
+ * Get the current timestamp.
+ * 
+ * @returns The timestamp in seconds.
+ */
 export function getTime(): number {
   return Math.floor(new Date().getTime() / 1000);
 }
 
-// Generate a new ID
+/**
+ * Generate a new ID.
+ * 
+ * @param len The length of the ID.
+ * @returns The new ID.
+ */
 export async function newID(len: number = idLength): Promise<string> {
   return new Promise((resolve, reject) => {
     crypto.randomBytes(len, (err, buffer) => {
@@ -33,7 +63,13 @@ export async function newID(len: number = idLength): Promise<string> {
   });
 }
 
-// Generate a new unique ID for a table
+/**
+ * Generate a new unique ID for a table.
+ * 
+ * @param table The table name.
+ * @param len The length of the ID.
+ * @returns The new unique ID.
+ */
 export async function newUniqueID(
   table: string,
   len: number = idLength
@@ -51,7 +87,13 @@ export async function newUniqueID(
   return base64ID;
 }
 
-// Hash a password
+/**
+ * Hash a password.
+ * 
+ * @param password The password.
+ * @param rounds The number of salt rounds for bcrypt to use.
+ * @returns The hashed password.
+ */
 export async function hashPassword(
   password: string,
   rounds: number = saltRounds
@@ -67,7 +109,13 @@ export async function hashPassword(
   });
 }
 
-// Check if passwords match
+/**
+ * Check if passwords match.
+ * 
+ * @param password The password.
+ * @param hash The hashed password.
+ * @returns Whether or not the password and hash match.
+ */
 export async function checkPassword(
   password: string,
   hash: string
