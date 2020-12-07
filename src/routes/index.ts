@@ -1,6 +1,14 @@
+/**
+ * Index routes.
+ * @packageDocumentation
+ */
+
 import { Router } from "express";
 import * as services from "../services";
 
+/**
+ * The index router.
+ */
 export const indexRouter = Router();
 
 // Index page
