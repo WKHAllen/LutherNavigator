@@ -20,7 +20,7 @@ export interface Image {
 export module ImageService {
   /**
    * Create an image.
-   * 
+   *
    * @param data Image binary data.
    * @returns The new image's ID.
    */
@@ -36,7 +36,7 @@ export module ImageService {
 
   /**
    * Check if an image exists.
-   * 
+   *
    * @param imageID An image's ID.
    * @returns Whether or not the image exists.
    */
@@ -50,7 +50,7 @@ export module ImageService {
 
   /**
    * Get an image.
-   * 
+   *
    * @param imageID An image's ID.
    * @returns The image.
    */
@@ -64,7 +64,7 @@ export module ImageService {
 
   /**
    * Delete an image.
-   * 
+   *
    * @param imageID An image's ID.
    */
   export async function deleteImage(imageID: string): Promise<void> {

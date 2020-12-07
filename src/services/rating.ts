@@ -36,7 +36,7 @@ export interface RatingParams {
 export module RatingService {
   /**
    * Create a rating.
-   * 
+   *
    * @param rating The user's rating.
    * @returns The new rating's ID.
    */
@@ -60,7 +60,7 @@ export module RatingService {
 
   /**
    * Check if a rating exists.
-   * 
+   *
    * @param ratingID A rating's ID.
    * @returns Whether or not the rating exists.
    */
@@ -74,7 +74,7 @@ export module RatingService {
 
   /**
    * Get a rating.
-   * 
+   *
    * @param ratingID A rating's ID.
    * @returns The rating.
    */
@@ -88,7 +88,7 @@ export module RatingService {
 
   /**
    * Delete a rating.
-   * 
+   *
    * @param ratingID A rating's ID.
    */
   export async function deleteRating(ratingID: string): Promise<void> {

@@ -38,7 +38,7 @@ export interface User {
 export module UserService {
   /**
    * Create a user.
-   * 
+   *
    * @param firstname The user's first name.
    * @param lastname The user's last name.
    * @param email The user's email address.
@@ -79,7 +79,7 @@ export module UserService {
 
   /**
    * Check if a user exists.
-   * 
+   *
    * @param userID A user's ID.
    * @returns Whether or not the user exists.
    */
@@ -93,7 +93,7 @@ export module UserService {
 
   /**
    * Get a user.
-   * 
+   *
    * @param userID A user's ID.
    * @returns The user.
    */
@@ -107,7 +107,7 @@ export module UserService {
 
   /**
    * Delete a user.
-   * 
+   *
    * @param userID A user's ID.
    */
   export async function deleteUser(userID: string): Promise<void> {
@@ -123,7 +123,7 @@ export module UserService {
 
   /**
    * Make sure an email address is not yet in use.
-   * 
+   *
    * @param email An email address.
    * @returns Whether or not the email address is unique.
    */
@@ -137,7 +137,7 @@ export module UserService {
 
   /**
    * Log a user in.
-   * 
+   *
    * @param email The user's email address.
    * @param password The user's password.
    * @returns Whether or not the login was successful.
@@ -165,7 +165,7 @@ export module UserService {
 
   /**
    * Get the name of a user's status.
-   * 
+   *
    * @param userID A user's ID.
    * @returns The name of the user's status.
    */
@@ -182,7 +182,7 @@ export module UserService {
 
   /**
    * Check if a user is verified.
-   * 
+   *
    * @param userID A user's ID.
    * @returns Whether or not the user's account has been verified.
    */
@@ -196,7 +196,7 @@ export module UserService {
 
   /**
    * Set a user's verification status.
-   * 
+   *
    * @param userID A user's ID.
    * @param verified Verification status.
    */
@@ -211,7 +211,7 @@ export module UserService {
 
   /**
    * Check if a user is an admin.
-   * 
+   *
    * @param userID A user's ID.
    * @returns Whether or not the user is an admin.
    */
@@ -225,7 +225,7 @@ export module UserService {
 
   /**
    * Set a user's admin status.
-   * 
+   *
    * @param userID A user's ID.
    * @param admin Admin status.
    */
@@ -240,7 +240,7 @@ export module UserService {
 
   /**
    * Get a user's image.
-   * 
+   *
    * @param userID A user's ID.
    * @returns The user's profile image.
    */
@@ -257,7 +257,7 @@ export module UserService {
 
   /**
    * Set a user's image.
-   * 
+   *
    * @param userID A user's ID.
    * @param imageData The new binary image data.
    */
@@ -281,7 +281,7 @@ export module UserService {
 
   /**
    * Delete a user's image.
-   * 
+   *
    * @param userID A user's ID.
    */
   export async function deleteUserImage(userID: string): Promise<void> {

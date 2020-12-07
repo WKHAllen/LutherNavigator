@@ -35,7 +35,7 @@ export default mainDB;
 
 /**
  * Get the current timestamp.
- * 
+ *
  * @returns The timestamp in seconds.
  */
 export function getTime(): number {
@@ -44,7 +44,7 @@ export function getTime(): number {
 
 /**
  * Generate a new ID.
- * 
+ *
  * @param len The length of the ID.
  * @returns The new ID.
  */
@@ -65,7 +65,7 @@ export async function newID(len: number = idLength): Promise<string> {
 
 /**
  * Generate a new unique ID for a table.
- * 
+ *
  * @param table The table name.
  * @param len The length of the ID.
  * @returns The new unique ID.
@@ -89,7 +89,7 @@ export async function newUniqueID(
 
 /**
  * Hash a password.
- * 
+ *
  * @param password The password.
  * @param rounds The number of salt rounds for bcrypt to use.
  * @returns The hashed password.
@@ -111,7 +111,7 @@ export async function hashPassword(
 
 /**
  * Check if passwords match.
- * 
+ *
  * @param password The password.
  * @param hash The hashed password.
  * @returns Whether or not the password and hash match.

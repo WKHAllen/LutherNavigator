@@ -7,7 +7,7 @@ import mainDB from "./services/util";
 
 /**
  * Asynchronously sleep.
- * 
+ *
  * @param ms Number of milliseconds to wait.
  */
 async function wait(ms: number): Promise<void> {
@@ -18,7 +18,7 @@ async function wait(ms: number): Promise<void> {
 
 /**
  * Populate a static table.
- * 
+ *
  * @param table Table name.
  * @param column Column name.
  * @param values Values to be inserted into the table.

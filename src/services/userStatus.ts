@@ -19,7 +19,7 @@ export interface UserStatus {
 export module UserStatusService {
   /**
    * Get all user statuses.
-   * 
+   *
    * @returns A list of all user statuses.
    */
   export async function getStatuses(): Promise<UserStatus[]> {
@@ -31,7 +31,7 @@ export module UserStatusService {
 
   /**
    * Get the name of a user status by ID.
-   * 
+   *
    * @param statusID A status's ID.
    * @returns The status's name.
    */
@@ -45,7 +45,7 @@ export module UserStatusService {
 
   /**
    * Check if a user status is valid.
-   * 
+   *
    * @param statusID A status's ID.
    * @returns Whether or not the status is valid.
    */

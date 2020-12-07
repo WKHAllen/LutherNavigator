@@ -7,7 +7,7 @@ import * as mysql from "mysql";
 
 /**
  * If an error is thrown, provide information on the error.
- */ 
+ */
 function logError(stmt: string, params: any[], res: any, err: Error) {
   const msg = `\n\n######### ERROR #########\n\n\nStatement:\n${stmt}\n\nParameters:\n${params}\n\nResponse:\n${res}\n\nError:`;
   console.error(msg);
@@ -16,7 +16,7 @@ function logError(stmt: string, params: any[], res: any, err: Error) {
 
 /**
  * Perform a database query asynchronously.
- * 
+ *
  * @param conn MySQL connection.
  * @param stmt SQL statement.
  * @param params Values to be inserted into the statement.
@@ -49,7 +49,7 @@ export class DB {
 
   /**
    * Database controller constructor.
-   * 
+   *
    * @param dbURL Database connection URL.
    * @returns Database controller object.
    */
@@ -59,7 +59,7 @@ export class DB {
 
   /**
    * Execute a SQL query.
-   * 
+   *
    * @param stmt SQL statement.
    * @param params Values to be inserted into the statement.
    * @returns Query results.
@@ -78,7 +78,7 @@ export class DB {
 
   /**
    * Execute multiple SQL queries, each one right after the last
-   * 
+   *
    * @param stmts SQL statement.
    * @param params Values to be inserted into the statement.
    * @returns Results of all queries.

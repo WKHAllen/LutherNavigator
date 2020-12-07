@@ -19,7 +19,7 @@ export interface LocationType {
 export module LocationTypeService {
   /**
    * Get all locations.
-   * 
+   *
    * @returns All location types.
    */
   export async function getLocations(): Promise<LocationType[]> {
@@ -31,7 +31,7 @@ export module LocationTypeService {
 
   /**
    * Get the name of a location by ID.
-   * 
+   *
    * @param locationID A location's ID.
    * @returns The location's name.
    */
@@ -45,7 +45,7 @@ export module LocationTypeService {
 
   /**
    * Check if a location is valid.
-   * 
+   *
    * @param locationID A location's ID.
    * @returns Whether or not the location is valid.
    */

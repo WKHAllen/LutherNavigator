@@ -32,7 +32,7 @@ export interface Post {
 export module PostService {
   /**
    * Create a post.
-   * 
+   *
    * @param userID The ID of the user making the post.
    * @param content The text content of the post.
    * @param imageData The binary data of the image associated with the post.
@@ -85,7 +85,7 @@ export module PostService {
 
   /**
    * Check if a post exists.
-   * 
+   *
    * @param postID A post's ID.
    * @returns Whether or not the post exists.
    */
@@ -99,7 +99,7 @@ export module PostService {
 
   /**
    * Get a post.
-   * 
+   *
    * @param postID A post's ID.
    * @returns The post.
    */
@@ -113,7 +113,7 @@ export module PostService {
 
   /**
    * Delete a post.
-   * 
+   *
    * @param postID A post's ID.
    */
   export async function deletePost(postID: string): Promise<void> {
@@ -133,7 +133,7 @@ export module PostService {
 
   /**
    * Get the user who made the post.
-   * 
+   *
    * @param postID A post's ID.
    * @returns The user who made the post.
    */
@@ -150,7 +150,7 @@ export module PostService {
 
   /**
    * Get a post's rating.
-   * 
+   *
    * @param postID A post's ID.
    * @returns The post's rating.
    */
@@ -167,7 +167,7 @@ export module PostService {
 
   /**
    * Get all of a user's posts.
-   * 
+   *
    * @param userID A user's ID.
    * @returns A list of all posts made by the user.
    */
@@ -181,7 +181,7 @@ export module PostService {
 
   /**
    * Delete all of a user's posts.
-   * 
+   *
    * @param userID A user's ID.
    */
   export async function deleteUserPosts(userID: string): Promise<void> {
@@ -211,7 +211,7 @@ export module PostService {
 
   /**
    * Get a post's text content.
-   * 
+   *
    * @param postID A post's ID.
    * @returns The post's text content.
    */
@@ -225,7 +225,7 @@ export module PostService {
 
   /**
    * Set a post's text content.
-   * 
+   *
    * @param postID A post's ID.
    * @param content The new text content of a post.
    */
@@ -240,7 +240,7 @@ export module PostService {
 
   /**
    * Get a post's image.
-   * 
+   *
    * @param postID A post's ID.
    * @returns The image associated with the post.
    */
@@ -257,7 +257,7 @@ export module PostService {
 
   /**
    * Set a post's image.
-   * 
+   *
    * @param postID A post's ID.
    * @param imageData The new binary image data.
    */
@@ -281,7 +281,7 @@ export module PostService {
 
   /**
    * Check if a post has been approved.
-   * 
+   *
    * @param postID A post's ID.
    * @returns Whether or not the post has been approved by an admin.
    */
@@ -295,7 +295,7 @@ export module PostService {
 
   /**
    * Set a post's approved status.
-   * 
+   *
    * @param postID A post's ID.
    * @param approved Approved status.
    */

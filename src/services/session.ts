@@ -20,7 +20,7 @@ export interface Session {
 export module SessionService {
   /**
    * Create a session.
-   * 
+   *
    * @param userID The ID of the user associated with the session.
    * @returns The new session's ID.
    */
@@ -42,7 +42,7 @@ export module SessionService {
 
   /**
    * Check if a session exists.
-   * 
+   *
    * @param sessionID A session's ID.
    * @returns Whether or not the session exists.
    */
@@ -56,7 +56,7 @@ export module SessionService {
 
   /**
    * Get a session.
-   * 
+   *
    * @param sessionID A session's ID.
    * @returns The session.
    */
@@ -70,7 +70,7 @@ export module SessionService {
 
   /**
    * Delete a session.
-   * 
+   *
    * @param sessionID A session's ID.
    */
   export async function deleteSession(sessionID: string): Promise<void> {
@@ -81,7 +81,7 @@ export module SessionService {
 
   /**
    * Get all of a user's sessions.
-   * 
+   *
    * @param userID A user's ID.
    * @returns A list of all sessions associated with the user.
    */
@@ -95,7 +95,7 @@ export module SessionService {
 
   /**
    * Delete all of a user's sessions.
-   * 
+   *
    * @param userID A user's ID.
    */
   export async function deleteUserSessions(userID: string): Promise<void> {
@@ -106,7 +106,7 @@ export module SessionService {
 
   /**
    * Get a user ID by session ID.
-   * 
+   *
    * @param sessionID A session's ID.
    * @returns The ID of the user associated with the session.
    */
