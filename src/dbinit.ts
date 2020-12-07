@@ -1,13 +1,30 @@
+/**
+ * Database initializer.
+ * @packageDocumentation
+ */
+
 import mainDB from "./services/util";
 
-// Asynchronously sleep
+/**
+ * Asynchronously sleep.
+ * 
+ * @param ms Number of milliseconds to wait.
+ */
 async function wait(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
 
-// Populate a static table
+/**
+ * Populate a static table.
+ * 
+ * @param table Table name.
+ * @param column Column name.
+ * @param values Values to be inserted into the table.
+ * @param other Whether or not to insert the "Other" option into the table.
+ * @param otherID ID of the "Other" option, if it is set to true.
+ */
 export async function populateTable(
   table: string,
   column: string,
@@ -32,7 +49,9 @@ export async function populateTable(
   }
 }
 
-// Initialize the database
+/**
+ * Initialize the database.
+ */
 export default async function initDB(): Promise<void> {
   // Create tables
   const imageTable = `
