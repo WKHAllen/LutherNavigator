@@ -39,7 +39,7 @@ export async function auth(
  * Admin authentication middleware.
  *
  * @param req Request object.
- * @param res Repsonse object.
+ * @param res Response object.
  * @param next Next function.
  */
 export async function adminAuth(
@@ -48,7 +48,7 @@ export async function adminAuth(
   next: NextFunction
 ): Promise<void> {
   const sessionID: string = req.cookies.sessionID;
-  const userID = await SessionService.getUserBySessionID(sessionID);
+  const userID = await SessionService.getUserIDBySessionID(sessionID);
   const admin = userID ? await UserService.isAdmin(userID) : false;
 
   if (admin) {
@@ -61,4 +61,42 @@ export async function adminAuth(
   } else {
     res.send("Permission denied");
   }
+}
+
+/**
+ * Render a webpage.
+ *
+ * @param req Request object.
+ * @param res Response object.
+ * @param page View to be rendered.
+ * @param options Options to be passed to the view.
+ * @param status HTTP status code.
+ */
+export async function renderPage(
+  req: Request,
+  res: Response,
+  page: string,
+  options: any = {},
+  status: number = 200
+): Promise<void> {
+  options.url = req.originalUrl;
+
+  const sessionID = req.cookies.sessionID;
+
+  if (!sessionID) {
+    options.loggedIn = false;
+  } else {
+    const user = await SessionService.getUserBySessionID(sessionID);
+
+    if (!user) {
+      options.loggedIn = false;
+    } else {
+      options.loggedIn = true;
+      options.userID = user.id;
+      options.userFirstname = user.firstname;
+      options.admin = user.admin;
+    }
+  }
+
+  res.status(status).render(page, options);
 }

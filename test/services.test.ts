@@ -334,7 +334,7 @@ test("Session", async () => {
   expect(session.createTime - getTime()).toBeLessThanOrEqual(3);
 
   // Get userID by sessionID
-  const sessionUserID = await SessionService.getUserBySessionID(sessionID);
+  const sessionUserID = await SessionService.getUserIDBySessionID(sessionID);
   expect(sessionUserID).toBe(userID);
 
   // Get all sessions

@@ -4,6 +4,7 @@
  */
 
 import mainDB, { getTime, newUniqueID, sessionIDLength } from "./util";
+import { User } from "./user";
 
 /**
  * Session architecture.
@@ -36,7 +37,7 @@ export module SessionService {
       );
     `;
     const now = getTime();
-    const params = [newSessionID, userID, now];
+    const params = [newSessionID, userID, now, now];
     await mainDB.execute(sql, params);
 
     return newSessionID;
@@ -112,7 +113,7 @@ export module SessionService {
    * @param sessionID A session's ID.
    * @returns The ID of the user associated with the session.
    */
-  export async function getUserBySessionID(
+  export async function getUserIDBySessionID(
     sessionID: string
   ): Promise<string> {
     const sql = `SELECT userID from Session WHERE id = ?;`;
@@ -122,6 +123,27 @@ export module SessionService {
     return rows[0]?.userID;
   }
 
+  /**
+   * Get a user by session ID.
+   *
+   * @param sessionID A session's ID.
+   * @returns The user associated with the session.
+   */
+  export async function getUserBySessionID(sessionID: string): Promise<User> {
+    const userID = await getUserIDBySessionID(sessionID);
+
+    const sql = `SELECT * FROM User WHERE id = ?;`;
+    const params = [userID];
+    const rows = await mainDB.execute(sql, params);
+
+    return rows[0];
+  }
+
+  /**
+   * Update the timestamp at which the session ID was last used.
+   *
+   * @param sessionID A session's ID.
+   */
   export async function updateSession(sessionID: string): Promise<void> {
     const sql = `UPDATE Session SET updateTime = ? WHERE id = ?;`;
     const params = [getTime(), sessionID];

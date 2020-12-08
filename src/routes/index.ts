@@ -12,7 +12,12 @@ import { auth } from "./util";
 export const indexRouter = Router();
 
 // Index page
-indexRouter.get("/", auth, async (req, res) => {
+indexRouter.get("/", async (req, res) => {
   const message = "Hello, world!";
   res.render("index", { message });
+});
+
+// Authentication test page
+indexRouter.get("/auth", auth, async (req, res) => {
+  res.send("Success!");
 });
