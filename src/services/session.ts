@@ -12,6 +12,7 @@ export interface Session {
   id: string;
   userID: string;
   createTime: number;
+  updateTime: number;
 }
 
 /**
@@ -29,12 +30,13 @@ export module SessionService {
 
     const sql = `
       INSERT INTO Session (
-        id, userID, createTime
+        id, userID, createTime, updateTime
       ) VALUES (
-        ?, ?, ?
+        ?, ?, ?, ?
       );
     `;
-    const params = [newSessionID, userID, getTime()];
+    const now = getTime();
+    const params = [newSessionID, userID, now];
     await mainDB.execute(sql, params);
 
     return newSessionID;
@@ -118,5 +120,11 @@ export module SessionService {
     const rows: Session[] = await mainDB.execute(sql, params);
 
     return rows[0]?.userID;
+  }
+
+  export async function updateSession(sessionID: string): Promise<void> {
+    const sql = `UPDATE Session SET updateTime = ? WHERE id = ?;`;
+    const params = [getTime(), sessionID];
+    await mainDB.execute(sql, params);
   }
 }

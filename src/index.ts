@@ -7,6 +7,7 @@ import * as express from "express";
 import * as hbs from "express-handlebars";
 import * as enforce from "express-sslify";
 import * as bodyParser from "body-parser";
+import * as cookieParser from "cookie-parser";
 import * as routes from "./routes";
 import initDB from "./dbinit";
 
@@ -42,6 +43,9 @@ app.set("view engine", ".html");
 
 // Request body parsing
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Cookie parsing
+app.use(cookieParser());
 
 // Include static directory for css and js files
 app.use(express.static("static"));

@@ -4,6 +4,7 @@
  */
 
 import { Router } from "express";
+import { auth } from "./util";
 
 /**
  * The index router.
@@ -11,7 +12,7 @@ import { Router } from "express";
 export const indexRouter = Router();
 
 // Index page
-indexRouter.get("/", async (req, res) => {
+indexRouter.get("/", auth, async (req, res) => {
   const message = "Hello, world!";
   res.render("index", { message });
 });

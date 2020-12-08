@@ -151,6 +151,7 @@ export default async function initDB(): Promise<void> {
       id         CHAR(16)     NOT NULL,
       userID     CHAR(4)      NOT NULL,
       createTime INT UNSIGNED NOT NULL,
+      updateTime INT UNSIGNED NOT NULL,
 
       PRIMARY KEY (id),
 
