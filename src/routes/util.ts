@@ -4,7 +4,7 @@
  */
 
 import { Request, Response, NextFunction } from "express";
-import { SessionService } from "../services";
+import { UserService, SessionService } from "../services";
 
 /**
  * Authentication middleware.
@@ -24,6 +24,34 @@ export async function auth(
     : false;
 
   if (validSession) {
+    res.cookie("sessionID", sessionID, {
+      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+    await SessionService.updateSession(sessionID);
+    next();
+  } else {
+    res.send("Permission denied");
+  }
+}
+
+/**
+ * Admin authentication middleware.
+ *
+ * @param req Request object.
+ * @param res Repsonse object.
+ * @param next Next function.
+ */
+export async function adminAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  const sessionID: string = req.cookies.sessionID;
+  const userID = await SessionService.getUserBySessionID(sessionID);
+  const admin = userID ? await UserService.isAdmin(userID) : false;
+
+  if (admin) {
     res.cookie("sessionID", sessionID, {
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: true,
