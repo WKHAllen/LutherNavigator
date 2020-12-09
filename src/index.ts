@@ -26,6 +26,13 @@ const port = parseInt(process.env.PORT);
  */
 const app = express();
 
+// Disable caching for authentication purposes
+app.set("etag", false);
+app.use((req, res, next) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  next();
+});
+
 // Enforce HTTPS
 if (!debug) {
   app.use(enforce.HTTPS({ trustProtoHeader: true }));
