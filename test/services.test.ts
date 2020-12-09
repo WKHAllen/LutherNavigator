@@ -13,6 +13,7 @@ import { UserService } from "../src/services/user";
 import { SessionService } from "../src/services/session";
 import { PostService } from "../src/services/post";
 import { MetaService } from "../src/services/meta";
+import { sendEmail } from "../src/emailer";
 
 async function wait(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -576,4 +577,17 @@ test("Meta", async () => {
   expect(valueExists).toBe(false);
   valueExists = await MetaService.exists(key2);
   expect(valueExists).toBe(false);
+});
+
+// Test sending emails
+test("Email", async () => {
+  // To test this, fill in an email address to send to below.
+  const address = "";
+  const subject = "Test email subject line";
+  const html = "<h1>HTML Content</h1><p>Hello, email!</p>";
+  const text = "Text Content\n\nHello, email!";
+
+  if (address) {
+    await sendEmail(address, subject, html, text);
+  }
 });
