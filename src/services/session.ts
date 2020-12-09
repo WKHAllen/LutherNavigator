@@ -3,7 +3,12 @@
  * @packageDocumentation
  */
 
-import mainDB, { getTime, newUniqueID, sessionIDLength } from "./util";
+import mainDB, {
+  getTime,
+  newUniqueID,
+  pruneSession,
+  sessionIDLength,
+} from "./util";
 import { User } from "./user";
 
 /**
@@ -26,7 +31,10 @@ export module SessionService {
    * @param userID The ID of the user associated with the session.
    * @returns The new session's ID.
    */
-  export async function createSession(userID: string): Promise<string> {
+  export async function createSession(
+    userID: string,
+    prune: boolean = true
+  ): Promise<string> {
     const newSessionID = await newUniqueID("Session", sessionIDLength);
 
     const sql = `
@@ -39,6 +47,10 @@ export module SessionService {
     const now = getTime();
     const params = [newSessionID, userID, now, now];
     await mainDB.execute(sql, params);
+
+    if (prune) {
+      pruneSession(newSessionID);
+    }
 
     return newSessionID;
   }
@@ -144,9 +156,16 @@ export module SessionService {
    *
    * @param sessionID A session's ID.
    */
-  export async function updateSession(sessionID: string): Promise<void> {
+  export async function updateSession(
+    sessionID: string,
+    prune: boolean = true
+  ): Promise<void> {
     const sql = `UPDATE Session SET updateTime = ? WHERE id = ?;`;
     const params = [getTime(), sessionID];
     await mainDB.execute(sql, params);
+
+    if (prune) {
+      pruneSession(sessionID);
+    }
   }
 }

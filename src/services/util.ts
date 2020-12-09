@@ -6,6 +6,7 @@
 import * as db from "../db";
 import * as crypto from "crypto";
 import * as bcrypt from "bcrypt";
+import { Session } from "./session";
 
 /**
  * Database connection URL.
@@ -26,6 +27,11 @@ export const sessionIDLength = 16;
  * Number of salt rounds for bcrypt to use.
  */
 export const saltRounds = 12;
+
+/**
+ * Session maximum age.
+ */
+export const sessionAge = 24 * 60 * 60 * 1000; // One day
 
 /**
  * Database object.
@@ -128,5 +134,44 @@ export async function checkPassword(
         resolve(same);
       }
     });
+  });
+}
+
+/**
+ * Delete a session when the time comes.
+ *
+ * @param sessionID A session's ID.
+ */
+export function pruneSession(
+  sessionID: string,
+  timeRemaining: number = sessionAge
+): void {
+  setTimeout(async () => {
+    let sql = `SELECT updateTime FROM Session WHERE id = ?;`;
+    let params = [sessionID];
+    const rows: Session[] = await mainDB.execute(sql, params);
+
+    const updateTime = rows[0]?.updateTime;
+    const deleteTime = updateTime + sessionAge / 1000;
+
+    if (deleteTime && getTime() - deleteTime >= 0) {
+      sql = `DELETE FROM Session WHERE id = ?;`;
+      params = [sessionID];
+      await mainDB.execute(sql, params);
+    }
+  }, timeRemaining);
+}
+
+/**
+ * Delete all active sessions when the time comes.
+ */
+export async function pruneSessions(): Promise<void> {
+  const sql = `SELECT id, updateTime FROM Session;`;
+  const params = [];
+  const rows: Session[] = await mainDB.execute(sql, params);
+
+  rows.forEach((row) => {
+    const timeRemaining = row.updateTime + sessionAge / 1000 - getTime();
+    pruneSession(row.id, timeRemaining * 1000);
   });
 }

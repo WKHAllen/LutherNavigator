@@ -3,7 +3,8 @@
  * @packageDocumentation
  */
 
-import mainDB from "./services/util";
+import { SessionService } from "./services/session";
+import mainDB, { getTime, pruneSessions } from "./services/util";
 
 /**
  * Asynchronously sleep.
@@ -52,7 +53,7 @@ export async function populateTable(
 /**
  * Initialize the database.
  */
-export default async function initDB(): Promise<void> {
+export default async function initDB(prune: boolean = true): Promise<void> {
   // Create tables
   const imageTable = `
     CREATE TABLE IF NOT EXISTS Image (
@@ -224,4 +225,9 @@ export default async function initDB(): Promise<void> {
     ],
     true
   );
+
+  // Prune sessions
+  if (prune) {
+    await pruneSessions();
+  }
 }

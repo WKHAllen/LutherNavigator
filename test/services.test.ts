@@ -321,7 +321,7 @@ test("Session", async () => {
   );
 
   // Create session
-  const sessionID = await SessionService.createSession(userID);
+  const sessionID = await SessionService.createSession(userID, false);
   expect(sessionID.length).toBe(16);
 
   // Check session exists
@@ -352,14 +352,14 @@ test("Session", async () => {
   // Update session
   const previousUpdateTime = session.updateTime;
   await wait(1000);
-  await SessionService.updateSession(sessionID);
+  await SessionService.updateSession(sessionID, false);
   session = await SessionService.getSession(sessionID);
   expect(session.updateTime).toBeGreaterThan(previousUpdateTime);
   expect(session.updateTime - getTime()).toBeLessThanOrEqual(3);
 
   // Get all sessions
   await wait(1000);
-  const sessionID2 = await SessionService.createSession(userID);
+  const sessionID2 = await SessionService.createSession(userID, false);
   let sessions = await SessionService.getUserSessions(userID);
   expect(sessions.length).toBe(2);
   expect(sessions[0].id).toBe(sessionID);
@@ -375,7 +375,7 @@ test("Session", async () => {
   expect(sessionExists).toBe(false);
 
   // Delete session
-  const sessionID3 = await SessionService.createSession(userID);
+  const sessionID3 = await SessionService.createSession(userID, false);
   sessionExists = await SessionService.sessionExists(sessionID3);
   expect(sessionExists).toBe(true);
   await SessionService.deleteSession(sessionID3);

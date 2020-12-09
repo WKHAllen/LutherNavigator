@@ -5,6 +5,7 @@
 
 import { Request, Response, NextFunction } from "express";
 import { MetaService, UserService, SessionService } from "../services";
+import { sessionAge } from "../services/util";
 
 /**
  * Authentication middleware.
@@ -25,7 +26,7 @@ export async function auth(
 
   if (validSession) {
     res.cookie("sessionID", sessionID, {
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: sessionAge,
       httpOnly: true,
     });
     await SessionService.updateSession(sessionID);
