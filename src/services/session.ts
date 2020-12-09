@@ -134,7 +134,7 @@ export module SessionService {
 
     const sql = `SELECT * FROM User WHERE id = ?;`;
     const params = [userID];
-    const rows = await mainDB.execute(sql, params);
+    const rows: User[] = await mainDB.execute(sql, params);
 
     return rows[0];
   }

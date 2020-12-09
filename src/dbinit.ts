@@ -159,6 +159,14 @@ export default async function initDB(): Promise<void> {
         REFERENCES User (id)
     );
   `;
+  const metaTable = `
+    CREATE TABLE IF NOT EXISTS Meta (
+      name  VARCHAR(255) NOT NULL,
+      value TEXT         NOT NULL,
+
+      PRIMARY KEY (name)
+    );
+  `; // MySQL fails to parse 'key' as a column name, so we use 'name' instead
   await mainDB.executeMany([
     imageTable,
     userStatusTable,
@@ -167,6 +175,7 @@ export default async function initDB(): Promise<void> {
     userTable,
     postTable,
     sessionTable,
+    metaTable,
   ]);
 
   // Create triggers
