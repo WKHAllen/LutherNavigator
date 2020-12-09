@@ -12,6 +12,7 @@ import { RatingService } from "../src/services/rating";
 import { UserService } from "../src/services/user";
 import { SessionService } from "../src/services/session";
 import { PostService } from "../src/services/post";
+import { MetaService } from "../src/services/meta";
 
 async function wait(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -320,7 +321,7 @@ test("Session", async () => {
   );
 
   // Create session
-  const sessionID = await SessionService.createSession(userID);
+  const sessionID = await SessionService.createSession(userID, false);
   expect(sessionID.length).toBe(16);
 
   // Check session exists
@@ -328,18 +329,37 @@ test("Session", async () => {
   expect(sessionExists).toBe(true);
 
   // Get session
-  const session = await SessionService.getSession(sessionID);
+  let session = await SessionService.getSession(sessionID);
   expect(session.id).toBe(sessionID);
   expect(session.userID).toBe(userID);
   expect(session.createTime - getTime()).toBeLessThanOrEqual(3);
+  expect(session.updateTime - getTime()).toBeLessThanOrEqual(3);
 
   // Get userID by sessionID
-  const sessionUserID = await SessionService.getUserBySessionID(sessionID);
+  const sessionUserID = await SessionService.getUserIDBySessionID(sessionID);
   expect(sessionUserID).toBe(userID);
+
+  // Get user by sessionID
+  const sessionUser = await SessionService.getUserBySessionID(sessionID);
+  expect(sessionUser.id).toBe(userID);
+  expect(sessionUser.firstname).toBe(firstname);
+  expect(sessionUser.lastname).toBe(lastname);
+  expect(sessionUser.email).toBe(email);
+  expect(sessionUser.statusID).toBe(statusID);
+  const samePasswords = await checkPassword(password, sessionUser.password);
+  expect(samePasswords).toBe(true);
+
+  // Update session
+  const previousUpdateTime = session.updateTime;
+  await wait(1000);
+  await SessionService.updateSession(sessionID, false);
+  session = await SessionService.getSession(sessionID);
+  expect(session.updateTime).toBeGreaterThan(previousUpdateTime);
+  expect(session.updateTime - getTime()).toBeLessThanOrEqual(3);
 
   // Get all sessions
   await wait(1000);
-  const sessionID2 = await SessionService.createSession(userID);
+  const sessionID2 = await SessionService.createSession(userID, false);
   let sessions = await SessionService.getUserSessions(userID);
   expect(sessions.length).toBe(2);
   expect(sessions[0].id).toBe(sessionID);
@@ -355,7 +375,7 @@ test("Session", async () => {
   expect(sessionExists).toBe(false);
 
   // Delete session
-  const sessionID3 = await SessionService.createSession(userID);
+  const sessionID3 = await SessionService.createSession(userID, false);
   sessionExists = await SessionService.sessionExists(sessionID3);
   expect(sessionExists).toBe(true);
   await SessionService.deleteSession(sessionID3);
@@ -513,4 +533,47 @@ test("Post", async () => {
   expect(postExists).toBe(false);
 
   await UserService.deleteUser(userID);
+});
+
+// Test meta service
+test("Meta", async () => {
+  const key1 = "Test Version";
+  const value1 = "0.1.0";
+  const value1_2 = "1.2.3";
+  const key2 = "Test Table";
+  const value2 = "Meta";
+
+  // Insert values
+  await MetaService.set(key1, value1);
+
+  // Check values exists
+  let valueExists = await MetaService.exists(key1);
+  expect(valueExists).toBe(true);
+
+  // Get value
+  let value = await MetaService.get(key1);
+  expect(value).toBe(value1);
+
+  // Set value
+  await MetaService.set(key1, value1_2);
+  value = await MetaService.get(key1);
+  expect(value).toBe(value1_2);
+
+  // Get all
+  await MetaService.set(key2, value2);
+  const values = await MetaService.getAll();
+  expect(values).toMatchObject([
+    { name: key2, value: value2 },
+    { name: key1, value: value1_2 },
+  ]);
+
+  // Remove
+  await MetaService.remove(key1);
+  await MetaService.remove(key2);
+
+  // Check values are gone
+  valueExists = await MetaService.exists(key1);
+  expect(valueExists).toBe(false);
+  valueExists = await MetaService.exists(key2);
+  expect(valueExists).toBe(false);
 });

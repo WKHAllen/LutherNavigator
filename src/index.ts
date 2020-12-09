@@ -7,6 +7,7 @@ import * as express from "express";
 import * as hbs from "express-handlebars";
 import * as enforce from "express-sslify";
 import * as bodyParser from "body-parser";
+import * as cookieParser from "cookie-parser";
 import * as routes from "./routes";
 import initDB from "./dbinit";
 
@@ -25,6 +26,13 @@ const port = parseInt(process.env.PORT);
  */
 const app = express();
 
+// Disable caching for authentication purposes
+app.set("etag", false);
+app.use((req, res, next) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  next();
+});
+
 // Enforce HTTPS
 if (!debug) {
   app.use(enforce.HTTPS({ trustProtoHeader: true }));
@@ -42,6 +50,9 @@ app.set("view engine", ".html");
 
 // Request body parsing
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Cookie parsing
+app.use(cookieParser());
 
 // Include static directory for css and js files
 app.use(express.static("static"));
