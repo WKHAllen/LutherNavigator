@@ -4,6 +4,7 @@
  */
 
 import { Router } from "express";
+import { renderPage } from "./util";
 import { PostService, UserStatusService } from "../services";
 
 /**
@@ -17,7 +18,7 @@ postRouter.get("/:postID", async (req, res) => {
   const user = await PostService.getPostUser(req.params.postID);
   const userStatusName = await UserStatusService.getStatusName(user.statusID);
 
-  res.render("post", {
+  renderPage(req, res, "post", {
     location: post.location,
     firstname: user.firstname,
     lastname: user.lastname,

@@ -4,7 +4,7 @@
  */
 
 import { Request, Response, NextFunction } from "express";
-import { UserService, SessionService } from "../services";
+import { MetaService, UserService, SessionService } from "../services";
 
 /**
  * Authentication middleware.
@@ -31,7 +31,16 @@ export async function auth(
     await SessionService.updateSession(sessionID);
     next();
   } else {
-    res.send("Permission denied");
+    renderPage(
+      req,
+      res,
+      "401",
+      {
+        title: "Permission denied",
+        after: req.originalUrl,
+      },
+      401
+    );
   }
 }
 
@@ -59,7 +68,16 @@ export async function adminAuth(
     await SessionService.updateSession(sessionID);
     next();
   } else {
-    res.send("Permission denied");
+    renderPage(
+      req,
+      res,
+      "401",
+      {
+        title: "Permission denied",
+        after: req.originalUrl,
+      },
+      401
+    );
   }
 }
 
@@ -80,6 +98,9 @@ export async function renderPage(
   status: number = 200
 ): Promise<void> {
   options.url = req.originalUrl;
+
+  const version = await MetaService.get("Version");
+  options.version = version;
 
   const sessionID = req.cookies.sessionID;
 

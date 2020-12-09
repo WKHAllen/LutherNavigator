@@ -4,7 +4,7 @@
  */
 
 import { Router } from "express";
-import { auth } from "./util";
+import { auth, renderPage } from "./util";
 
 /**
  * The index router.
@@ -14,7 +14,7 @@ export const indexRouter = Router();
 // Index page
 indexRouter.get("/", async (req, res) => {
   const message = "Hello, world!";
-  res.render("index", { message });
+  renderPage(req, res, "index", { message });
 });
 
 // Authentication test page
