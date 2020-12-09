@@ -39,9 +39,9 @@ MySQL database can be interfaced with by running `./script.sh db` (`chmod +x ./s
 
 ## Stack
 
-* Database: MySQL
-* Backend: TypeScript (4.0.3)
-* Frontend: HTML 5, CSS 3 (+ [Bootstrap](https://getbootstrap.com/)), JS (ES6)
+- Database: MySQL
+- Backend: TypeScript (4.0.3)
+- Frontend: HTML 5, CSS 3 (+ [Bootstrap](https://getbootstrap.com/)), JS (ES6)
 
 ### Frontend
 
