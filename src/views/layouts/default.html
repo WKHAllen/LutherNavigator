@@ -3,13 +3,31 @@
   <head>
     <!-- Meta -->
     <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="no-referrer" />
+
+    <!-- Open Graph Protocol -->
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/img/favicon.png" />
+    <meta property="og:site_name" content="Luther Navigator" />
+    <meta
+      property="og:description"
+      content="The Luther Navigator project seeks to provide students a way to share their experiences abroad."
+    />
+    <meta property="og:url" content="https://www.luthernavigator.com{{url}}" />
+
     <link rel="icon" href="/favicon.ico" />
+
     <!-- Title -->
     {{#if title}}
     <title>{{title}} - Luther Navigator</title>
+    <meta property="og:title" content="{{title}} - Luther Navigator" />
     {{else}}
     <title>Luther Navigator</title>
+    <meta property="og:title" content="Luther Navigator" />
     {{/if}}
     <!-- Bootstrap -->
     <link
