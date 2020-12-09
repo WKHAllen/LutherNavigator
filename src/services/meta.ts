@@ -24,7 +24,7 @@ export module MetaService {
    * @returns Whether or not the name exists.
    */
   export async function exists(name: string): Promise<boolean> {
-    const sql = `SELECT id FROM Meta WHERE name = ?;`;
+    const sql = `SELECT name FROM Meta WHERE name = ?;`;
     const params = [name];
     const rows: Meta[] = await mainDB.execute(sql, params);
 
