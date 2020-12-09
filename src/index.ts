@@ -9,6 +9,7 @@ import * as enforce from "express-sslify";
 import * as bodyParser from "body-parser";
 import * as cookieParser from "cookie-parser";
 import * as routes from "./routes";
+import { renderPage } from "./routes/util";
 import initDB from "./dbinit";
 
 /**
@@ -63,7 +64,7 @@ app.use("/post", routes.postRouter);
 
 // Error 404 (not found)
 app.use((req, res) => {
-  res.status(404).render("404", { title: "Not found" });
+  renderPage(req, res, "404", { title: "Not found" }, 404);
 });
 
 // Error 500 (internal server error)
@@ -81,12 +82,13 @@ app.use(
           message: err.message,
           stack: err.stack,
         };
-    res
-      .status(500)
-      .render(
-        "500",
-        Object.assign(options, { title: "Internal server error" })
-      );
+    renderPage(
+      req,
+      res,
+      "500",
+      Object.assign(options, { title: "Internal server error" }),
+      500
+    );
     console.error(err.stack);
   }
 );
