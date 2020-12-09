@@ -329,14 +329,33 @@ test("Session", async () => {
   expect(sessionExists).toBe(true);
 
   // Get session
-  const session = await SessionService.getSession(sessionID);
+  let session = await SessionService.getSession(sessionID);
   expect(session.id).toBe(sessionID);
   expect(session.userID).toBe(userID);
   expect(session.createTime - getTime()).toBeLessThanOrEqual(3);
+  expect(session.updateTime - getTime()).toBeLessThanOrEqual(3);
 
   // Get userID by sessionID
   const sessionUserID = await SessionService.getUserIDBySessionID(sessionID);
   expect(sessionUserID).toBe(userID);
+
+  // Get user by sessionID
+  const sessionUser = await SessionService.getUserBySessionID(sessionID);
+  expect(sessionUser.id).toBe(userID);
+  expect(sessionUser.firstname).toBe(firstname);
+  expect(sessionUser.lastname).toBe(lastname);
+  expect(sessionUser.email).toBe(email);
+  expect(sessionUser.statusID).toBe(statusID);
+  const samePasswords = await checkPassword(password, sessionUser.password);
+  expect(samePasswords).toBe(true);
+
+  // Update session
+  const previousUpdateTime = session.updateTime;
+  await wait(1000);
+  await SessionService.updateSession(sessionID);
+  session = await SessionService.getSession(sessionID);
+  expect(session.updateTime).toBeGreaterThan(previousUpdateTime);
+  expect(session.updateTime - getTime()).toBeLessThanOrEqual(3);
 
   // Get all sessions
   await wait(1000);
