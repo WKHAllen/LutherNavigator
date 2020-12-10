@@ -28,7 +28,7 @@ p {
   vertical-align: middle;
   line-height: normal;
 }
-
+/* Error */
 .err-info {
   padding: 16px 32px;
 }
@@ -59,4 +59,19 @@ p {
   padding: 0px;
   font-size: 1rem;
   border: 0px;
+}
+/* FOOTER */
+footer {
+  clear: left;
+  padding: 30px 10px;
+  background-color: #003882;
+  color: white;
+  text-align: center;
+  bottom: 0;
+}
+footer a {
+  color: white;
+}
+table {
+  width: 100%;
 }

@@ -1,0 +1,19 @@
+/* Three navigation buttons */
+.menus {
+    text-align: center;
+}
+.menu-button {
+    margin: 1rem 2rem; 
+    padding: .5rem 3rem;
+    font-size: 1.75rem;
+}
+.menu-button:hover {
+    border: solid 1px #003882;
+}
+/* Home page / index */
+.homepage {
+    margin: 10px 40px 60px 40px;
+}
+h1 {
+    text-align: left;
+}
