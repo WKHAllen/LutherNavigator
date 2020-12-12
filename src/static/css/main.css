@@ -1,8 +1,14 @@
 body {
   font-family: "Maven Pro", sans-serif;
   margin: 0px;
+  /* sticky footer */
+  display: flex;
+  flex-direction: column;
 }
-
+html, body {
+  height: 100%;
+  margin: 0;
+}
 h1 {
   text-align: center;
   margin: 0;
@@ -68,10 +74,25 @@ footer {
   color: white;
   text-align: center;
   bottom: 0;
+  /* sticky footer */
+  flex-shrink: 0; 
 }
 footer a {
   color: white;
 }
 table {
   width: 100%;
+}
+main {
+  /* sticky footer */
+  flex: 1 0 auto;
+  background: url("/img/vienna.jpg") center center;
+  background-position-x: 100%;
+  max-width: 2000px;
+  max-height: 1334px;
+  background-repeat: no-repeat;
+}
+#content {
+  display: block;
+  margin: 60px 50px;
 }
