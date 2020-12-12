@@ -122,3 +122,35 @@ export async function renderPage(
 
   res.status(status).render(page, options);
 }
+
+/**
+ * Get the session ID cookie.
+ *
+ * @param req Request object.
+ * @returns The session ID.
+ */
+export function getSessionID(req: Request): void {
+  return req.cookies.sessionID;
+}
+
+/**
+ * Set the session ID cookie.
+ *
+ * @param res Response object.
+ * @param sessionID A session ID.
+ */
+export function setSessionID(res: Response, sessionID: string): void {
+  res.cookie("sessionID", sessionID, {
+    maxAge: sessionAge,
+    httpOnly: true,
+  });
+}
+
+/**
+ * Delete the session ID cookie.
+ *
+ * @param res Response object.
+ */
+export function deleteSessionID(res: Response): void {
+  res.clearCookie("sessionID");
+}

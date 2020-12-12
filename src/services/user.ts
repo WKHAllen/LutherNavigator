@@ -122,6 +122,20 @@ export module UserService {
   }
 
   /**
+   * Get a user by their email address.
+   *
+   * @param email An email address.
+   * @returns The user.
+   */
+  export async function getUserByEmail(email: string): Promise<User> {
+    const sql = `SELECT * FROM User WHERE email = ?;`;
+    const params = [email];
+    const rows: User[] = await mainDB.execute(sql, params);
+
+    return rows[0];
+  }
+
+  /**
    * Make sure an email address is not yet in use.
    *
    * @param email An email address.
