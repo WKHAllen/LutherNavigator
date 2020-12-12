@@ -1,3 +1,8 @@
+/**
+ * Services for the user table.
+ * @packageDocumentation
+ */
+
 import mainDB, {
   getTime,
   newUniqueID,
@@ -9,7 +14,9 @@ import { Image, ImageService } from "./image";
 import { SessionService } from "./session";
 import { PostService } from "./post";
 
-// User architecture
+/**
+ * User architecture.
+ */
 export interface User {
   id: string;
   firstname: string;
@@ -25,9 +32,20 @@ export interface User {
   lastPostTime: number | null;
 }
 
-// User services
+/**
+ * User services.
+ */
 export module UserService {
-  // Create a user
+  /**
+   * Create a user.
+   *
+   * @param firstname The user's first name.
+   * @param lastname The user's last name.
+   * @param email The user's email address.
+   * @param password The user's password.
+   * @param statusID The status ID of the user.
+   * @returns The new user's ID.
+   */
   export async function createUser(
     firstname: string,
     lastname: string,
@@ -59,7 +77,12 @@ export module UserService {
     return userID;
   }
 
-  // Check if a user exists
+  /**
+   * Check if a user exists.
+   *
+   * @param userID A user's ID.
+   * @returns Whether or not the user exists.
+   */
   export async function userExists(userID: string): Promise<boolean> {
     const sql = `SELECT id FROM User WHERE id = ?;`;
     const params = [userID];
@@ -68,7 +91,12 @@ export module UserService {
     return rows.length > 0;
   }
 
-  // Get a user
+  /**
+   * Get a user.
+   *
+   * @param userID A user's ID.
+   * @returns The user.
+   */
   export async function getUser(userID: string): Promise<User> {
     const sql = `SELECT * FROM User WHERE id = ?;`;
     const params = [userID];
@@ -77,7 +105,11 @@ export module UserService {
     return rows[0];
   }
 
-  // Delete a user
+  /**
+   * Delete a user.
+   *
+   * @param userID A user's ID.
+   */
   export async function deleteUser(userID: string): Promise<void> {
     await deleteUserImage(userID);
 
@@ -89,7 +121,26 @@ export module UserService {
     await PostService.deleteUserPosts(userID);
   }
 
-  // Make sure an email address is not yet in use
+  /**
+   * Get a user by their email address.
+   *
+   * @param email An email address.
+   * @returns The user.
+   */
+  export async function getUserByEmail(email: string): Promise<User> {
+    const sql = `SELECT * FROM User WHERE email = ?;`;
+    const params = [email];
+    const rows: User[] = await mainDB.execute(sql, params);
+
+    return rows[0];
+  }
+
+  /**
+   * Make sure an email address is not yet in use.
+   *
+   * @param email An email address.
+   * @returns Whether or not the email address is unique.
+   */
   export async function uniqueEmail(email: string): Promise<boolean> {
     const sql = `SELECT email FROM User WHERE email = ?;`;
     const params = [email];
@@ -98,7 +149,13 @@ export module UserService {
     return rows.length === 0;
   }
 
-  // Log a user in
+  /**
+   * Log a user in.
+   *
+   * @param email The user's email address.
+   * @param password The user's password.
+   * @returns Whether or not the login was successful.
+   */
   export async function login(
     email: string,
     password: string
@@ -120,7 +177,12 @@ export module UserService {
     return true;
   }
 
-  // Get the name of a user's status
+  /**
+   * Get the name of a user's status.
+   *
+   * @param userID A user's ID.
+   * @returns The name of the user's status.
+   */
   export async function getUserStatusName(userID: string): Promise<string> {
     const sql = `SELECT statusID FROM User WHERE id = ?;`;
     const params = [userID];
@@ -132,7 +194,12 @@ export module UserService {
     return statusName;
   }
 
-  // Check if a user is verified
+  /**
+   * Check if a user is verified.
+   *
+   * @param userID A user's ID.
+   * @returns Whether or not the user's account has been verified.
+   */
   export async function isVerified(userID: string): Promise<boolean> {
     const sql = `SELECT verified FROM User WHERE id = ?;`;
     const params = [userID];
@@ -141,7 +208,12 @@ export module UserService {
     return !!rows[0]?.verified;
   }
 
-  // Set a user's verification status
+  /**
+   * Set a user's verification status.
+   *
+   * @param userID A user's ID.
+   * @param verified Verification status.
+   */
   export async function setVerified(
     userID: string,
     verified: boolean = true
@@ -151,7 +223,12 @@ export module UserService {
     await mainDB.execute(sql, params);
   }
 
-  // Check if a user is an admin
+  /**
+   * Check if a user is an admin.
+   *
+   * @param userID A user's ID.
+   * @returns Whether or not the user is an admin.
+   */
   export async function isAdmin(userID: string): Promise<boolean> {
     const sql = `SELECT admin FROM User WHERE id = ?;`;
     const params = [userID];
@@ -160,7 +237,12 @@ export module UserService {
     return !!rows[0]?.admin;
   }
 
-  // Set a user's admin status
+  /**
+   * Set a user's admin status.
+   *
+   * @param userID A user's ID.
+   * @param admin Admin status.
+   */
   export async function setAdmin(
     userID: string,
     admin: boolean = true
@@ -170,7 +252,12 @@ export module UserService {
     await mainDB.execute(sql, params);
   }
 
-  // Get a user's image
+  /**
+   * Get a user's image.
+   *
+   * @param userID A user's ID.
+   * @returns The user's profile image.
+   */
   export async function getUserImage(userID: string): Promise<Image> {
     const sql = `SELECT imageID from User WHERE id = ?;`;
     const params = [userID];
@@ -182,7 +269,12 @@ export module UserService {
     return image;
   }
 
-  // Set a user's image
+  /**
+   * Set a user's image.
+   *
+   * @param userID A user's ID.
+   * @param imageData The new binary image data.
+   */
   export async function setUserImage(
     userID: string,
     imageData: Buffer
@@ -201,7 +293,11 @@ export module UserService {
     await ImageService.deleteImage(imageID);
   }
 
-  // Delete a user's image
+  /**
+   * Delete a user's image.
+   *
+   * @param userID A user's ID.
+   */
   export async function deleteUserImage(userID: string): Promise<void> {
     let sql = `SELECT imageID from User WHERE id = ?;`;
     let params = [userID];

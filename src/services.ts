@@ -1,7 +1,10 @@
-// Export services
+/**
+ * Export all services.
+ * @packageDocumentation
+ */
 export * from "./services/image";
-export * from "./services/index";
 export * from "./services/locationType";
+export * from "./services/meta";
 export * from "./services/post";
 export * from "./services/rating";
 export * from "./services/session";

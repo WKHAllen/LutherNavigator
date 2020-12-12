@@ -1,13 +1,31 @@
-import mainDB from "./services/util";
+/**
+ * Database initializer.
+ * @packageDocumentation
+ */
 
-// Asynchronously sleep
+import { SessionService } from "./services/session";
+import mainDB, { getTime, pruneSessions } from "./services/util";
+
+/**
+ * Asynchronously sleep.
+ *
+ * @param ms Number of milliseconds to wait.
+ */
 async function wait(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
 
-// Populate a static table
+/**
+ * Populate a static table.
+ *
+ * @param table Table name.
+ * @param column Column name.
+ * @param values Values to be inserted into the table.
+ * @param other Whether or not to insert the "Other" option into the table.
+ * @param otherID ID of the "Other" option, if it is set to true.
+ */
 export async function populateTable(
   table: string,
   column: string,
@@ -32,8 +50,10 @@ export async function populateTable(
   }
 }
 
-// Initialize the database
-export default async function initDB(): Promise<void> {
+/**
+ * Initialize the database.
+ */
+export default async function initDB(prune: boolean = true): Promise<void> {
   // Create tables
   const imageTable = `
     CREATE TABLE IF NOT EXISTS Image (
@@ -132,6 +152,7 @@ export default async function initDB(): Promise<void> {
       id         CHAR(16)     NOT NULL,
       userID     CHAR(4)      NOT NULL,
       createTime INT UNSIGNED NOT NULL,
+      updateTime INT UNSIGNED NOT NULL,
 
       PRIMARY KEY (id),
 
@@ -139,6 +160,14 @@ export default async function initDB(): Promise<void> {
         REFERENCES User (id)
     );
   `;
+  const metaTable = `
+    CREATE TABLE IF NOT EXISTS Meta (
+      name  VARCHAR(255) NOT NULL,
+      value TEXT         NOT NULL,
+
+      PRIMARY KEY (name)
+    );
+  `; // MySQL fails to parse 'key' as a column name, so we use 'name' instead
   await mainDB.executeMany([
     imageTable,
     userStatusTable,
@@ -147,6 +176,7 @@ export default async function initDB(): Promise<void> {
     userTable,
     postTable,
     sessionTable,
+    metaTable,
   ]);
 
   // Create triggers
@@ -195,4 +225,9 @@ export default async function initDB(): Promise<void> {
     ],
     true
   );
+
+  // Prune sessions
+  if (prune) {
+    await pruneSessions();
+  }
 }
