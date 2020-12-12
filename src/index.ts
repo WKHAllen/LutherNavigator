@@ -60,6 +60,8 @@ app.use(express.static("static"));
 
 // Use routes
 app.use("/", routes.indexRouter);
+app.use("/login", routes.loginRouter);
+app.use("/logout", routes.logoutRouter);
 app.use("/post", routes.postRouter);
 
 // Error 404 (not found)
