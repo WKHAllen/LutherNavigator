@@ -19,16 +19,13 @@ export async function auth(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const sessionID: string = req.cookies.sessionID;
+  const sessionID: string = getSessionID(req);
   const validSession = sessionID
     ? await SessionService.sessionExists(sessionID)
     : false;
 
   if (validSession) {
-    res.cookie("sessionID", sessionID, {
-      maxAge: sessionAge,
-      httpOnly: true,
-    });
+    setSessionID(res, sessionID);
     await SessionService.updateSession(sessionID);
     next();
   } else {
@@ -57,15 +54,12 @@ export async function adminAuth(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const sessionID: string = req.cookies.sessionID;
+  const sessionID: string = getSessionID(req);
   const userID = await SessionService.getUserIDBySessionID(sessionID);
   const admin = userID ? await UserService.isAdmin(userID) : false;
 
   if (admin) {
-    res.cookie("sessionID", sessionID, {
-      maxAge: 24 * 60 * 60 * 1000,
-      httpOnly: true,
-    });
+    setSessionID(res, sessionID);
     await SessionService.updateSession(sessionID);
     next();
   } else {
@@ -103,7 +97,7 @@ export async function renderPage(
   const version = await MetaService.get("Version");
   options.version = version;
 
-  const sessionID = req.cookies.sessionID;
+  const sessionID = getSessionID(req);
 
   if (!sessionID) {
     options.loggedIn = false;
@@ -129,7 +123,7 @@ export async function renderPage(
  * @param req Request object.
  * @returns The session ID.
  */
-export function getSessionID(req: Request): void {
+export function getSessionID(req: Request): string {
   return req.cookies.sessionID;
 }
 
