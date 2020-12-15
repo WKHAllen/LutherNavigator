@@ -59,36 +59,44 @@
     <script type="text/javascript" src="/js/main.js"></script>
   </head>
   <body>
-    <header>
-      <nav class="navbar sticky-top navbar-expand-lg navbar-light" style="background-color: #003882;">
-        <a class="navbar-brand" href="/">
-          <img src="/img/compass_w.png" width="50" height="50" class="d-inline-block align-top" alt="">
-          Luther Navigator
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-          <img src="/img/toggle_menu.png" width="50" height="50" class="" alt="">
-        </button>
-        <div class="collapse navbar-collapse" id="navbarText">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item"></li>
-          </ul>
-          <!-- <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-          </form> -->
-          <a class="nav-link" href="#">Post</a>
-          <a class="nav-link" href="#">Sign In</a>
-        </div>
-      </nav>
-    </header>
-    <main>
-      <div id="content">{{{body}}}</div>
-    </main>
+    <img src="/img/vienna.jpg" alt="Vienna" class="vienna">
+    <div class="foreground">
+      <header>
+        <nav class="navbar sticky-top navbar-expand-lg navbar-light" style="background-color: #003882;">
+          <a class="navbar-brand" href="/">
+            <img src="/img/compass_w.png" width="50" height="50" class="d-inline-block align-top nav-logo" alt="Luther Navigator Logo">
+            Luther Navigator
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <img src="/img/toggle_menu.png" width="50" height="50" class="toggle-menu-img" alt="Three dots">
+          </button>
+          <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item"></li>
+            </ul>
+            <!-- <form class="form-inline my-2 my-lg-0">
+              <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form> -->
+            <a class="nav-link" href="#">Post</a>
+            <a class="nav-link" href="#">Sign In</a>
+          </div>
+        </nav>
+      </header>
+      <main>
+        <div id="content">{{{body}}}</div>
+      </main>
+    </div>
     <footer>
-      <table>
+      <div class="row">
+        <a href="/" class="col-sm-4">About Luther Navigator</a>
+        <a href="/" class="col-sm-4">Terms of Use</a>
+        <a href="/" class="col-sm-4">Privacy Statement</a>
+      </div>
+      <!-- <table>
         <tr>
           <td class="">
-            <a href="/">About Luther Navigator</a>
+            <a href="/" class="col-sm-4">About Luther Navigator</a>
           </td>
           <td class="">
             <a href="/">Terms of Use</a>
@@ -97,8 +105,7 @@
             <a href="/">Privacy Statement</a>
           </td>
         </tr>
-      </table>
-      
+      </table> -->
     </footer>
   </body>
 </html>
