@@ -65,7 +65,7 @@ p {
 /* content same as main */
 #content {
   display: block;
-  margin: 60px 50px;
+  margin: 20px 40px;
 }
 main {
   /* sticky footer */
@@ -77,7 +77,7 @@ main {
 }
 /* NAVBAR */
 .navbar {
-  padding: 1.25rem 1rem;
+  padding: 0px 24px;
 } 
 .navbar-light .navbar-brand {
   color: white;
@@ -95,8 +95,8 @@ main {
   border: 0px;
 }
 .nav-logo {
-  width: 1.5em;
-  height: 1.5em;
+  width: 45px;
+  height: 45px;
 }
 .toggle-menu-img {
   width: 1.5em;
@@ -105,7 +105,7 @@ main {
 /* FOOTER */
 footer {
   clear: left;
-  padding: 30px 10px;
+  padding: 10px 10px;
   background-color: #003882;
   color: white;
   text-align: center;
@@ -126,6 +126,9 @@ table {
   .mainbody {
     width: 725px;
   }
+  #content {
+    margin: 30px 40px;
+  }
   /* .vienna {
     height: 100%;
   } */
@@ -135,6 +138,9 @@ table {
   .toggle-menu-img {
     width: 2em;
     height: 2em;
+  }
+  footer {
+    padding: 24px 10px;
   }
 }
 /*desktop*/
