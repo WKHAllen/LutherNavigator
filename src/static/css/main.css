@@ -74,24 +74,19 @@ a:hover {
 main {
   /* sticky footer */
   flex: 1 0 auto;
-  /* width: 100%; */
   max-width: 2000px;
   max-height: 1334px;
   background-repeat: no-repeat;
 }
-.row {
-  margin: 0 !important;
-}
-/* NAVBAR */
+/* NAVBAR is header*/
 .navbar {
   padding: 0px 24px;
-  margin: 0 !important;
 } 
 .navbar-light .navbar-brand {
   color: white;
   font-size: 1.5rem;
   padding: .5rem;
-
+  
 }
 .nav-link {
   color: white;
@@ -110,6 +105,9 @@ main {
   width: 1.5em;
   height: 1.5em;
 }
+.row {
+  margin: 0;
+}
 /* FOOTER */
 footer {
   clear: left;
@@ -126,6 +124,14 @@ footer a {
 }
 table {
   width: 100%;
+}
+/* LOGIN */
+.clear-button {
+    padding: .5rem .75rem;
+    font-size: 1.25rem; 
+}
+.clear-button:hover {
+  border: solid 1px #003882;
 }
 
 /*tablet 768px*/
