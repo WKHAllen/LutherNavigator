@@ -3,17 +3,13 @@
     text-align: center;
 }
 .menu-button {
-    margin: 0rem 2rem; 
-    padding: .5rem 3rem;
-    font-size: 1.75rem;
+    padding: .5rem;
+    font-size: 1.75rem; 
 }
 .menu-button:hover {
     border: solid 1px #003882;
 }
 /* Home page / index */
-.homepage {
-    /* margin: 10px 50px 60px 50px; */
-}
 h1 {
     text-align: left;
 }
