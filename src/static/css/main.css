@@ -19,6 +19,10 @@ p {
   text-align: justify;
 }
 
+a:hover {
+  color: black;
+}
+
 .center {
   text-align: center;
 }
@@ -75,9 +79,13 @@ main {
   max-height: 1334px;
   background-repeat: no-repeat;
 }
+.row {
+  margin: 0 !important;
+}
 /* NAVBAR */
 .navbar {
   padding: 0px 24px;
+  margin: 0 !important;
 } 
 .navbar-light .navbar-brand {
   color: white;
@@ -110,7 +118,6 @@ footer {
   color: white;
   text-align: center;
   bottom: 0;
-  /* position: fixed bottom; */
   /* sticky footer */
   flex-shrink: 0; 
 }
@@ -129,9 +136,6 @@ table {
   #content {
     margin: 30px 40px;
   }
-  /* .vienna {
-    height: 100%;
-  } */
   .navbar-light .navbar-brand {
     font-size: 2em;
   }
@@ -149,10 +153,4 @@ table {
     width: 865px; 
     display: inline-table;
   }
-  .navbar-light .navbar-brand {
-    font-size: 2em;
-  }
-  /* .vienna {
-    height: 100%;
-  } */
 }
