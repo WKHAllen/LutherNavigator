@@ -125,17 +125,6 @@ footer a {
 table {
   width: 100%;
 }
-/* LOGIN */
-.clear-button {
-    padding: .5rem .75rem;
-    font-size: 1.25rem; 
-}
-.clear-button {
-  border: solid 1px #003882;
-}
-.clear-button:hover {
-  color: #003882;
-}
 
 /*tablet 768px*/
 @media screen and (min-width: 425px) {
