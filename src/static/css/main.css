@@ -5,7 +5,8 @@ body {
   display: flex;
   flex-direction: column;
 }
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
 }
@@ -81,12 +82,11 @@ main {
 /* NAVBAR is header*/
 .navbar {
   padding: 0px 24px;
-} 
+}
 .navbar-light .navbar-brand {
   color: white;
   font-size: 1.5rem;
-  padding: .5rem;
-  
+  padding: 0.5rem;
 }
 .nav-link {
   color: white;
@@ -117,7 +117,7 @@ footer {
   text-align: center;
   bottom: 0;
   /* sticky footer */
-  flex-shrink: 0; 
+  flex-shrink: 0;
 }
 footer a {
   color: white;
@@ -148,7 +148,7 @@ table {
 /*desktop*/
 @media screen and (min-width: 1225px) {
   .mainbody {
-    width: 865px; 
+    width: 865px;
     display: inline-table;
   }
 }
