@@ -9,7 +9,7 @@ import * as enforce from "express-sslify";
 import * as bodyParser from "body-parser";
 import * as cookieParser from "cookie-parser";
 import * as routes from "./routes";
-import { renderPage } from "./routes/util";
+import { renderPage, renderError } from "./routes/util";
 import initDB from "./dbinit";
 
 /**
@@ -60,9 +60,11 @@ app.use(express.static("static"));
 
 // Use routes
 app.use("/", routes.indexRouter);
+app.use("/image", routes.imageRouter);
 app.use("/login", routes.loginRouter);
 app.use("/logout", routes.logoutRouter);
 app.use("/post", routes.postRouter);
+app.use("/profile", routes.profileRouter);
 
 // Error 404 (not found)
 app.use((req, res) => {
@@ -77,21 +79,7 @@ app.use(
     res: express.Response,
     next: express.NextFunction
   ) => {
-    const options = !debug
-      ? {}
-      : {
-          name: err.name,
-          message: err.message,
-          stack: err.stack,
-        };
-    renderPage(
-      req,
-      res,
-      "500",
-      Object.assign(options, { title: "Internal server error" }),
-      500
-    );
-    console.error(err.stack);
+    renderError(err, req, res);
   }
 );
 

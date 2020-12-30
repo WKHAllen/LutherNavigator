@@ -8,6 +8,11 @@ import { MetaService, UserService, SessionService } from "../services";
 import { sessionAge } from "../services/util";
 
 /**
+ * Debug/production environment.
+ */
+const debug = !!parseInt(process.env.DEBUG);
+
+/**
  * Authentication middleware.
  *
  * @param req Request object.
@@ -29,7 +34,7 @@ export async function auth(
     await SessionService.updateSession(sessionID);
     next();
   } else {
-    renderPage(
+    await renderPage(
       req,
       res,
       "401",
@@ -63,7 +68,7 @@ export async function adminAuth(
     await SessionService.updateSession(sessionID);
     next();
   } else {
-    renderPage(
+    await renderPage(
       req,
       res,
       "401",
@@ -118,6 +123,37 @@ export async function renderPage(
 }
 
 /**
+ * Render an error page.
+ *
+ * @param err The error.
+ * @param req Request object.
+ * @param res Response object.
+ */
+export async function renderError(
+  err: Error,
+  req: Request,
+  res: Response
+): Promise<void> {
+  const options = !debug
+    ? {}
+    : {
+        name: err.name,
+        message: err.message,
+        stack: err.stack,
+      };
+
+  await renderPage(
+    req,
+    res,
+    "500",
+    Object.assign(options, { title: "Internal server error" }),
+    500
+  );
+
+  console.error(err.stack);
+}
+
+/**
  * Get the session ID cookie.
  *
  * @param req Request object.
@@ -147,4 +183,16 @@ export function setSessionID(res: Response, sessionID: string): void {
  */
 export function deleteSessionID(res: Response): void {
   res.clearCookie("sessionID");
+}
+
+/**
+ * Get the currently logged in user's ID.
+ *
+ * @param req Request object.
+ */
+export async function getUserID(req: Request): Promise<string> {
+  const sessionID = getSessionID(req);
+  const userID = await SessionService.getUserIDBySessionID(sessionID);
+
+  return userID;
 }

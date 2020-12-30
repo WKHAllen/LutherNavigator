@@ -21,5 +21,11 @@ logoutRouter.get("/", async (req, res) => {
     await SessionService.deleteSession(sessionID);
   }
 
-  res.redirect("/login");
+  const after = req.query.after as string;
+
+  if (after) {
+    res.redirect(after);
+  } else {
+    res.redirect("/login");
+  }
 });
