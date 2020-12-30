@@ -229,6 +229,20 @@ test("User", async () => {
   expect(user.lastLoginTime).toBe(null);
   expect(user.lastPostTime).toBe(null);
 
+  // Get user by email
+  user = await UserService.getUserByEmail(email);
+  expect(user.id).toBe(userID);
+  expect(user.firstname).toBe(firstname);
+  expect(user.lastname).toBe(lastname);
+  expect(user.email).toBe(email);
+  expect(user.statusID).toBe(statusID);
+  expect(user.verified).toBeFalsy();
+  expect(user.admin).toBeFalsy();
+  expect(user.imageID).toBe(null);
+  expect(user.joinTime - getTime()).toBeLessThanOrEqual(3);
+  expect(user.lastLoginTime).toBe(null);
+  expect(user.lastPostTime).toBe(null);
+
   // Check passwords match
   const same = await checkPassword(password, user.password);
   expect(same).toBe(true);
