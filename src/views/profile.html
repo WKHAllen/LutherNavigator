@@ -38,7 +38,11 @@
             <td>{{ this.location }}</td>
             <td>{{ this.program }}</td>
             <td>{{ this.threeWords }}</td>
-            <td>{{ this.approved }}</td>
+            <td>
+              {{#if this.approved}}
+              <i class="fas fa-check"></i>
+              {{/if}}
+            </td>
           </tr>
           {{/each}}
         </tbody>
