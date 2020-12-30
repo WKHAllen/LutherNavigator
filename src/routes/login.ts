@@ -14,7 +14,7 @@ export const loginRouter = Router();
 
 // Login page
 loginRouter.get("/", async (req, res) => {
-  renderPage(req, res, "login", { title: "Login" });
+  await renderPage(req, res, "login", { title: "Login" });
 });
 
 // Login event
@@ -37,6 +37,9 @@ loginRouter.post("/", async (req, res) => {
       res.redirect("/");
     }
   } else {
-    renderPage(req, res, "login", { title: "Login", error: "Invalid login" });
+    await renderPage(req, res, "login", {
+      title: "Login",
+      error: "Invalid login",
+    });
   }
 });

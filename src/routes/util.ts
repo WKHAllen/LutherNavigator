@@ -34,7 +34,7 @@ export async function auth(
     await SessionService.updateSession(sessionID);
     next();
   } else {
-    renderPage(
+    await renderPage(
       req,
       res,
       "401",
@@ -68,7 +68,7 @@ export async function adminAuth(
     await SessionService.updateSession(sessionID);
     next();
   } else {
-    renderPage(
+    await renderPage(
       req,
       res,
       "401",
