@@ -4,7 +4,7 @@
  */
 
 import { Router } from "express";
-import { renderPage, auth, getUserID } from "./util";
+import { renderPage, auth, upload, getUserID } from "./util";
 import { UserService, PostService } from "../services";
 
 /**
@@ -30,3 +30,13 @@ profileRouter.get("/", auth, async (req, res) => {
     posts,
   });
 });
+
+// Set image event
+profileRouter.post(
+  "/setImage",
+  auth,
+  upload.single("image"),
+  async (req, res) => {
+    
+  }
+);

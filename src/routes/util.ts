@@ -4,6 +4,7 @@
  */
 
 import { Request, Response, NextFunction } from "express";
+import * as multer from "multer";
 import { MetaService, UserService, SessionService } from "../services";
 import { sessionAge } from "../services/util";
 
@@ -11,6 +12,20 @@ import { sessionAge } from "../services/util";
  * Debug/production environment.
  */
 const debug = !!parseInt(process.env.DEBUG);
+
+/**
+ * Multer disk storage.
+ */
+const storage = multer.diskStorage({
+  filename: (req, file, callback) => {
+    callback(null, Date.now() + file.originalname);
+  },
+});
+
+/**
+ * Multer uploader.
+ */
+export const upload = multer({ storage });
 
 /**
  * Authentication middleware.
