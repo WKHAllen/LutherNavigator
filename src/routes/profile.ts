@@ -19,6 +19,7 @@ profileRouter.get("/", auth, async (req, res) => {
   const posts = await PostService.getUserPosts(userID);
 
   renderPage(req, res, "profile", {
+    title: "Your profile",
     userID: user.id,
     firstname: user.firstname,
     lastname: user.lastname,
