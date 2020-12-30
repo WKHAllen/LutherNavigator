@@ -214,6 +214,7 @@ export function deleteSessionID(res: Response): void {
  * Get the error message cookie.
  *
  * @param req Request object.
+ * @returns The error message or a null value.
  */
 export function getErrorMessage(req: Request, res: Response): string | null {
   const errorMessage = req.cookies.errorMessage || null;
@@ -238,6 +239,7 @@ export function setErrorMessage(res: Response, message: string): void {
  * Get the currently logged in user's ID.
  *
  * @param req Request object.
+ * @returns The user's ID.
  */
 export async function getUserID(req: Request): Promise<string> {
   const sessionID = getSessionID(req);

@@ -72,6 +72,7 @@ profileRouter.post(
   }
 );
 
+// Change password event
 profileRouter.post("/changePassword", auth, async (req, res) => {
   const currentPassword: string = req.body.currentPassword;
   const newPassword: string = req.body.newPassword;
