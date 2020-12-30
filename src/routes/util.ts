@@ -148,3 +148,15 @@ export function setSessionID(res: Response, sessionID: string): void {
 export function deleteSessionID(res: Response): void {
   res.clearCookie("sessionID");
 }
+
+/**
+ * Get the currently logged in user's ID.
+ *
+ * @param req Request object.
+ */
+export async function getUserID(req: Request): Promise<string> {
+  const sessionID = getSessionID(req);
+  const userID = await SessionService.getUserIDBySessionID(sessionID);
+
+  return userID;
+}
