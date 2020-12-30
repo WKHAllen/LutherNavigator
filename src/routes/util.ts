@@ -14,6 +14,11 @@ import { sessionAge } from "../services/util";
 const debug = !!parseInt(process.env.DEBUG);
 
 /**
+ * Maximum size an image can be (in bytes).
+ */
+export const maxImageSize = 262144;
+
+/**
  * Multer disk storage.
  */
 const storage = multer.diskStorage({

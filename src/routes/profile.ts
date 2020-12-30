@@ -4,7 +4,8 @@
  */
 
 import { Router } from "express";
-import { renderPage, auth, upload, getUserID } from "./util";
+import * as fs from 'fs';
+import { renderPage, auth, upload, getUserID, maxImageSize } from "./util";
 import { UserService, PostService } from "../services";
 
 /**
@@ -20,6 +21,7 @@ profileRouter.get("/", auth, async (req, res) => {
 
   await renderPage(req, res, "profile", {
     title: "Your profile",
+    error: req.cookies.errorMessage || null,
     userID: user.id,
     firstname: user.firstname,
     lastname: user.lastname,
@@ -29,6 +31,8 @@ profileRouter.get("/", auth, async (req, res) => {
     hasPosts: posts.length > 0,
     posts,
   });
+
+  req.cookies.errorMessage = undefined;
 });
 
 // Set image event
@@ -37,6 +41,23 @@ profileRouter.post(
   auth,
   upload.single("image"),
   async (req, res) => {
-    
+    if (!['image/png', 'image/jpg', 'image/jpeg'].includes(req.file.mimetype)) {
+      res.cookie('errorMessage', 'Profile image must be in PNG, JPG, or JPEG format', {
+        maxAge: 60 * 1000, // one minute
+        httpOnly: true
+      });
+    } else if (req.file.size >= maxImageSize) {
+      res.cookie('errorMessage', `Profile image must be less than ${Math.floor(maxImageSize / 1024)} KB`, {
+        maxAge: 60 * 1000, // one minute
+        httpOnly: true
+      });
+    } else {
+      const userID = await getUserID(req);
+      const imageData = await fs.promises.readFile(req.file.path);
+      await UserService.setUserImage(userID, imageData);
+    }
+
+    await fs.promises.unlink(req.file.path);
+    res.redirect('/profile');
   }
 );
