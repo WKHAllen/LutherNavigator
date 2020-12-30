@@ -8,6 +8,11 @@ import { MetaService, UserService, SessionService } from "../services";
 import { sessionAge } from "../services/util";
 
 /**
+ * Debug/production environment.
+ */
+const debug = !!parseInt(process.env.DEBUG);
+
+/**
  * Authentication middleware.
  *
  * @param req Request object.
@@ -115,6 +120,37 @@ export async function renderPage(
   }
 
   res.status(status).render(page, options);
+}
+
+/**
+ * Render an error page.
+ *
+ * @param err The error.
+ * @param req Request object.
+ * @param res Response object.
+ */
+export async function renderError(
+  err: Error,
+  req: Request,
+  res: Response
+): Promise<void> {
+  const options = !debug
+    ? {}
+    : {
+        name: err.name,
+        message: err.message,
+        stack: err.stack,
+      };
+
+  await renderPage(
+    req,
+    res,
+    "500",
+    Object.assign(options, { title: "Internal server error" }),
+    500
+  );
+
+  console.error(err.stack);
 }
 
 /**
