@@ -13,8 +13,10 @@ import {
   maxImageSize,
   setErrorMessage,
   getErrorMessage,
+  getSessionID,
 } from "./util";
-import { UserService, PostService } from "../services";
+import { UserService, PostService, SessionService } from "../services";
+import { checkPassword } from "../services/util";
 
 /**
  * The profile router.
@@ -71,5 +73,25 @@ profileRouter.post(
 );
 
 profileRouter.post("/changePassword", auth, async (req, res) => {
-  
+  const currentPassword: string = req.body.currentPassword;
+  const newPassword: string = req.body.newPassword;
+  const confirmNewPassword: string = req.body.confirmNewPassword;
+
+  if (newPassword !== confirmNewPassword) {
+    setErrorMessage(res, "Passwords do not match");
+  } else if (newPassword.length < 8) {
+    setErrorMessage(res, "New password must be at least 8 characters");
+  } else {
+    const sessionID = getSessionID(req);
+    const user = await SessionService.getUserBySessionID(sessionID);
+    const match = await checkPassword(currentPassword, user.password);
+
+    if (!match) {
+      setErrorMessage(res, "Incorrect password");
+    } else {
+      await UserService.setUserPassword(user.id, newPassword);
+    }
+  }
+
+  res.redirect("/profile");
 });
