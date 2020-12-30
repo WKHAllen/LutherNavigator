@@ -123,6 +123,14 @@ main {
   margin: 0;
 }
 
+.clear-card {
+  background: none;
+  backdrop-filter: opacity(0.7) blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
+  padding: 16px;
+}
+
 /* FOOTER */
 footer {
   clear: left;
