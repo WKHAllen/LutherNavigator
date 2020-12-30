@@ -14,6 +14,11 @@ import { sessionAge } from "../services/util";
 const debug = !!parseInt(process.env.DEBUG);
 
 /**
+ * Error message maximum age.
+ */
+export const errorMessageAge = 60 * 1000; // one minute
+
+/**
  * Maximum size an image can be (in bytes).
  */
 export const maxImageSize = 262144;
@@ -203,6 +208,30 @@ export function setSessionID(res: Response, sessionID: string): void {
  */
 export function deleteSessionID(res: Response): void {
   res.clearCookie("sessionID");
+}
+
+/**
+ * Get the error message cookie.
+ *
+ * @param req Request object.
+ */
+export function getErrorMessage(req: Request, res: Response): string | null {
+  const errorMessage = req.cookies.errorMessage || null;
+  res.clearCookie("errorMessage");
+  return errorMessage;
+}
+
+/**
+ * Set the error message cookie.
+ *
+ * @param res Response object.
+ * @param message Error message.
+ */
+export function setErrorMessage(res: Response, message: string): void {
+  res.cookie("errorMessage", message, {
+    maxAge: errorMessageAge,
+    httpOnly: true,
+  });
 }
 
 /**
