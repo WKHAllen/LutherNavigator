@@ -244,7 +244,7 @@ test("User", async () => {
   expect(user.lastPostTime).toBe(null);
 
   // Check passwords match
-  const same = await checkPassword(password, user.password);
+  let same = await checkPassword(password, user.password);
   expect(same).toBe(true);
 
   // Log user in
@@ -306,6 +306,27 @@ test("User", async () => {
   await UserService.setAdmin(userID);
   admin = await UserService.isAdmin(userID);
   expect(admin).toBe(true);
+
+  // Change password
+  const newPassword = "password135";
+  await UserService.setUserPassword(userID, newPassword);
+  user = await UserService.getUser(userID);
+
+  // Check new password matches
+  same = await checkPassword(newPassword, user.password);
+  expect(same).toBe(true);
+
+  // Check old password does not match
+  same = await checkPassword(password, user.password);
+  expect(same).toBe(false);
+
+  // Check login with new password
+  success = await UserService.login(email, newPassword);
+  expect(success).toBe(true);
+
+  // Check login with old password fails
+  success = await UserService.login(email, password);
+  expect(success).toBe(false);
 
   // Delete user
   await UserService.deleteUser(userID);

@@ -5,7 +5,7 @@
 
 import { Router } from "express";
 import { renderError } from "./util";
-import { UserService } from "../services";
+import { UserService, PostService } from "../services";
 import proxy from "../proxy";
 
 /**
@@ -31,6 +31,24 @@ imageRouter.get("/user/:userID", async (req, res, next) => {
       const host = req.protocol + "://" + req.get("host");
       proxy(res, host + "/img/compass_b.png");
     }
+  } else {
+    next(); // 404
+  }
+});
+
+// Get a post's image
+imageRouter.get("/post/:postID", async (req, res, next) => {
+  const postExists = await PostService.postExists(req.params.postID);
+
+  if (postExists) {
+    const image = await PostService.getPostImage(req.params.postID);
+
+    res.write(image.data, async (err) => {
+      if (err) {
+        await renderError(err, req, res);
+      }
+      res.end();
+    });
   } else {
     next(); // 404
   }

@@ -1,4 +1,6 @@
 <link rel="stylesheet" type="text/css" href="/css/profile.css" />
+<script type="text/javascript" src="/js/profile.js"></script>
+
 <div class="container">
   <div class="mt-5">
     <div class="profile-summary clear-card mb-5">
@@ -53,45 +55,6 @@
     </div>
 
     <div class="clear-card mb-5">
-      <form method="POST">
-        <h3>Set name</h3>
-        <div class="row">
-          <div class="form-group col-12 col-sm-6">
-            <label for="firstname">First name</label>
-            <input
-              type="text"
-              class="form-control"
-              id="firstname"
-              name="firstname"
-              maxlength="64"
-              value="{{ firstname }}"
-              required
-            />
-          </div>
-          <div class="form-group col-12 col-sm-6">
-            <label for="lastname">Last name</label>
-            <input
-              type="text"
-              class="form-control"
-              id="lastname"
-              name="lastname"
-              maxlength="64"
-              value="{{ lastname }}"
-              required
-            />
-          </div>
-        </div>
-        <button
-          type="submit"
-          class="btn btn-primary mb-3"
-          formaction="/profile/setName"
-        >
-          Set name
-        </button>
-      </form>
-    </div>
-
-    <div class="clear-card mb-5">
       <form method="POST" enctype="multipart/form-data">
         <h3>Set image</h3>
         <div class="row">
@@ -131,29 +94,29 @@
               class="form-control"
               id="currentPassword"
               name="currentPassword"
-              maxlength="128"
+              maxlength="255"
               required
             />
           </div>
-          <div class="form-group col-12 col-sm-6 col-md-4">
+          <div class="form-group col-12 col-md-4">
             <label for="newPassword">New password</label>
             <input
               type="password"
               class="form-control"
               id="newPassword"
               name="newPassword"
-              maxlength="128"
+              maxlength="255"
               required
             />
           </div>
-          <div class="form-group col-12 col-sm-6 col-md-4">
+          <div class="form-group col-12 col-md-4">
             <label for="confirmNewPassword">Confirm new password</label>
             <input
               type="password"
               class="form-control"
               id="confirmNewPassword"
               name="confirmNewPassword"
-              maxlength="128"
+              maxlength="255"
               required
             />
           </div>

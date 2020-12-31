@@ -13,6 +13,5 @@ export const indexRouter = Router();
 
 // Index page
 indexRouter.get("/", async (req, res) => {
-  const message = "Hello, world!";
-  await renderPage(req, res, "index", { message });
+  await renderPage(req, res, "index");
 });

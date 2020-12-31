@@ -4,6 +4,7 @@
  */
 
 import { Request, Response, NextFunction } from "express";
+import * as multer from "multer";
 import { MetaService, UserService, SessionService } from "../services";
 import { sessionAge } from "../services/util";
 
@@ -11,6 +12,30 @@ import { sessionAge } from "../services/util";
  * Debug/production environment.
  */
 const debug = !!parseInt(process.env.DEBUG);
+
+/**
+ * Error message maximum age.
+ */
+export const errorMessageAge = 60 * 1000; // one minute
+
+/**
+ * Maximum size an image can be (in bytes).
+ */
+export const maxImageSize = 262144;
+
+/**
+ * Multer disk storage.
+ */
+const storage = multer.diskStorage({
+  filename: (req, file, callback) => {
+    callback(null, Date.now() + file.originalname);
+  },
+});
+
+/**
+ * Multer uploader.
+ */
+export const upload = multer({ storage });
 
 /**
  * Authentication middleware.
@@ -186,9 +211,35 @@ export function deleteSessionID(res: Response): void {
 }
 
 /**
+ * Get the error message cookie.
+ *
+ * @param req Request object.
+ * @returns The error message or a null value.
+ */
+export function getErrorMessage(req: Request, res: Response): string | null {
+  const errorMessage = req.cookies.errorMessage || null;
+  res.clearCookie("errorMessage");
+  return errorMessage;
+}
+
+/**
+ * Set the error message cookie.
+ *
+ * @param res Response object.
+ * @param message Error message.
+ */
+export function setErrorMessage(res: Response, message: string): void {
+  res.cookie("errorMessage", message, {
+    maxAge: errorMessageAge,
+    httpOnly: true,
+  });
+}
+
+/**
  * Get the currently logged in user's ID.
  *
  * @param req Request object.
+ * @returns The user's ID.
  */
 export async function getUserID(req: Request): Promise<string> {
   const sessionID = getSessionID(req);
