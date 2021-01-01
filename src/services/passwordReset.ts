@@ -61,4 +61,45 @@ export module PasswordResetService {
 
     return newPasswordResetID;
   }
+
+  /**
+   * Check if a password reset record exists.
+   *
+   * @param resetID A password reset record's ID.
+   * @returns Whether or not the password reset record exists.
+   */
+  export async function resetRecordExists(resetID: string): Promise<boolean> {
+    const sql = `SELECT id FROM PasswordReset WHERE id = ?;`;
+    const params = [resetID];
+    const rows: PasswordReset[] = await mainDB.execute(sql, params);
+
+    return rows.length > 0;
+  }
+
+  /**
+   * Get a password reset record.
+   *
+   * @param resetID A password reset record's ID.
+   * @returns The password reset record.
+   */
+  export async function getResetRecord(
+    resetID: string
+  ): Promise<PasswordReset> {
+    const sql = `SELECT * FROM PasswordReset WHERE id = ?;`;
+    const params = [resetID];
+    const rows: PasswordReset[] = await mainDB.execute(sql, params);
+
+    return rows[0];
+  }
+
+  /**
+   * Delete a password reset record.
+   *
+   * @param resetID A password reset record's ID.
+   */
+  export async function deleteResetRecord(resetID: string): Promise<void> {
+    const sql = `DELETE FROM PasswordReset WHERE id = ?;`;
+    const params = [resetID];
+    await mainDB.execute(sql, params);
+  }
 }
