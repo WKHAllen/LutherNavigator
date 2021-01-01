@@ -28,7 +28,7 @@ jest.setTimeout(10000);
 beforeAll(
   async () =>
     new Promise((resolve) => {
-      initDB().then(resolve);
+      initDB(false).then(resolve);
     })
 );
 
