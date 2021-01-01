@@ -15,6 +15,7 @@ import {
   getErrorMessage,
   getSessionID,
 } from "./util";
+import wrapRoute from "../asyncCatch";
 import { UserService, PostService, SessionService } from "../services";
 import { checkPassword } from "../services/util";
 
@@ -24,31 +25,35 @@ import { checkPassword } from "../services/util";
 export const profileRouter = Router();
 
 // Profile page
-profileRouter.get("/", auth, async (req, res) => {
-  const userID = await getUserID(req);
-  const user = await UserService.getUser(userID);
-  const posts = await PostService.getUserPosts(userID);
+profileRouter.get(
+  "/",
+  auth,
+  wrapRoute(async (req, res) => {
+    const userID = await getUserID(req);
+    const user = await UserService.getUser(userID);
+    const posts = await PostService.getUserPosts(userID);
 
-  await renderPage(req, res, "profile", {
-    title: "Your profile",
-    error: getErrorMessage(req, res),
-    userID: user.id,
-    firstname: user.firstname,
-    lastname: user.lastname,
-    email: user.email,
-    joinTime: user.joinTime,
-    numPosts: `${posts.length} ${posts.length === 1 ? "post" : "posts"}`,
-    hasPosts: posts.length > 0,
-    posts,
-  });
-});
+    await renderPage(req, res, "profile", {
+      title: "Your profile",
+      error: getErrorMessage(req, res),
+      userID: user.id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      joinTime: user.joinTime,
+      numPosts: `${posts.length} ${posts.length === 1 ? "post" : "posts"}`,
+      hasPosts: posts.length > 0,
+      posts,
+    });
+  })
+);
 
 // Set image event
 profileRouter.post(
   "/setImage",
   auth,
   upload.single("image"),
-  async (req, res) => {
+  wrapRoute(async (req, res) => {
     if (
       !["image/png", "image/jpg", "image/jpeg"].includes(req.file.mimetype)
     ) {
@@ -69,30 +74,34 @@ profileRouter.post(
 
     await fs.promises.unlink(req.file.path);
     res.redirect("/profile");
-  }
+  })
 );
 
 // Change password event
-profileRouter.post("/changePassword", auth, async (req, res) => {
-  const currentPassword: string = req.body.currentPassword;
-  const newPassword: string = req.body.newPassword;
-  const confirmNewPassword: string = req.body.confirmNewPassword;
+profileRouter.post(
+  "/changePassword",
+  auth,
+  wrapRoute(async (req, res) => {
+    const currentPassword: string = req.body.currentPassword;
+    const newPassword: string = req.body.newPassword;
+    const confirmNewPassword: string = req.body.confirmNewPassword;
 
-  if (newPassword !== confirmNewPassword) {
-    setErrorMessage(res, "Passwords do not match");
-  } else if (newPassword.length < 8) {
-    setErrorMessage(res, "New password must be at least 8 characters");
-  } else {
-    const sessionID = getSessionID(req);
-    const user = await SessionService.getUserBySessionID(sessionID);
-    const match = await checkPassword(currentPassword, user.password);
-
-    if (!match) {
-      setErrorMessage(res, "Incorrect password");
+    if (newPassword !== confirmNewPassword) {
+      setErrorMessage(res, "Passwords do not match");
+    } else if (newPassword.length < 8) {
+      setErrorMessage(res, "New password must be at least 8 characters");
     } else {
-      await UserService.setUserPassword(user.id, newPassword);
-    }
-  }
+      const sessionID = getSessionID(req);
+      const user = await SessionService.getUserBySessionID(sessionID);
+      const match = await checkPassword(currentPassword, user.password);
 
-  res.redirect("/profile");
-});
+      if (!match) {
+        setErrorMessage(res, "Incorrect password");
+      } else {
+        await UserService.setUserPassword(user.id, newPassword);
+      }
+    }
+
+    res.redirect("/profile");
+  })
+);
