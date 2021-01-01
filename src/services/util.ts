@@ -24,6 +24,11 @@ export const idLength = 4;
 export const sessionIDLength = 16;
 
 /**
+ * Length of a password reset ID.
+ */
+export const passwordResetIDLength = 16;
+
+/**
  * Number of salt rounds for bcrypt to use.
  */
 export const saltRounds = 12;
