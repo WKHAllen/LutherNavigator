@@ -4,6 +4,7 @@
  */
 
 import mainDB, { getTime, newUniqueID, passwordResetIDLength } from "./util";
+import { UserService } from "./user";
 
 /**
  * Password reset architecture.
@@ -26,18 +27,16 @@ export module PasswordResetService {
    */
   export async function requestPasswordReset(email: string): Promise<string> {
     // Confirm that the email address exists
-    let sql = `SELECT id FROM User WHERE email = ? AND verified = TRUE;`;
-    let params: any[] = [email];
-    let rows: PasswordReset[] = await mainDB.execute(sql, params);
+    const emailUnused = await UserService.uniqueEmail(email);
 
-    if (rows.length !== 1) {
+    if (emailUnused) {
       return null;
     }
 
     // Check that no password reset has already been requested
-    sql = `SELECT id FROM PasswordReset WHERE email = ?;`;
-    params = [email];
-    rows = await mainDB.execute(sql, params);
+    let sql = `SELECT id FROM PasswordReset WHERE email = ?;`;
+    let params: any[] = [email];
+    let rows: PasswordReset[] = await mainDB.execute(sql, params);
 
     if (rows.length > 0) {
       return null;
