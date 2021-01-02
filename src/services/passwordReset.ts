@@ -101,4 +101,28 @@ export module PasswordResetService {
     const params = [resetID];
     await mainDB.execute(sql, params);
   }
+
+  /**
+   * Reset a user's password.
+   *
+   * @param resetID A password reset record's ID.
+   * @param newPassword The user's new password.
+   * @returns Whether or not the reset was successful.
+   */
+  export async function resetPassword(
+    resetID: string,
+    newPassword: string
+  ): Promise<boolean> {
+    const resetRecord = await getResetRecord(resetID);
+
+    if (!resetRecord) {
+      return false;
+    }
+
+    const user = await UserService.getUserByEmail(resetRecord.email);
+    await UserService.setUserPassword(user.id, newPassword);
+    await deleteResetRecord(resetID);
+
+    return true;
+  }
 }
