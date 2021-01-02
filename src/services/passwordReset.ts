@@ -120,6 +120,11 @@ export module PasswordResetService {
     }
 
     const user = await UserService.getUserByEmail(resetRecord.email);
+
+    if (!user) {
+      return false;
+    }
+
     await UserService.setUserPassword(user.id, newPassword);
     await deleteResetRecord(resetID);
 
