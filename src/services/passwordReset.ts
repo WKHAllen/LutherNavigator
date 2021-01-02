@@ -3,7 +3,12 @@
  * @packageDocumentation
  */
 
-import mainDB, { getTime, newUniqueID, passwordResetIDLength } from "./util";
+import mainDB, {
+  getTime,
+  newUniqueID,
+  prunePasswordResetRecord,
+  passwordResetIDLength,
+} from "./util";
 import { UserService } from "./user";
 
 /**
@@ -23,9 +28,13 @@ export module PasswordResetService {
    * Request a password reset.
    *
    * @param email The email address associated with the user's account.
+   * @param prune Whether or not to prune the record when the time comes.
    * @returns The new password reset record's ID.
    */
-  export async function requestPasswordReset(email: string): Promise<string> {
+  export async function requestPasswordReset(
+    email: string,
+    prune: boolean = true
+  ): Promise<string> {
     // Confirm that the email address exists
     const emailUnused = await UserService.uniqueEmail(email);
 
@@ -57,6 +66,10 @@ export module PasswordResetService {
     `;
     params = [newPasswordResetID, email, getTime()];
     await mainDB.execute(sql, params);
+
+    if (prune) {
+      prunePasswordResetRecord(newPasswordResetID);
+    }
 
     return newPasswordResetID;
   }
