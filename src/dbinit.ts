@@ -3,8 +3,10 @@
  * @packageDocumentation
  */
 
-import { SessionService } from "./services/session";
-import mainDB, { getTime, pruneSessions } from "./services/util";
+import mainDB, {
+  prunePasswordResetRecords,
+  pruneSessions,
+} from "./services/util";
 
 /**
  * Asynchronously sleep.
@@ -160,6 +162,15 @@ export default async function initDB(prune: boolean = true): Promise<void> {
         REFERENCES User (id)
     );
   `;
+  const passwordResetTable = `
+    CREATE TABLE IF NOT EXISTS PasswordReset (
+      id         CHAR(16)     NOT NULL,
+      email      VARCHAR(63)  NOT NULL,
+      createTime INT UNSIGNED NOT NULL,
+
+      PRIMARY KEY (id)
+    );
+  `;
   const metaTable = `
     CREATE TABLE IF NOT EXISTS Meta (
       name  VARCHAR(255) NOT NULL,
@@ -176,6 +187,7 @@ export default async function initDB(prune: boolean = true): Promise<void> {
     userTable,
     postTable,
     sessionTable,
+    passwordResetTable,
     metaTable,
   ]);
 
@@ -229,5 +241,9 @@ export default async function initDB(prune: boolean = true): Promise<void> {
   // Prune sessions
   if (prune) {
     await pruneSessions();
+  }
+  // Prune password reset records
+  if (prune) {
+    await prunePasswordResetRecords();
   }
 }

@@ -29,6 +29,7 @@ export module SessionService {
    * Create a session.
    *
    * @param userID The ID of the user associated with the session.
+   * @param prune Whether or not to prune the session when the time comes.
    * @returns The new session's ID.
    */
   export async function createSession(
