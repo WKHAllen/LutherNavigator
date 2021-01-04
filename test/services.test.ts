@@ -55,7 +55,7 @@ test("Util", async () => {
 });
 
 // Test user status service
-test("User status", async () => {
+test("UserStatus", async () => {
   // Get statuses
   const statuses = await UserStatusService.getStatuses();
   expect(statuses).toMatchObject([
@@ -86,7 +86,7 @@ test("User status", async () => {
 });
 
 // Test location type service
-test("Location type", async () => {
+test("LocationType", async () => {
   // Get locations
   const locations = await LocationTypeService.getLocations();
   expect(locations).toMatchObject([
@@ -616,7 +616,7 @@ test("Meta", async () => {
 });
 
 // Test password reset service
-test("Password reset", async () => {
+test("PasswordReset", async () => {
   const firstname = "Martin";
   const lastname = "Luther";
   const email = "lumart01@luther.edu";
