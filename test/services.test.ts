@@ -13,6 +13,7 @@ import { UserService } from "../src/services/user";
 import { SessionService } from "../src/services/session";
 import { PostService } from "../src/services/post";
 import { MetaService } from "../src/services/meta";
+import { PasswordResetService } from "../src/services/passwordReset";
 import { sendEmail } from "../src/emailer";
 
 async function wait(ms: number): Promise<void> {
@@ -612,6 +613,86 @@ test("Meta", async () => {
   expect(valueExists).toBe(false);
   valueExists = await MetaService.exists(key2);
   expect(valueExists).toBe(false);
+});
+
+// Test password reset service
+test("Password reset", async () => {
+  const firstname = "Martin";
+  const lastname = "Luther";
+  const email = "lumart01@luther.edu";
+  const password = "password123";
+  const statusID = 1; // Student
+
+  const userID = await UserService.createUser(
+    firstname,
+    lastname,
+    email,
+    password,
+    statusID
+  );
+
+  // Request password reset
+  const resetID = await PasswordResetService.requestPasswordReset(
+    email,
+    false
+  );
+  expect(resetID).not.toBeNull();
+  expect(resetID.length).toBe(16);
+
+  // Attempt request with invalid email
+  const resetID2 = await PasswordResetService.requestPasswordReset(
+    "fake_email",
+    false
+  );
+  expect(resetID2).toBeNull();
+
+  // Attempt request with same email address
+  const resetID3 = await PasswordResetService.requestPasswordReset(
+    email,
+    false
+  );
+  expect(resetID3).toBeNull();
+
+  // Check reset record exists
+  let recordExists = await PasswordResetService.resetRecordExists(resetID);
+  expect(recordExists).toBe(true);
+
+  // Get reset record
+  const resetRecord = await PasswordResetService.getResetRecord(resetID);
+  expect(resetRecord.id).toBe(resetID);
+  expect(resetRecord.email).toBe(email);
+  expect(resetRecord.createTime - getTime()).toBeLessThanOrEqual(3);
+
+  // Delete reset record
+  await PasswordResetService.deleteResetRecord(resetID);
+  recordExists = await PasswordResetService.resetRecordExists(resetID);
+  expect(recordExists).toBe(false);
+
+  // Attempt to reset with invalid ID
+  let success = await PasswordResetService.resetPassword(
+    resetID3,
+    "not new password"
+  );
+  expect(success).toBe(false);
+
+  // Reset password
+  const newPassword = "new password";
+  const resetID4 = await PasswordResetService.requestPasswordReset(
+    email,
+    false
+  );
+  const hashedPassword = (await UserService.getUser(userID)).password;
+  success = await PasswordResetService.resetPassword(resetID4, newPassword);
+  expect(success).toBe(true);
+  const hashedPassword2 = (await UserService.getUser(userID)).password;
+  expect(hashedPassword).not.toBe(hashedPassword2);
+  await checkPassword(newPassword, hashedPassword2);
+
+  // Check record has been removed
+  recordExists = await PasswordResetService.resetRecordExists(resetID);
+  expect(recordExists).toBe(false);
+
+  await UserService.deleteUser(userID);
 });
 
 // Test sending emails
