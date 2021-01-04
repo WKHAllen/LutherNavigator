@@ -5,10 +5,13 @@ body {
   display: flex;
   flex-direction: column;
 }
-html, body {
+
+html,
+body {
   height: 100%;
   margin: 0;
 }
+
 h1 {
   text-align: center;
   margin: 0;
@@ -38,6 +41,7 @@ a:hover {
   vertical-align: middle;
   line-height: normal;
 }
+
 /* Error */
 .err-info {
   padding: 16px 32px;
@@ -52,11 +56,13 @@ a:hover {
   color: red;
   font-weight: 600;
 }
+
 .vienna {
   width: 100%;
   height: 100%; /*auto*/
   opacity: 0.45;
 }
+
 .foreground {
   /* in dealing with background img*/
   position: absolute;
@@ -66,11 +72,13 @@ a:hover {
   /* sticky footer */
   flex: 1 0 auto;
 }
+
 /* content same as main */
 #content {
   display: block;
   margin: 20px 40px;
 }
+
 main {
   /* sticky footer */
   flex: 1 0 auto;
@@ -78,36 +86,51 @@ main {
   max-height: 1334px;
   background-repeat: no-repeat;
 }
+
 /* NAVBAR is header*/
 .navbar {
   padding: 0px 24px;
-} 
+}
+
 .navbar-light .navbar-brand {
   color: white;
   font-size: 1.5rem;
-  padding: .5rem;
-  
+  padding: 0.5rem;
 }
+
 .nav-link {
   color: white;
   font-size: 1.5rem;
 }
+
 .navbar-light .navbar-toggler {
   padding: 0px;
   font-size: 1rem;
   border: 0px;
 }
+
 .nav-logo {
   width: 45px;
   height: 45px;
 }
+
 .toggle-menu-img {
   width: 1.5em;
   height: 1.5em;
 }
+
 .row {
   margin: 0;
 }
+
+.clear-card {
+  background: none;
+  backdrop-filter: opacity(0.7) blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
+  padding: 16px;
+}
+
 /* FOOTER */
 footer {
   clear: left;
@@ -117,11 +140,13 @@ footer {
   text-align: center;
   bottom: 0;
   /* sticky footer */
-  flex-shrink: 0; 
+  flex-shrink: 0;
 }
+
 footer a {
   color: white;
 }
+
 table {
   width: 100%;
 }
@@ -131,24 +156,29 @@ table {
   .mainbody {
     width: 725px;
   }
+
   #content {
     margin: 30px 40px;
   }
+
   .navbar-light .navbar-brand {
     font-size: 2em;
   }
+
   .toggle-menu-img {
     width: 2em;
     height: 2em;
   }
+
   footer {
     padding: 24px 10px;
   }
 }
+
 /*desktop*/
 @media screen and (min-width: 1225px) {
   .mainbody {
-    width: 865px; 
+    width: 865px;
     display: inline-table;
   }
 }

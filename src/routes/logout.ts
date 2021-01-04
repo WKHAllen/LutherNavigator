@@ -5,6 +5,7 @@
 
 import { Router } from "express";
 import { getSessionID, deleteSessionID } from "./util";
+import wrapRoute from "../asyncCatch";
 import { SessionService } from "../services";
 
 /**
@@ -13,13 +14,22 @@ import { SessionService } from "../services";
 export const logoutRouter = Router();
 
 // Logout event
-logoutRouter.get("/", async (req, res) => {
-  const sessionID = getSessionID(req);
+logoutRouter.get(
+  "/",
+  wrapRoute(async (req, res) => {
+    const sessionID = getSessionID(req);
 
-  if (sessionID) {
-    deleteSessionID(res);
-    await SessionService.deleteSession(sessionID);
-  }
+    if (sessionID) {
+      deleteSessionID(res);
+      await SessionService.deleteSession(sessionID);
+    }
 
-  res.redirect("/login");
-});
+    const after = req.query.after as string;
+
+    if (after) {
+      res.redirect(after);
+    } else {
+      res.redirect("/login");
+    }
+  })
+);

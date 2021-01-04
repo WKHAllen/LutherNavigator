@@ -13,6 +13,7 @@ import { UserService } from "../src/services/user";
 import { SessionService } from "../src/services/session";
 import { PostService } from "../src/services/post";
 import { MetaService } from "../src/services/meta";
+import { PasswordResetService } from "../src/services/passwordReset";
 import { sendEmail } from "../src/emailer";
 
 async function wait(ms: number): Promise<void> {
@@ -21,14 +22,14 @@ async function wait(ms: number): Promise<void> {
   });
 }
 
-// Timeout after 10 seconds
-jest.setTimeout(10000);
+// Timeout after 15 seconds
+jest.setTimeout(15000);
 
 // Setup
 beforeAll(
   async () =>
     new Promise((resolve) => {
-      initDB().then(resolve);
+      initDB(false).then(resolve);
     })
 );
 
@@ -54,7 +55,7 @@ test("Util", async () => {
 });
 
 // Test user status service
-test("User status", async () => {
+test("UserStatus", async () => {
   // Get statuses
   const statuses = await UserStatusService.getStatuses();
   expect(statuses).toMatchObject([
@@ -85,7 +86,7 @@ test("User status", async () => {
 });
 
 // Test location type service
-test("Location type", async () => {
+test("LocationType", async () => {
   // Get locations
   const locations = await LocationTypeService.getLocations();
   expect(locations).toMatchObject([
@@ -229,8 +230,22 @@ test("User", async () => {
   expect(user.lastLoginTime).toBe(null);
   expect(user.lastPostTime).toBe(null);
 
+  // Get user by email
+  user = await UserService.getUserByEmail(email);
+  expect(user.id).toBe(userID);
+  expect(user.firstname).toBe(firstname);
+  expect(user.lastname).toBe(lastname);
+  expect(user.email).toBe(email);
+  expect(user.statusID).toBe(statusID);
+  expect(user.verified).toBeFalsy();
+  expect(user.admin).toBeFalsy();
+  expect(user.imageID).toBe(null);
+  expect(user.joinTime - getTime()).toBeLessThanOrEqual(3);
+  expect(user.lastLoginTime).toBe(null);
+  expect(user.lastPostTime).toBe(null);
+
   // Check passwords match
-  const same = await checkPassword(password, user.password);
+  let same = await checkPassword(password, user.password);
   expect(same).toBe(true);
 
   // Log user in
@@ -292,6 +307,27 @@ test("User", async () => {
   await UserService.setAdmin(userID);
   admin = await UserService.isAdmin(userID);
   expect(admin).toBe(true);
+
+  // Change password
+  const newPassword = "password135";
+  await UserService.setUserPassword(userID, newPassword);
+  user = await UserService.getUser(userID);
+
+  // Check new password matches
+  same = await checkPassword(newPassword, user.password);
+  expect(same).toBe(true);
+
+  // Check old password does not match
+  same = await checkPassword(password, user.password);
+  expect(same).toBe(false);
+
+  // Check login with new password
+  success = await UserService.login(email, newPassword);
+  expect(success).toBe(true);
+
+  // Check login with old password fails
+  success = await UserService.login(email, password);
+  expect(success).toBe(false);
 
   // Delete user
   await UserService.deleteUser(userID);
@@ -577,6 +613,86 @@ test("Meta", async () => {
   expect(valueExists).toBe(false);
   valueExists = await MetaService.exists(key2);
   expect(valueExists).toBe(false);
+});
+
+// Test password reset service
+test("PasswordReset", async () => {
+  const firstname = "Martin";
+  const lastname = "Luther";
+  const email = "lumart01@luther.edu";
+  const password = "password123";
+  const statusID = 1; // Student
+
+  const userID = await UserService.createUser(
+    firstname,
+    lastname,
+    email,
+    password,
+    statusID
+  );
+
+  // Request password reset
+  const resetID = await PasswordResetService.requestPasswordReset(
+    email,
+    false
+  );
+  expect(resetID).not.toBeNull();
+  expect(resetID.length).toBe(16);
+
+  // Attempt request with invalid email
+  const resetID2 = await PasswordResetService.requestPasswordReset(
+    "fake_email",
+    false
+  );
+  expect(resetID2).toBeNull();
+
+  // Attempt request with same email address
+  const resetID3 = await PasswordResetService.requestPasswordReset(
+    email,
+    false
+  );
+  expect(resetID3).toBeNull();
+
+  // Check reset record exists
+  let recordExists = await PasswordResetService.resetRecordExists(resetID);
+  expect(recordExists).toBe(true);
+
+  // Get reset record
+  const resetRecord = await PasswordResetService.getResetRecord(resetID);
+  expect(resetRecord.id).toBe(resetID);
+  expect(resetRecord.email).toBe(email);
+  expect(resetRecord.createTime - getTime()).toBeLessThanOrEqual(3);
+
+  // Delete reset record
+  await PasswordResetService.deleteResetRecord(resetID);
+  recordExists = await PasswordResetService.resetRecordExists(resetID);
+  expect(recordExists).toBe(false);
+
+  // Attempt to reset with invalid ID
+  let success = await PasswordResetService.resetPassword(
+    resetID3,
+    "not new password"
+  );
+  expect(success).toBe(false);
+
+  // Reset password
+  const newPassword = "new password";
+  const resetID4 = await PasswordResetService.requestPasswordReset(
+    email,
+    false
+  );
+  const hashedPassword = (await UserService.getUser(userID)).password;
+  success = await PasswordResetService.resetPassword(resetID4, newPassword);
+  expect(success).toBe(true);
+  const hashedPassword2 = (await UserService.getUser(userID)).password;
+  expect(hashedPassword).not.toBe(hashedPassword2);
+  await checkPassword(newPassword, hashedPassword2);
+
+  // Check record has been removed
+  recordExists = await PasswordResetService.resetRecordExists(resetID);
+  expect(recordExists).toBe(false);
+
+  await UserService.deleteUser(userID);
 });
 
 // Test sending emails

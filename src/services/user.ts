@@ -310,4 +310,21 @@ export module UserService {
     const imageID = rows[0]?.imageID;
     await ImageService.deleteImage(imageID);
   }
+
+  /**
+   * Set a user's password.
+   *
+   * @param userID A user's ID.
+   * @param password The user's new password.
+   */
+  export async function setUserPassword(
+    userID: string,
+    password: string
+  ): Promise<void> {
+    const hashedPassword = await hashPassword(password);
+
+    const sql = `UPDATE User SET password = ? WHERE id = ?;`;
+    const params = [hashedPassword, userID];
+    await mainDB.execute(sql, params);
+  }
 }

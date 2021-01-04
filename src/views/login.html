@@ -1,6 +1,5 @@
 <link rel="stylesheet" type="text/css" href="/css/login.css" />
 <div class="login-page">
-
   {{#if error}}
   <div class="alert alert-danger" role="alert">{{error}}</div>
   {{/if}}
@@ -16,6 +15,7 @@
             id="email"
             name="email"
             class="form-control"
+            maxlength="63"
             required
           />
         </div>
@@ -26,6 +26,7 @@
             id="password"
             name="password"
             class="form-control"
+            maxlength="255"
             required
           />
         </div>

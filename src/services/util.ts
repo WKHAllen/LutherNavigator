@@ -7,6 +7,7 @@ import * as db from "../db";
 import * as crypto from "crypto";
 import * as bcrypt from "bcrypt";
 import { Session } from "./session";
+import { PasswordReset, PasswordResetService } from "./passwordReset";
 
 /**
  * Database connection URL.
@@ -24,6 +25,11 @@ export const idLength = 4;
 export const sessionIDLength = 16;
 
 /**
+ * Length of a password reset ID.
+ */
+export const passwordResetIDLength = 16;
+
+/**
  * Number of salt rounds for bcrypt to use.
  */
 export const saltRounds = 12;
@@ -32,6 +38,11 @@ export const saltRounds = 12;
  * Session maximum age.
  */
 export const sessionAge = 24 * 60 * 60 * 1000; // One day
+
+/**
+ * Password reset maximum age.
+ */
+export const passwordResetAge = 60 * 60 * 1000; // One hour
 
 /**
  * Database object.
@@ -141,6 +152,7 @@ export async function checkPassword(
  * Delete a session when the time comes.
  *
  * @param sessionID A session's ID.
+ * @param timeRemaining The amount of time to wait before removing the session.
  */
 export function pruneSession(
   sessionID: string,
@@ -173,5 +185,34 @@ export async function pruneSessions(): Promise<void> {
   rows.forEach((row) => {
     const timeRemaining = row.updateTime + sessionAge / 1000 - getTime();
     pruneSession(row.id, timeRemaining * 1000);
+  });
+}
+
+/**
+ * Delete a password reset record when the time comes.
+ *
+ * @param resetID A password reset ID.
+ * @param timeRemaining The amount of time to wait before removing the record.
+ */
+export function prunePasswordResetRecord(
+  resetID: string,
+  timeRemaining: number = passwordResetAge
+): void {
+  setTimeout(async () => {
+    await PasswordResetService.deleteResetRecord(resetID);
+  }, timeRemaining);
+}
+
+/**
+ * Delete all active password reset records when the time comes.
+ */
+export async function prunePasswordResetRecords(): Promise<void> {
+  const sql = `SELECT id, createTime FROM PasswordReset;`;
+  const params = [];
+  const rows: PasswordReset[] = await mainDB.execute(sql, params);
+
+  rows.forEach((row) => {
+    const timeRemaining = row.createTime + passwordResetAge / 1000 - getTime();
+    prunePasswordResetRecord(row.id, timeRemaining * 1000);
   });
 }

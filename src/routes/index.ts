@@ -5,6 +5,7 @@
 
 import { Router } from "express";
 import { renderPage } from "./util";
+import wrapRoute from "../asyncCatch";
 
 /**
  * The index router.
@@ -12,7 +13,9 @@ import { renderPage } from "./util";
 export const indexRouter = Router();
 
 // Index page
-indexRouter.get("/", async (req, res) => {
-  const message = "Hello, world!";
-  renderPage(req, res, "index", { message });
-});
+indexRouter.get(
+  "/",
+  wrapRoute(async (req, res) => {
+    await renderPage(req, res, "index");
+  })
+);
