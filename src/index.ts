@@ -65,6 +65,7 @@ app.use("/login", routes.loginRouter);
 app.use("/logout", routes.logoutRouter);
 app.use("/post", routes.postRouter);
 app.use("/profile", routes.profileRouter);
+app.use("/register", routes.registerRouter);
 
 // Error 404 (not found)
 app.use((req, res) => {
