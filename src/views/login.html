@@ -5,8 +5,8 @@
   {{/if}}
 
   <form method="POST">
-    <div class="card">
-      <div class="card-body">
+    <div class="clear-card">
+      <div class="col">
         <h1>Login</h1>
         <p class="text-h3">
           Don't have an account? <a href="/register">Create one here.</a>
@@ -16,7 +16,7 @@
           <label for="email">Email address</label>
           <input
             type="email"
-            class="form-control"
+            class="form-control clear-input"
             id="email"
             name="email"
             maxlength="63"
@@ -28,7 +28,7 @@
           <label for="password">Password</label>
           <input
             type="password"
-            class="form-control"
+            class="form-control clear-input"
             id="password"
             name="password"
             maxlength="255"
@@ -36,7 +36,7 @@
           />
         </div>
 
-        <button type="submit" class="btn clear-button mt-2">Login</button>
+        <button type="submit" class="btn clear-button mt-2 mb-3">Login</button>
       </div>
     </div>
   </form>

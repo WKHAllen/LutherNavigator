@@ -139,7 +139,25 @@ header {
   backdrop-filter: opacity(0.7) blur(8px);
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.25rem;
-  padding: 16px;
+  /* padding: 16px; */
+  padding: 1em;
+}
+
+.clear-input {
+  background: none;
+  backdrop-filter: opacity(0.7) blur(8px);
+  border: 1px solid #495057;
+}
+
+.clear-button {
+  padding: 0.5rem 0.75rem;
+  font-size: 1.25rem;
+  border: 1px solid #495057;
+}
+
+.clear-button:hover {
+  color: #003882;
+  border: 1px solid #003882;
 }
 
 /* FOOTER */
