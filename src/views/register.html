@@ -18,6 +18,7 @@
             class="form-control"
             id="firstname"
             name="firstname"
+            maxlength="63"
             required
           />
         </div>
@@ -28,6 +29,7 @@
             class="form-control"
             id="lastname"
             name="lastname"
+            maxlength="63"
             required
           />
         </div>
@@ -42,6 +44,7 @@
             class="form-control"
             id="email"
             name="email"
+            maxlength="63"
             required
           />
         </div>
@@ -56,6 +59,7 @@
             class="form-control"
             id="password"
             name="password"
+            maxlength="255"
             required
           />
         </div>
@@ -66,29 +70,28 @@
             class="form-control"
             id="confirmPassword"
             name="confirmPassword"
+            maxlength="255"
             required
           />
         </div>
       </div>
 
       <!-- Terms and Conditions -->
-      <div class="row justify-content-start">
-        <div class="col-12">
-          <div class="form-check">
-            <label class="form-check-label">
-              <input type="checkbox" class="form-check-input" required />
-              I have read and accept
-              <a href="https://www.luthernavigator.com/terms-and-conditions"
-                >Terms and Conditions</a
-              >
-            </label>
-          </div>
-
-          <!-- Submit button -->
-          <button type="submit" class="btn btn-primary mt-3 mb-3">
-            Register
-          </button>
+      <div class="col-12 mb-3">
+        <div class="form-check">
+          <label class="form-check-label">
+            <input type="checkbox" class="form-check-input" required />
+            I have read and accept
+            <a href="https://www.luthernavigator.com/terms-and-conditions"
+              >Terms and Conditions</a
+            >
+          </label>
         </div>
+      </div>
+
+      <!-- Submit button -->
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary mb-3">Register</button>
       </div>
     </form>
   </div>
