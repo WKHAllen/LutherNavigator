@@ -1,5 +1,5 @@
 /**
- * Registration routes.
+ * Register routes.
  * @packageDocumentation
  */
 
@@ -8,14 +8,14 @@ import { renderPage } from "./util";
 import wrapRoute from "../asyncCatch";
 
 /**
- * The registration router.
+ * The register router.
  */
-export const registrationRouter = Router();
+export const registerRouter = Router();
 
-// Registration page
-registrationRouter.get(
+// Register page
+registerRouter.get(
   "/",
   wrapRoute(async (req, res) => {
-    await renderPage(req, res, "registration");
+    await renderPage(req, res, "register");
   })
 );
