@@ -57,7 +57,12 @@ passwordResetRouter.get(
 passwordResetRouter.get(
   "/reset/:resetID",
   wrapRoute(async (req, res) => {
-    await renderPage(req, res, "passwordReset");
+    const resetID = req.params.resetID;
+    const exists = await PasswordResetService.resetRecordExists(resetID);
+
+    await renderPage(req, res, "passwordReset", {
+      valid: exists,
+    });
   })
 );
 
