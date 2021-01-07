@@ -41,15 +41,15 @@ passwordResetRouter.post(
       );
     }
 
-    res.redirect("/password-reset/success");
+    res.redirect("./request-success");
   })
 );
 
 // Request password reset success
 passwordResetRouter.get(
-  "/success",
+  "/request-success",
   wrapRoute(async (req, res) => {
-    await renderPage(req, res, "passwordResetSuccess");
+    await renderPage(req, res, "passwordResetRequestSuccess");
   })
 );
 
@@ -58,5 +58,21 @@ passwordResetRouter.get(
   "/reset/:resetID",
   wrapRoute(async (req, res) => {
     await renderPage(req, res, "passwordReset");
+  })
+);
+
+// Reset password event
+passwordResetRouter.post(
+  "/reset/:resetID",
+  wrapRoute(async (req, res) => {
+    res.redirect("./reset-success");
+  })
+);
+
+// Password reset success
+passwordResetRouter.get(
+  "/reset-success",
+  wrapRoute(async (req, res) => {
+    await renderPage(req, res, "passwordResetSuccess");
   })
 );
