@@ -22,9 +22,25 @@ passwordResetRouter.get(
   })
 );
 
+// Request password reset event
+passwordResetRouter.post(
+  "/",
+  wrapRoute(async (req, res) => {
+    res.redirect("/password-reset/success");
+  })
+);
+
+// Request password reset success
+passwordResetRouter.get(
+  "/success",
+  wrapRoute(async (req, res) => {
+    await renderPage(req, res, "passwordResetSuccess");
+  })
+);
+
 // Reset a password
 passwordResetRouter.get(
-  "/:resetID",
+  "/reset/:resetID",
   wrapRoute(async (req, res) => {
     await renderPage(req, res, "passwordReset");
   })
