@@ -63,6 +63,7 @@ app.use("/", routes.indexRouter);
 app.use("/image", routes.imageRouter);
 app.use("/login", routes.loginRouter);
 app.use("/logout", routes.logoutRouter);
+app.use("/password-reset", routes.passwordResetRouter);
 app.use("/post", routes.postRouter);
 app.use("/profile", routes.profileRouter);
 app.use("/register", routes.registerRouter);
