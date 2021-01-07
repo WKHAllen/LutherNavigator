@@ -4,10 +4,10 @@
  */
 
 import { Router } from "express";
-import { renderPage } from "./util";
+import { renderPage, getHostname } from "./util";
 import wrapRoute from "../asyncCatch";
 import { PasswordResetService } from "../services";
-import { sendEmail } from "../emailer";
+import { sendFormattedEmail } from "../emailer";
 
 /**
  * The password reset router.
@@ -26,6 +26,21 @@ passwordResetRouter.get(
 passwordResetRouter.post(
   "/",
   wrapRoute(async (req, res) => {
+    const email = req.body.email;
+    const resetID = await PasswordResetService.requestPasswordReset(email);
+
+    if (resetID) {
+      sendFormattedEmail(
+        email,
+        "Luther Navigator - Password Reset",
+        "passwordReset",
+        {
+          host: getHostname(req),
+          resetID,
+        }
+      );
+    }
+
     res.redirect("/password-reset/success");
   })
 );

@@ -179,6 +179,15 @@ export async function renderError(
 }
 
 /**
+ * Get the hostname of a request.
+ *
+ * @param req Request object.
+ */
+export function getHostname(req: Request): string {
+  return `${req.protocol}://${req.get("host")}`;
+}
+
+/**
  * Get the session ID cookie.
  *
  * @param req Request object.
