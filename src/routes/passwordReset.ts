@@ -82,22 +82,19 @@ passwordResetRouter.post(
   "/reset/:resetID",
   wrapRoute(async (req, res) => {
     const resetID = req.params.resetID;
-    const password = req.body.password;
-    const password2 = req.body.confirmPassword;
+    const newPassword: string = req.body.newPassword;
+    const confirmNewPassword: string = req.body.confirmNewPassword;
 
-    if (password.length < 8 || password.length > 255) {
-      setErrorMessage(
-        res,
-        "Password must be between 8 and 255 characters in length"
-      );
-      res.redirect(`./${resetID}`);
-    } else if (password !== password2) {
+    if (newPassword !== confirmNewPassword) {
       setErrorMessage(res, "Passwords do not match");
-      res.redirect(`./${resetID}`);
+      res.redirect(`/password-reset/reset/${resetID}`);
+    } else if (newPassword.length < 8) {
+      setErrorMessage(res, "New password must be at least 8 characters");
+      res.redirect(`/password-reset/reset/${resetID}`);
     } else {
       const success = await PasswordResetService.resetPassword(
         resetID,
-        password
+        newPassword
       );
 
       if (success) {
