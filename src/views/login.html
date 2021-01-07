@@ -1,13 +1,14 @@
 <link rel="stylesheet" type="text/css" href="/css/login.css" />
 <div class="login-page">
-  {{#if error}}
-  <div class="alert alert-danger" role="alert">{{error}}</div>
-  {{/if}}
-
   <form method="POST">
     <div class="clear-card">
       <div class="col">
         <h1>Login</h1>
+
+        {{#if error}}
+        <div class="alert alert-danger" role="alert">{{error}}</div>
+        {{/if}}
+
         <p class="text-h3">
           Don't have an account? <a href="/register">Create one here.</a>
         </p>
@@ -36,7 +37,8 @@
           />
         </div>
 
-        <button type="submit" class="btn clear-button mt-2 mb-3">Login</button>
+        <button type="submit" class="btn clear-button mt-2 mb-3 mr-3">Login</button>
+        <span><a href="/password-reset">Forgot your password?</a></span>
       </div>
     </div>
   </form>

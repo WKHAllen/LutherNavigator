@@ -4,6 +4,7 @@
  */
 
 import * as nodemailer from "nodemailer";
+import * as fs from "fs";
 
 /**
  * Email address environment variable.
@@ -70,4 +71,33 @@ export async function sendEmail(
       }
     });
   });
+}
+
+/**
+ * Send an email and render values into it.
+ *
+ * @param emailTo The destination address.
+ * @param subject The email subject line.
+ * @param emailName The name of the email.
+ * @param options The values to be rendered into the email.
+ */
+export async function sendFormattedEmail(
+  emailTo: string,
+  subject: string,
+  emailName: string,
+  options: any
+): Promise<void> {
+  const htmlBuffer = await fs.promises.readFile(`./emails/${emailName}.html`);
+  let html = htmlBuffer.toString();
+  const textBuffer = await fs.promises.readFile(`./emails/${emailName}.txt`);
+  let text = textBuffer.toString();
+
+  for (const key of Object.keys(options)) {
+    while (html.includes(`{${key}}`))
+      html = html.replace(`{${key}}`, options[key]);
+    while (text.includes(`{${key}}`))
+      text = text.replace(`{${key}}`, options[key]);
+  }
+
+  await sendEmail(emailTo, subject, html, text);
 }

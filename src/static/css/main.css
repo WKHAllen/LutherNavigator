@@ -184,6 +184,10 @@ table {
   max-width: 800px;
 }
 
+.sm-width {
+  max-width: 600px;
+}
+
 /*tablet 768px*/
 @media screen and (min-width: 425px) {
   .mainbody {
