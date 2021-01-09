@@ -2,14 +2,17 @@
 .menus {
   text-align: center;
 }
+
 .menu-button {
   padding: 0.5rem;
   font-size: 1.75rem;
 }
+
 .menu-button:hover {
   border: solid 1px #003882;
 }
+
 /* Home page / index */
-h1 {
-  text-align: left;
+.homepage {
+  margin-top: 20px;;
 }
