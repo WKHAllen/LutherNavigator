@@ -24,6 +24,7 @@ postRouter.get(
     );
 
     await renderPage(req, res, "post", {
+      postID: post.id,
       location: post.location,
       firstname: user.firstname,
       lastname: user.lastname,

@@ -2,13 +2,21 @@
   rel="stylesheet"
   href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
 />
-<link rel="stylesheet" type="text/css" href="/css/post.css" />
 <link rel="stylesheet" type="text/css" href="/css/main.css" />
-<div class="">
+<link rel="stylesheet" type="text/css" href="/css/post.css" />
+<div class="clear-card">
   <h1>{{ location }}</h1>
-  <h4 class="tagline">{{ threeWords }}</h4>
-  <h2>{{ firstname }} {{ lastname }} | {{ status }}</h2>
+  <h4 class="info">the_address | the_phone_number | the_website</h4>
+  <div class=im>
+    <img src="/image/post/{{postID}}" alt="uploaded photo from user">
+    <img src="http://playfoursquare.s3.amazonaws.com/pix/130277_9pfvgu8sfK3xoD7-YLqMjWGCpOVyAJl-aGDql5Y53dU.jpg" alt="pepperioni pizza pie">
+    <img src="https://media-cdn.tripadvisor.com/media/photo-s/10/cf/1e/3d/photo0jpg.jpg" alt="Mabe's inside seating">
+    <img src="https://media-cdn.tripadvisor.com/media/photo-s/06/b6/54/64/mabe-s-pizza.jpg" alt="olive pizza">
+  </div>
+  <h3 class="tagline">{{ threeWords }}</h3>
+  <h4>{{ firstname }} {{ lastname }} | {{ status }}</h4>
   <h4>{{ program }} | <span class="timestamp">{{ createTime }}</span></h4>
+  
   <div class="post">
     <p>{{ content }}</p>
   </div>
