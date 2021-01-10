@@ -120,12 +120,15 @@
           <a class="nav-link" href="/logout?after={{url}}">Logout</a>
           {{else}}
           <a class="nav-link" href="/">Post</a>
-          <a class="nav-link" href="/login?after={{url}}">Login</a>
-          {{/if}}
+          {{#if after}}
+          <a class="nav-link" href="/login?after={{after}}">Login</a>
+          {{else}}
+          <a class="nav-link" href="/login">Login</a>
+          {{/if}} {{/if}}
         </div>
       </nav>
     </header>
-    <main >
+    <main>
       <div class="clearfix" id="content">{{{body}}}</div>
     </main>
     <footer>
