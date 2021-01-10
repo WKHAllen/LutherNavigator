@@ -124,6 +124,16 @@ export async function renderPage(
 ): Promise<void> {
   options.url = req.originalUrl;
 
+  if (options.loginAfter === undefined) {
+    options.loginAfter = true;
+  }
+
+  if (options.loginAfter) {
+    options.after = req.originalUrl;
+  } else {
+    options.after = req.query.after;
+  }
+
   const version = await MetaService.get("Version");
   options.version = version;
 
@@ -176,6 +186,15 @@ export async function renderError(
   );
 
   console.error(err.stack);
+}
+
+/**
+ * Get the hostname of a request.
+ *
+ * @param req Request object.
+ */
+export function getHostname(req: Request): string {
+  return `${req.protocol}://${req.get("host")}`;
 }
 
 /**

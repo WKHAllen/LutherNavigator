@@ -6,6 +6,12 @@ body {
   flex-direction: column;
 }
 
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
 html,
 body {
   height: 100%;
@@ -13,7 +19,6 @@ body {
 }
 
 h1 {
-  text-align: center;
   margin: 0;
   padding: 16px 0;
 }
@@ -28,6 +33,10 @@ a:hover {
 
 .center {
   text-align: center;
+}
+
+.div-center {
+  margin: auto;
 }
 
 .full-center {
@@ -57,26 +66,13 @@ a:hover {
   font-weight: 600;
 }
 
-.vienna {
-  width: 100%;
-  height: 100%; /*auto*/
-  opacity: 0.45;
-}
-
-.foreground {
-  /* in dealing with background img*/
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  /* sticky footer */
-  flex: 1 0 auto;
-}
-
 /* content same as main */
 #content {
   display: block;
-  margin: 20px 40px;
+  padding: 0.5em 2.5em;
+  margin: 20px 20px;
+  /* overflow-y: auto; */
+  /* height: 430px; */
 }
 
 main {
@@ -84,14 +80,33 @@ main {
   flex: 1 0 auto;
   max-width: 2000px;
   max-height: 1334px;
+  /* stationary background */
+  display: block;
+  position: relative;
+}
+
+main::after {
+  content: "";
+  /* stationary background */
+  background-image: url("/img/vienna.jpg");
   background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: top;
+  opacity: 0.45;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+}
+
+header {
+  background-color: #003882;
 }
 
 /* NAVBAR is header*/
-.navbar {
-  padding: 0px 24px;
-}
-
 .navbar-light .navbar-brand {
   color: white;
   font-size: 1.5rem;
@@ -128,7 +143,25 @@ main {
   backdrop-filter: opacity(0.7) blur(8px);
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.25rem;
-  padding: 16px;
+  /* padding: 16px; */
+  padding: 1em;
+}
+
+.clear-input {
+  background: none;
+  backdrop-filter: opacity(0.7) blur(8px);
+  border: 1px solid #495057;
+}
+
+.clear-button {
+  padding: 0.5rem 0.75rem;
+  font-size: 1.25rem;
+  border: 1px solid #495057;
+}
+
+.clear-button:hover {
+  color: #003882;
+  border: 1px solid #003882;
 }
 
 /* FOOTER */
@@ -151,6 +184,14 @@ table {
   width: 100%;
 }
 
+.std-width {
+  max-width: 800px;
+}
+
+.sm-width {
+  max-width: 600px;
+}
+
 /*tablet 768px*/
 @media screen and (min-width: 425px) {
   .mainbody {
@@ -158,7 +199,7 @@ table {
   }
 
   #content {
-    margin: 30px 40px;
+    margin: 20px 20px;
   }
 
   .navbar-light .navbar-brand {

@@ -17,7 +17,7 @@ export const loginRouter = Router();
 loginRouter.get(
   "/",
   wrapRoute(async (req, res) => {
-    await renderPage(req, res, "login", { title: "Login" });
+    await renderPage(req, res, "login", { title: "Login", loginAfter: false });
   })
 );
 

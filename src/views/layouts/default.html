@@ -70,14 +70,9 @@
     <script type="text/javascript" src="/js/main.js"></script>
   </head>
   <body>
-    <img src="/img/vienna.jpg" alt="Vienna" class="vienna" />
-    <div class="foreground">
-      <header>
-        <nav
-          class="navbar sticky-top navbar-expand-lg navbar-light row"
-          style="background-color: #003882"
-        >
-          <!-- <a class="navbar-brand col-sm-4" href="/">
+    <header>
+      <nav class="navbar sticky-top navbar-expand-lg navbar-light row">
+        <!-- <a class="navbar-brand col-sm-4" href="/">
             <img src="/img/compass_w.png" width="50" height="50" class="d-inline-block align-top nav-logo" alt="Luther Navigator Logo">
             Luther Navigator
           </a>
@@ -87,53 +82,55 @@
           <div class="col-sm-8"></div>
           <a class="nav-link col-sm-4" href="#">Post</a>
           <a class="nav-link col-sm-4" href="#">Sign In</a> -->
-          <a class="navbar-brand" href="/">
-            <img
-              src="/img/compass_w.png"
-              class="d-inline-block align-top nav-logo"
-              alt="Luther Navigator Logo"
-            />
-            Luther Navigator
-          </a>
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarText"
-            aria-controls="navbarText"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <img
-              src="/img/toggle_menu.png"
-              width="50"
-              height="50"
-              class="toggle-menu-img"
-              alt="Three dots"
-            />
-          </button>
-          <div class="collapse navbar-collapse" id="navbarText">
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-item"></li>
-            </ul>
-            <!-- <form class="form-inline my-2 my-lg-0">
+        <a class="navbar-brand" href="/">
+          <img
+            src="/img/compass_w.png"
+            class="d-inline-block align-top nav-logo"
+            alt="Luther Navigator Logo"
+          />
+          Luther Navigator
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarText"
+          aria-controls="navbarText"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <img
+            src="/img/toggle_menu.png"
+            width="50"
+            height="50"
+            class="toggle-menu-img"
+            alt="Three dots"
+          />
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item"></li>
+          </ul>
+          <!-- <form class="form-inline my-2 my-lg-0">
               <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form> -->
-            {{#if loggedIn}}
-            <a class="nav-link" href="/">Post</a>
-            <a class="nav-link" href="/logout?after={{url}}">Logout</a>
-            {{else}}
-            <a class="nav-link" href="/">Post</a>
-            <a class="nav-link" href="/login?after={{url}}">Login</a>
-            {{/if}}
-          </div>
-        </nav>
-      </header>
-      <main>
-        <div id="content">{{{body}}}</div>
-      </main>
-    </div>
+          {{#if loggedIn}}
+          <a class="nav-link" href="/">Post</a>
+          <a class="nav-link" href="/logout?after={{url}}">Logout</a>
+          {{else}}
+          <a class="nav-link" href="/">Post</a>
+          {{#if after}}
+          <a class="nav-link" href="/login?after={{after}}">Login</a>
+          {{else}}
+          <a class="nav-link" href="/login">Login</a>
+          {{/if}} {{/if}}
+        </div>
+      </nav>
+    </header>
+    <main>
+      <div class="clearfix" id="content">{{{body}}}</div>
+    </main>
     <footer>
       <div class="row">
         <a href="/" class="col-sm-4">About Luther Navigator</a>
