@@ -11,11 +11,7 @@ form {
 }
 
 h1 {
-  padding: 0px 0px 20px 0px;
-}
-
-img {
-  /* filter: blur(8px); */
+  text-align: center;
 }
 
 /*tablet 768px*/

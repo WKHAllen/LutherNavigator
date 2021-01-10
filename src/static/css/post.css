@@ -3,23 +3,46 @@
   clear: both;
   display: table;
 }
+
 body {
   margin: 0px;
 }
+
 h1 {
   font-size: 36pt;
   padding: 20px 0px 0px 0px !important;
 }
+
+.info {
+  margin: 0px 0px 40px 0px;
+}
+
+.review {
+  margin: 40px 0px 10px 0px;
+}
+
+h4{
+  font-size: medium;
+}
+
 h4,
 p {
   margin: 10px 0px;
 }
-.tagline {
+
+.im {
   text-align: center;
-  margin: 10px 0px 50px 0px;
 }
-.post,
-#content {
-  display: block;
-  margin: 60px 50px;
+
+img {
+  width: 300px;
+  height: 200px;
+  margin-bottom: 5px;
+}
+
+/*tablet 768px*/
+@media screen and (min-width: 768px) {
+  #content {
+    margin: 50px 0px;
+  }
 }
