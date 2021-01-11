@@ -1,8 +1,13 @@
 <div class="std-width div-center">
   <div class="clear-card">
     <form method="POST">
-      <div class="col text-center">
-        <h1>Register</h1>
+      <div class="col">
+        <h1 class="center">Register</h1>
+
+        {{#if error}}
+        <div class="alert alert-danger" role="alert">{{error}}</div>
+        {{/if}}
+
         <p class="text-h3">
           Please fill out the form below. If you already have an account,
           please <a href="/login">log in here</a>.
@@ -76,12 +81,30 @@
         </div>
       </div>
 
+      <!-- User status -->
+      <div class="row align-items-center">
+        <div class="col-12 mb-3 form-group">
+          <label for="userStatus">Status</label>
+          <select
+            class="form-control clear-select"
+            id="userStatus"
+            name="userStatus"
+            required
+          >
+            <option value="">Select...</option>
+            {{#each userStatuses}}
+            <option value="{{this.id}}">{{this.name}}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+
       <!-- Terms and Conditions -->
       <div class="col-12 mb-3">
         <div class="form-check">
           <label class="form-check-label">
             <input type="checkbox" class="form-check-input" required />
-            I have read and accept
+            I have read and accept the
             <a href="https://www.luthernavigator.com/terms-and-conditions"
               >Terms and Conditions</a
             >
