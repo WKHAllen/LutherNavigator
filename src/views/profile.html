@@ -24,47 +24,51 @@
     {{/if}}
 
     <div id="your-posts" class="clear-card mb-5">
-      <h3 class="posts">Your posts</h3>
-      {{#if hasPosts}}
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Location</th>
-            <th scope="col">Program</th>
-            <th scope="col">Description</th>
-            <th scope="col">Approved</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each posts}}
-          <tr onclick="window.location.href = '/post/{{this.id}}';">
-            <td>{{ this.location }}</td>
-            <td>{{ this.program }}</td>
-            <td>{{ this.threeWords }}</td>
-            <td>
-              {{#if this.approved}}
-              <i class="fas fa-check"></i>
-              {{/if}}
-            </td>
-          </tr>
-          {{/each}}
-        </tbody>
-      </table>
-      {{else}}
-      <span>You have yet to create a post.</span>
-      {{/if}}
+      <div class="col mt-2 mb-2">
+        <h3 class="posts">Your posts</h3>
+        {{#if hasPosts}}
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Location</th>
+              <th scope="col">Program</th>
+              <th scope="col">Description</th>
+              <th scope="col">Approved</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each posts}}
+            <tr onclick="window.location.href = '/post/{{this.id}}';">
+              <td>{{ this.location }}</td>
+              <td>{{ this.program }}</td>
+              <td>{{ this.threeWords }}</td>
+              <td>
+                {{#if this.approved}}
+                <i class="fas fa-check"></i>
+                {{/if}}
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        {{else}}
+        <span>You have yet to create a post.</span>
+        {{/if}}
+      </div>
     </div>
 
     <div class="clear-card mb-5">
       <form method="POST" enctype="multipart/form-data">
-        <h3>Set image</h3>
+        <div class="col mt-1">
+          <h3>Set image</h3>
+        </div>
         <div class="row">
           <div class="form-group col-12">
             <label for="imageDiv">Image</label>
             <div class="custom-file" id="imageDiv">
               <input
                 type="file"
-                class="custom-file-input"
+                class="custom-file-input clear-input"
                 id="image"
                 name="image"
                 accept=".jpg, .jpeg, .png"
@@ -74,25 +78,29 @@
             </div>
           </div>
         </div>
-        <button
-          type="submit"
-          class="btn btn-primary mb-3"
-          formaction="/profile/setImage"
-        >
-          Set image
-        </button>
+        <div class="col">
+          <button
+            type="submit"
+            class="btn clear-button mb-2"
+            formaction="/profile/setImage"
+          >
+            Set image
+          </button>
+        </div>
       </form>
     </div>
 
     <div class="clear-card mb-5">
       <form method="POST">
-        <h3>Change password</h3>
+        <div class="col mt-1">
+          <h3>Change password</h3>
+        </div>
         <div class="row">
           <div class="form-group col-12 col-md-4">
             <label for="currentPassword">Current password</label>
             <input
               type="password"
-              class="form-control"
+              class="form-control clear-input"
               id="currentPassword"
               name="currentPassword"
               maxlength="255"
@@ -103,7 +111,7 @@
             <label for="newPassword">New password</label>
             <input
               type="password"
-              class="form-control"
+              class="form-control clear-input"
               id="newPassword"
               name="newPassword"
               maxlength="255"
@@ -114,7 +122,7 @@
             <label for="confirmNewPassword">Confirm new password</label>
             <input
               type="password"
-              class="form-control"
+              class="form-control clear-input"
               id="confirmNewPassword"
               name="confirmNewPassword"
               maxlength="255"
@@ -122,13 +130,15 @@
             />
           </div>
         </div>
-        <button
-          type="submit"
-          class="btn btn-primary"
-          formaction="/profile/changePassword"
-        >
-          Change password
-        </button>
+        <div class="col">
+          <button
+            type="submit"
+            class="btn clear-button mb-2"
+            formaction="/profile/changePassword"
+          >
+            Change password
+          </button>
+        </div>
       </form>
     </div>
   </div>
