@@ -76,12 +76,30 @@
         </div>
       </div>
 
+      <!-- User status -->
+      <div class="row align-items-center">
+        <div class="col-12 mb-3 form-group">
+          <label for="userStatus">Status</label>
+          <select
+            class="form-control clear-select"
+            id="userStatus"
+            name="userStatus"
+            required
+          >
+            <option value="">Select...</option>
+            {{#each userStatuses}}
+            <option value="{{this.id}}">{{this.name}}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+
       <!-- Terms and Conditions -->
       <div class="col-12 mb-3">
         <div class="form-check">
           <label class="form-check-label">
             <input type="checkbox" class="form-check-input" required />
-            I have read and accept
+            I have read and accept the
             <a href="https://www.luthernavigator.com/terms-and-conditions"
               >Terms and Conditions</a
             >

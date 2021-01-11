@@ -6,6 +6,7 @@
 import { Router } from "express";
 import { renderPage } from "./util";
 import wrapRoute from "../asyncCatch";
+import { UserStatusService } from "../services";
 
 /**
  * The register router.
@@ -16,6 +17,10 @@ export const registerRouter = Router();
 registerRouter.get(
   "/",
   wrapRoute(async (req, res) => {
-    await renderPage(req, res, "register");
+    const userStatuses = await UserStatusService.getStatuses();
+
+    await renderPage(req, res, "register", {
+      userStatuses,
+    });
   })
 );
