@@ -72,6 +72,36 @@ export module VerifyService {
   }
 
   /**
+   * Check if a verification record exists.
+   *
+   * @param verifyID A verification record's ID.
+   * @returns Whether or not the verification record exists.
+   */
+  export async function verifyRecordExists(
+    verifyID: string
+  ): Promise<boolean> {
+    const sql = `SELECT id FROM Verify WHERE id = ?;`;
+    const params = [verifyID];
+    const rows: Verify[] = await mainDB.execute(sql, params);
+
+    return rows.length > 0;
+  }
+
+  /**
+   * Get a verification record.
+   *
+   * @param verifyID A verification record's ID.
+   * @returns The verification record.
+   */
+  export async function getVerifyRecord(verifyID: string): Promise<Verify> {
+    const sql = `SELECT * FROM Verify WHERE id = ?;`;
+    const params = [verifyID];
+    const rows: Verify[] = await mainDB.execute(sql, params);
+
+    return rows[0];
+  }
+
+  /**
    * Delete a verification record.
    *
    * @param verifyID A verification record's ID.
@@ -80,5 +110,30 @@ export module VerifyService {
     const sql = `DELETE FROM Verify WHERE id = ?;`;
     const params = [verifyID];
     await mainDB.execute(sql, params);
+  }
+
+  /**
+   * Verify a user.
+   *
+   * @param verifyID A verification record's ID.
+   * @returns Whether or not the verification was successful.
+   */
+  export async function verifyUser(verifyID: string): Promise<boolean> {
+    const verifyRecord = await getVerifyRecord(verifyID);
+
+    if (!verifyRecord) {
+      return false;
+    }
+
+    const user = await UserService.getUserByEmail(verifyRecord.email);
+
+    if (!user) {
+      return false;
+    }
+
+    await UserService.setVerified(user.id);
+    await deleteVerifyRecord(verifyID);
+
+    return true;
   }
 }
