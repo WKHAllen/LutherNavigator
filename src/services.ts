@@ -11,3 +11,4 @@ export * from "./services/rating";
 export * from "./services/session";
 export * from "./services/user";
 export * from "./services/userStatus";
+export * from "./services/verify";

@@ -38,6 +38,7 @@ registerRouter.post(
     const confirmPassword: string = req.body.confirmPassword;
     const userStatus: number = parseInt(req.body.userStatus) || 0;
 
+    // Validation
     if (firstname.length < 1 || firstname.length > 63) {
       setErrorMessage(res, "First name must be less than 64 characters");
       res.redirect("/register");
@@ -79,5 +80,14 @@ registerRouter.post(
       res.redirect("/register");
       return;
     }
+
+    // Verification
+    const userID = await UserService.createUser(
+      firstname,
+      lastname,
+      email,
+      password,
+      userStatus
+    );
   })
 );
