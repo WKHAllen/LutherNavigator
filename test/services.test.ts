@@ -599,10 +599,8 @@ test("Meta", async () => {
   // Get all
   await MetaService.set(key2, value2);
   const values = await MetaService.getAll();
-  expect(values).toMatchObject([
-    { name: key2, value: value2 },
-    { name: key1, value: value1_2 },
-  ]);
+  expect(values).toContainEqual({ name: key2, value: value2 });
+  expect(values).toContainEqual({ name: key1, value: value1_2 });
 
   // Remove
   await MetaService.remove(key1);
