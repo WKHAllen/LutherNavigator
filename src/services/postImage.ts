@@ -106,7 +106,7 @@ export module PostImageService {
     const params = [postID];
     const rows = await mainDB.execute(sql, params);
 
-    return rows[0]["COUNT(*)"];
+    return parseInt(rows[0]["COUNT(*)"]);
   }
 
   /**
@@ -115,16 +115,18 @@ export module PostImageService {
    * @param postID A post's ID.
    */
   export async function deletePostImages(postID: string): Promise<void> {
-    let sql = `
-      DELETE FROM Image WHERE id IN (
-        SELECT imageID FROM PostImage WHERE postID = ?
-      );
-    `;
-    let params = [postID];
-    await mainDB.execute(sql, params);
+    let sql = `SELECT imageID FROM PostImage WHERE postID = ?`;
+    let params: any = [postID];
+    const rows: PostImage[] = await mainDB.execute(sql, params);
+
+    const imageIDs = rows.map((postImage) => postImage.imageID);
 
     sql = `DELETE FROM PostImage WHERE postID = ?;`;
     params = [postID];
+    await mainDB.execute(sql, params);
+
+    sql = `DELETE FROM Image WHERE id IN ?;`;
+    params = [imageIDs];
     await mainDB.execute(sql, params);
   }
 }
