@@ -35,10 +35,10 @@ export module VerifyService {
     email: string,
     prune: boolean = true
   ): Promise<string> {
-    // Confirm that the email address exists
+    // Confirm that the email address does not exist
     const emailUnused = await UserService.uniqueEmail(email);
 
-    if (emailUnused) {
+    if (!emailUnused) {
       return null;
     }
 
@@ -110,6 +110,25 @@ export module VerifyService {
     const sql = `DELETE FROM Verify WHERE id = ?;`;
     const params = [verifyID];
     await mainDB.execute(sql, params);
+  }
+
+  /**
+   * Delete a verification record and the corresponding user.
+   *
+   * @param verifyID A verification record's ID.
+   */
+  export async function deleteUnverifiedUser(verifyID: string): Promise<void> {
+    const verifyRecord = await getVerifyRecord(verifyID);
+
+    if (verifyRecord) {
+      const user = await UserService.getUserByEmail(verifyRecord.email);
+
+      if (user && !user.verified) {
+        await UserService.deleteUser(user.id);
+      }
+
+      await deleteVerifyRecord(verifyID);
+    }
   }
 
   /**

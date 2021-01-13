@@ -1,0 +1,10 @@
+Hello, thank you for signing up for Luther Navigator!
+
+All we need is for you to verify your email address. You can do so by clicking the link below.
+
+{host}/register/verify/{verifyID}
+
+If you did not register for Luther Navigator, or you have already verified your email, please disregard this email, and do not click on the link.
+
+Sincerely,
+The Luther Navigator Team

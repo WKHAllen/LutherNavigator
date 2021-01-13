@@ -89,16 +89,25 @@
                 "
               >
                 <p style="font-size: 16px">
-                  <strong><span>Dear Guest</span></strong>
+                  <strong
+                    ><span
+                      >Hello, thank you for signing up for Luther
+                      Navigator!</span
+                    ></strong
+                  >
                 </p>
-                <p>A password reset was requested.</p>
                 <p>
-                  If you did not request to reset your password, please
-                  disregard this email. Do not share the link with anyone.
+                  All we need is for you to verify your email address. You can
+                  do so by clicking the link below.
+                </p>
+                <p>
+                  If you did not register for Luther Navigator, or you have
+                  already verified your email, please disregard this email, and
+                  do not click on the link.
                 </p>
                 <p>Sincerely,<br />The Luther Navigator Team</p>
                 <a
-                  href="{host}/password-reset/reset/{resetID}"
+                  href="{host}/register/verify/{verifyID}"
                   style="
                     line-height: 3;
                     background-color: #003882;
@@ -112,7 +121,7 @@
                       sans-serif;
                   "
                 >
-                  <strong>CHANGE YOUR PASSWORD</strong>
+                  <strong>VERIFY YOUR EMAIL</strong>
                 </a>
                 <p>
                   <span style="font-size: 14px"
