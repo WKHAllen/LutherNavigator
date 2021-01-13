@@ -4,7 +4,7 @@
  */
 
 import mainDB, { getTime, newUniqueID } from "./util";
-import { Image, ImageService } from "./image";
+import { Image } from "./image";
 import { Rating, RatingParams, RatingService } from "./rating";
 import { User, UserService } from "./user";
 import { PostImageService } from "./postImage";
@@ -55,7 +55,6 @@ export module PostService {
   ): Promise<string> {
     const postID = await newUniqueID("Post");
     const ratingID = await RatingService.createRating(rating);
-    await PostImageService.createPostImages(postID, imageData);
 
     const sql = `
       INSERT INTO Post (
@@ -78,6 +77,8 @@ export module PostService {
       getTime(),
     ];
     await mainDB.execute(sql, params);
+
+    await PostImageService.createPostImages(postID, imageData);
 
     return postID;
   }
