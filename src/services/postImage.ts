@@ -28,7 +28,7 @@ export module PostImageService {
     const sql = `
       SELECT * FROM Image WHERE id IN (
         SELECT imageID FROM PostImage WHERE postID = ?
-      );`;
+      ) ORDER BY registerTime;`;
     const params = [postID];
     const rows: Image[] = await mainDB.execute(sql, params);
 

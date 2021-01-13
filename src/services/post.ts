@@ -240,7 +240,7 @@ export module PostService {
    * @param postID A post's ID.
    * @returns The images associated with the post.
    */
-  export async function getPostImage(postID: string): Promise<Image[]> {
+  export async function getPostImages(postID: string): Promise<Image[]> {
     return await PostImageService.getPostImages(postID);
   }
 
@@ -251,7 +251,7 @@ export module PostService {
    * @param imageData The binary data of the new images.
    * @returns The IDs of the new images.
    */
-  export async function setPostImage(
+  export async function setPostImages(
     postID: string,
     imageData: Buffer[]
   ): Promise<string[]> {

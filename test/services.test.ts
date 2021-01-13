@@ -460,7 +460,7 @@ test("Post", async () => {
   const postID = await PostService.createPost(
     userID,
     content,
-    buf,
+    [buf],
     location,
     locationTypeID,
     program,
@@ -505,16 +505,18 @@ test("Post", async () => {
   const newPostContent = await PostService.getPostContent(postID);
   expect(newPostContent).toBe(newContent);
 
-  // Get post image
-  const postImage = await PostService.getPostImage(postID);
-  expect(postImage.data.toString()).toBe(buf.toString());
+  // Get post images
+  const postImages = await PostService.getPostImages(postID);
+  expect(postImages.length).toBe(1);
+  expect(postImages[0].data.toString()).toBe(buf.toString());
 
   // Set post image
   const newLen = Math.floor(Math.random() * 63) + 1;
   const newBuf = crypto.randomBytes(newLen);
-  await PostService.setPostImage(postID, newBuf);
-  const newPostImage = await PostService.getPostImage(postID);
-  expect(newPostImage.data.toString()).toBe(newBuf.toString());
+  await PostService.setPostImages(postID, [newBuf]);
+  const newPostImages = await PostService.getPostImages(postID);
+  expect(newPostImages.length).toBe(2);
+  expect(newPostImages[1].data.toString()).toBe(newBuf.toString());
 
   // Check approved
   let approved = await PostService.isApproved(postID);
@@ -529,7 +531,7 @@ test("Post", async () => {
   const postID2 = await PostService.createPost(
     userID,
     content,
-    buf,
+    [buf],
     location,
     locationTypeID,
     program,
@@ -555,7 +557,7 @@ test("Post", async () => {
   const postID3 = await PostService.createPost(
     userID,
     content,
-    buf,
+    [buf],
     location,
     locationTypeID,
     program,
