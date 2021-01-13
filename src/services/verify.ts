@@ -113,6 +113,25 @@ export module VerifyService {
   }
 
   /**
+   * Delete a verification record and the corresponding user.
+   *
+   * @param verifyID A verification record's ID.
+   */
+  export async function deleteUnverifiedUser(verifyID: string): Promise<void> {
+    const verifyRecord = await getVerifyRecord(verifyID);
+
+    if (verifyRecord) {
+      const user = await UserService.getUserByEmail(verifyRecord.email);
+
+      if (user && !user.verified) {
+        await UserService.deleteUser(user.id);
+      }
+
+      await deleteVerifyRecord(verifyID);
+    }
+  }
+
+  /**
    * Verify a user.
    *
    * @param verifyID A verification record's ID.

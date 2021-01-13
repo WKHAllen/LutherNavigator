@@ -210,7 +210,7 @@ export function pruneVerifyRecord(
   timeRemaining: number = verifyAge
 ): void {
   setTimeout(async () => {
-    await VerifyService.deleteVerifyRecord(verifyID);
+    await VerifyService.deleteUnverifiedUser(verifyID);
   }, timeRemaining);
 }
 
