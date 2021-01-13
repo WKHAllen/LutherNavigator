@@ -125,7 +125,6 @@ export default async function initDB(prune: boolean = true): Promise<void> {
       id             CHAR(4)       NOT NULL,
       userID         CHAR(4)       NOT NULL,
       content        VARCHAR(750)  NOT NULL,
-      imageID        CHAR(4)       NOT NULL,
       location       VARCHAR(255)  NOT NULL,
       locationTypeID INT           NOT NULL,
       program        VARCHAR(255)  NOT NULL,
@@ -140,14 +139,26 @@ export default async function initDB(prune: boolean = true): Promise<void> {
       FOREIGN KEY (userID)
         REFERENCES User (id),
 
-      FOREIGN KEY (imageID)
-        REFERENCES Image (id),
-      
       FOREIGN KEY (locationTypeID)
         REFERENCES LocationType (id),
 
       FOREIGN KEY (ratingID)
         REFERENCES Rating (id)
+    );
+  `;
+  const postImageTable = `
+    CREATE TABLE IF NOT EXISTS PostImage (
+      id      INT UNSIGNED NOT NULL AUTO_INCREMENT,
+      postID  CHAR(4)      NOT NULL,
+      imageID CHAR(4)      NOT NULL,
+
+      PRIMARY KEY (id),
+
+      FOREIGN KEY (postID)
+        REFERENCES Post (id),
+
+      FOREIGN KEY (imageID)
+        REFERENCES Image (id)
     );
   `;
   const sessionTable = `
@@ -196,6 +207,7 @@ export default async function initDB(prune: boolean = true): Promise<void> {
     ratingTable,
     userTable,
     postTable,
+    postImageTable,
     sessionTable,
     verifyTable,
     passwordResetTable,

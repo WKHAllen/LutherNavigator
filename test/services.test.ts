@@ -15,6 +15,7 @@ import { PostService } from "../src/services/post";
 import { MetaService } from "../src/services/meta";
 import { PasswordResetService } from "../src/services/passwordReset";
 import { VerifyService } from "../src/services/verify";
+import { PostImageService } from "../src/services/postImage";
 import { sendEmail } from "../src/emailer";
 
 async function wait(ms: number): Promise<void> {
@@ -460,7 +461,7 @@ test("Post", async () => {
   const postID = await PostService.createPost(
     userID,
     content,
-    buf,
+    [buf],
     location,
     locationTypeID,
     program,
@@ -505,16 +506,18 @@ test("Post", async () => {
   const newPostContent = await PostService.getPostContent(postID);
   expect(newPostContent).toBe(newContent);
 
-  // Get post image
-  const postImage = await PostService.getPostImage(postID);
-  expect(postImage.data.toString()).toBe(buf.toString());
+  // Get post images
+  const postImages = await PostService.getPostImages(postID);
+  expect(postImages.length).toBe(1);
+  expect(postImages[0].data.toString()).toBe(buf.toString());
 
   // Set post image
   const newLen = Math.floor(Math.random() * 63) + 1;
   const newBuf = crypto.randomBytes(newLen);
-  await PostService.setPostImage(postID, newBuf);
-  const newPostImage = await PostService.getPostImage(postID);
-  expect(newPostImage.data.toString()).toBe(newBuf.toString());
+  await PostService.setPostImages(postID, [newBuf]);
+  const newPostImages = await PostService.getPostImages(postID);
+  expect(newPostImages.length).toBe(2);
+  expect(newPostImages[1].data.toString()).toBe(newBuf.toString());
 
   // Check approved
   let approved = await PostService.isApproved(postID);
@@ -529,7 +532,7 @@ test("Post", async () => {
   const postID2 = await PostService.createPost(
     userID,
     content,
-    buf,
+    [buf],
     location,
     locationTypeID,
     program,
@@ -555,7 +558,7 @@ test("Post", async () => {
   const postID3 = await PostService.createPost(
     userID,
     content,
-    buf,
+    [buf],
     location,
     locationTypeID,
     program,
@@ -680,12 +683,10 @@ test("PasswordReset", async () => {
     email,
     false
   );
-  const hashedPassword = (await UserService.getUser(userID)).password;
   success = await PasswordResetService.resetPassword(resetID4, newPassword);
   expect(success).toBe(true);
-  const hashedPassword2 = (await UserService.getUser(userID)).password;
-  expect(hashedPassword).not.toBe(hashedPassword2);
-  const match = await checkPassword(newPassword, hashedPassword2);
+  const newHashedPassword = (await UserService.getUser(userID)).password;
+  const match = await checkPassword(newPassword, newHashedPassword);
   expect(match).toBe(true);
 
   // Check record has been removed
@@ -774,6 +775,115 @@ test("Verify", async () => {
   expect(recordExists).toBe(false);
 
   await UserService.deleteUser(userID3);
+});
+
+test("PostImage", async () => {
+  const firstname = "Martin";
+  const lastname = "Luther";
+  const email = "lumart01@luther.edu";
+  const password = "password123";
+  const statusID = 1; // Student
+
+  const userID = await UserService.createUser(
+    firstname,
+    lastname,
+    email,
+    password,
+    statusID
+  );
+
+  const content = "Hello, post!";
+  const location = "Mabe's Pizza";
+  const locationTypeID = 6; // Restaurant
+  const program = "N/A";
+  const threeWords = "Absolutely amazing pizza";
+
+  const rating = {
+    general: 1,
+    cost: 3,
+    safety: 7,
+  };
+
+  // Create post
+  const postID = await PostService.createPost(
+    userID,
+    content,
+    [],
+    location,
+    locationTypeID,
+    program,
+    rating,
+    threeWords
+  );
+
+  // Check no post images exist
+  let postImages = await PostImageService.getPostImages(postID);
+  expect(postImages.length).toBe(0);
+  let numImages = await PostImageService.numImages(postID);
+  expect(numImages).toBe(0);
+
+  // Check set post image
+  const len = Math.floor(Math.random() * 63) + 1;
+  const buf = crypto.randomBytes(len);
+  const imageID = await ImageService.createImage(buf);
+  await PostImageService.setPostImage(postID, imageID);
+  postImages = await PostImageService.getPostImages(postID);
+  expect(postImages.length).toBe(1);
+  expect(postImages[0].data.toString()).toBe(buf.toString());
+  numImages = await PostImageService.numImages(postID);
+  expect(numImages).toBe(1);
+
+  // Create post image
+  const len2 = Math.floor(Math.random() * 63) + 1;
+  const buf2 = crypto.randomBytes(len2);
+  const imageID2 = await PostImageService.createPostImage(postID, buf2);
+  postImages = await PostImageService.getPostImages(postID);
+  expect(postImages.length).toBe(2);
+  expect(postImages[1].id).toBe(imageID2);
+  expect(postImages[1].data.toString()).toBe(buf2.toString());
+  numImages = await PostImageService.numImages(postID);
+  expect(numImages).toBe(2);
+
+  // Create post images
+  const len3 = Math.floor(Math.random() * 63) + 1;
+  const buf3 = crypto.randomBytes(len3);
+  const len4 = Math.floor(Math.random() * 63) + 1;
+  const buf4 = crypto.randomBytes(len4);
+  const [imageID3, imageID4] = await PostImageService.createPostImages(
+    postID,
+    [buf3, buf4]
+  );
+  postImages = await PostImageService.getPostImages(postID);
+  expect(postImages.length).toBe(4);
+  expect(postImages[2].id).toBe(imageID3);
+  expect(postImages[2].data.toString()).toBe(buf3.toString());
+  expect(postImages[3].id).toBe(imageID4);
+  expect(postImages[3].data.toString()).toBe(buf4.toString());
+  numImages = await PostImageService.numImages(postID);
+  expect(numImages).toBe(4);
+
+  // Delete all post images
+  await PostImageService.deletePostImages(postID);
+  postImages = await PostImageService.getPostImages(postID);
+  expect(postImages.length).toBe(0);
+  numImages = await PostImageService.numImages(postID);
+  expect(numImages).toBe(0);
+
+  // Delete images upon post deletion
+  const len5 = Math.floor(Math.random() * 63) + 1;
+  const buf5 = crypto.randomBytes(len5);
+  const imageID5 = await PostImageService.createPostImage(postID, buf5);
+  numImages = await PostImageService.numImages(postID);
+  expect(numImages).toBe(1);
+  let imageExists = await ImageService.imageExists(imageID5);
+  expect(imageExists).toBe(true);
+  await PostService.deletePost(postID);
+  numImages = await PostImageService.numImages(postID);
+  expect(numImages).toBe(0);
+  imageExists = await ImageService.imageExists(imageID5);
+  expect(imageExists).toBe(false);
+
+  await UserService.deleteUser(userID);
 });
 
 // Test sending emails
