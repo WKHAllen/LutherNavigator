@@ -35,10 +35,10 @@ export module VerifyService {
     email: string,
     prune: boolean = true
   ): Promise<string> {
-    // Confirm that the email address exists
+    // Confirm that the email address does not exist
     const emailUnused = await UserService.uniqueEmail(email);
 
-    if (emailUnused) {
+    if (!emailUnused) {
       return null;
     }
 

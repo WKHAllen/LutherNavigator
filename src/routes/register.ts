@@ -4,9 +4,15 @@
  */
 
 import { Router } from "express";
-import { renderPage, getErrorMessage, setErrorMessage } from "./util";
+import {
+  renderPage,
+  getErrorMessage,
+  setErrorMessage,
+  getHostname,
+} from "./util";
 import wrapRoute from "../asyncCatch";
-import { UserService, UserStatusService } from "../services";
+import { UserService, UserStatusService, VerifyService } from "../services";
+import { sendFormattedEmail } from "../emailer";
 
 /**
  * The register router.
@@ -82,12 +88,28 @@ registerRouter.post(
     }
 
     // Verification
-    const userID = await UserService.createUser(
-      firstname,
-      lastname,
-      email,
-      password,
-      userStatus
-    );
+    const verifyID = await VerifyService.createVerifyRecord(email);
+
+    if (verifyID) {
+      const userID = await UserService.createUser(
+        firstname,
+        lastname,
+        email,
+        password,
+        userStatus
+      );
+
+      sendFormattedEmail(
+        email,
+        "Luther Navigator - Verify Email",
+        "verification",
+        {
+          host: getHostname(req),
+          verifyID,
+        }
+      );
+    }
+
+    res.redirect("/register/register-success");
   })
 );
