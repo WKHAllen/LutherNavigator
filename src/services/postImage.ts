@@ -60,7 +60,7 @@ export module PostImageService {
    * Create a new image and associate it with a post.
    *
    * @param postID A post's ID.
-   * @param imageData The new binary image data.
+   * @param imageData The binary data of the new image.
    * @returns The new image's ID.
    */
   export async function createPostImage(
@@ -71,6 +71,28 @@ export module PostImageService {
     await setPostImage(postID, imageID);
 
     return imageID;
+  }
+
+  /**
+   * Create new images and associate them with a post.
+   *
+   * @param postID A post's ID.
+   * @param imageData The binary data of the new images.
+   * @returns The IDs of the new images.
+   */
+  export async function createPostImages(
+    postID: string,
+    imageData: Buffer[]
+  ): Promise<string[]> {
+    let imageIDs: string[] = [];
+
+    for (const data of imageData) {
+      const imageID = await createPostImage(postID, data);
+      await setPostImage(postID, imageID);
+      imageIDs.push(imageID);
+    }
+
+    return imageIDs;
   }
 
   /**

@@ -7,6 +7,7 @@ import mainDB, { getTime, newUniqueID } from "./util";
 import { Image, ImageService } from "./image";
 import { Rating, RatingParams, RatingService } from "./rating";
 import { User, UserService } from "./user";
+import { PostImageService } from "./postImage";
 
 /**
  * Post architecture.
@@ -15,7 +16,6 @@ export interface Post {
   id: string;
   userID: string;
   content: string;
-  imageID: string;
   location: string;
   locationTypeID: number;
   program: string;
@@ -35,7 +35,7 @@ export module PostService {
    *
    * @param userID The ID of the user making the post.
    * @param content The text content of the post.
-   * @param imageData The binary data of the image associated with the post.
+   * @param imageData The binary data of the images associated with the post.
    * @param location The post's location.
    * @param locationTypeID The type ID of location.
    * @param program The program the user is in.
@@ -46,7 +46,7 @@ export module PostService {
   export async function createPost(
     userID: string,
     content: string,
-    imageData: Buffer,
+    imageData: Buffer[],
     location: string,
     locationTypeID: number,
     program: string,
@@ -54,23 +54,22 @@ export module PostService {
     threeWords: string
   ): Promise<string> {
     const postID = await newUniqueID("Post");
-    const imageID = await ImageService.createImage(imageData);
     const ratingID = await RatingService.createRating(rating);
+    await PostImageService.createPostImages(postID, imageData);
 
     const sql = `
       INSERT INTO Post (
-        id, userID, content, imageID, location, locationTypeID, program,
-        ratingID, threeWords, createTime
+        id, userID, content, location, locationTypeID, program, ratingID,
+        threeWords, createTime
       ) VALUES (
-        ?, ?, ?, ?, ?, ?, ?,
-        ?, ?, ?
+        ?, ?, ?, ?, ?, ?, ?
+        ?, ?
       );
     `;
     const params = [
       postID,
       userID,
       content,
-      imageID,
       location,
       locationTypeID,
       program,
@@ -117,7 +116,7 @@ export module PostService {
    * @param postID A post's ID.
    */
   export async function deletePost(postID: string): Promise<void> {
-    let sql = `SELECT imageID, ratingID FROM Post WHERE id = ?;`;
+    let sql = `SELECT ratingID FROM Post WHERE id = ?;`;
     let params = [postID];
     let rows: Post[] = await mainDB.execute(sql, params);
 
@@ -125,10 +124,9 @@ export module PostService {
     params = [postID];
     await mainDB.execute(sql, params);
 
-    const imageID = rows[0]?.imageID;
     const ratingID = rows[0]?.ratingID;
-    await ImageService.deleteImage(imageID);
     await RatingService.deleteRating(ratingID);
+    await PostImageService.deletePostImages(postID);
   }
 
   /**
@@ -185,7 +183,7 @@ export module PostService {
    * @param userID A user's ID.
    */
   export async function deleteUserPosts(userID: string): Promise<void> {
-    let sql = `SELECT imageID, ratingID FROM Post WHERE userID = ?;`;
+    let sql = `SELECT id, ratingID FROM Post WHERE userID = ?;`;
     let params = [userID];
     const rows: Post[] = await mainDB.execute(sql, params);
 
@@ -193,19 +191,17 @@ export module PostService {
     params = [userID];
     await mainDB.execute(sql, params);
 
-    const imageIDs = rows.map((post) => `'${post.imageID}'`);
     const ratingIDs = rows.map((post) => `'${post.ratingID}'`);
-
-    if (imageIDs.length > 0) {
-      sql = `DELETE FROM Image WHERE id IN (${imageIDs.join(", ")});`;
-      params = [];
-      await mainDB.execute(sql, params);
-    }
+    const postIDs = rows.map((post) => post.id);
 
     if (ratingIDs.length > 0) {
       sql = `DELETE FROM Rating WHERE id IN (${ratingIDs.join(", ")});`;
       params = [];
       await mainDB.execute(sql, params);
+    }
+
+    for (const postID of postIDs) {
+      await PostImageService.deletePostImages(postID);
     }
   }
 
@@ -239,47 +235,27 @@ export module PostService {
   }
 
   /**
-   * Get a post's image.
+   * Get a post's images.
    *
    * @param postID A post's ID.
-   * @returns The image associated with the post.
+   * @returns The images associated with the post.
    */
-  export async function getPostImage(postID: string): Promise<Image> {
-    const sql = `SELECT imageID from Post WHERE id = ?;`;
-    const params = [postID];
-    const rows: Post[] = await mainDB.execute(sql, params);
-
-    const imageID = rows[0]?.imageID;
-    const image = await ImageService.getImage(imageID);
-
-    return image;
+  export async function getPostImage(postID: string): Promise<Image[]> {
+    return await PostImageService.getPostImages(postID);
   }
 
   /**
-   * Set a post's image.
+   * Set a post's images.
    *
    * @param postID A post's ID.
-   * @param imageData The new binary image data.
-   * @returns The new image's ID.
+   * @param imageData The binary data of the new images.
+   * @returns The IDs of the new images.
    */
   export async function setPostImage(
     postID: string,
-    imageData: Buffer
-  ): Promise<string> {
-    let sql = `SELECT imageID from Post WHERE id = ?;`;
-    let params = [postID];
-    const rows: Post[] = await mainDB.execute(sql, params);
-
-    const newImageID = await ImageService.createImage(imageData);
-
-    sql = `UPDATE Post SET imageID = ? WHERE id = ?`;
-    params = [newImageID, postID];
-    await mainDB.execute(sql, params);
-
-    const imageID = rows[0]?.imageID;
-    await ImageService.deleteImage(imageID);
-
-    return newImageID;
+    imageData: Buffer[]
+  ): Promise<string[]> {
+    return await PostImageService.createPostImages(postID, imageData);
   }
 
   /**
