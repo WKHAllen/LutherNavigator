@@ -703,6 +703,12 @@ test("Verify", async () => {
   const password = "password123";
   const statusID = 1; // Student
 
+  // Create verification record
+  const verifyID = await VerifyService.createVerifyRecord(email, false);
+  expect(verifyID).not.toBe(null);
+  expect(verifyID.length).toBe(16);
+
+  // Create user record
   const userID = await UserService.createUser(
     firstname,
     lastname,
@@ -711,17 +717,17 @@ test("Verify", async () => {
     statusID
   );
 
-  // Create verification record
-  const verifyID = await VerifyService.createVerifyRecord(email, false);
-  expect(verifyID).not.toBe(null);
-  expect(verifyID.length).toBe(16);
-
-  // Attempt verification with invalid email
-  const verifyID2 = await VerifyService.createVerifyRecord(
-    "fake_email",
-    false
+  // Attempt verification with email that already exists
+  const userID2 = await UserService.createUser(
+    firstname,
+    lastname,
+    "email",
+    password,
+    statusID
   );
+  const verifyID2 = await VerifyService.createVerifyRecord("email", false);
   expect(verifyID2).toBeNull();
+  await UserService.deleteUser(userID2);
 
   // Attempt verification with the same email
   const verifyID3 = await VerifyService.createVerifyRecord(email, false);
@@ -745,21 +751,29 @@ test("Verify", async () => {
   // Attempt to verify with invalid ID
   let success = await VerifyService.verifyUser(verifyID3);
   expect(success).toBe(false);
+  await UserService.deleteUser(userID);
 
   // Verify user
-  let verified = (await UserService.getUser(userID)).verified;
-  expect(verified).toBeFalsy();
   const verifyID4 = await VerifyService.createVerifyRecord(email, false);
+  const userID3 = await UserService.createUser(
+    firstname,
+    lastname,
+    email,
+    password,
+    statusID
+  );
+  let verified = (await UserService.getUser(userID3)).verified;
+  expect(verified).toBeFalsy();
   success = await VerifyService.verifyUser(verifyID4);
   expect(success).toBe(true);
-  verified = (await UserService.getUser(userID)).verified;
+  verified = (await UserService.getUser(userID3)).verified;
   expect(verified).toBeTruthy();
 
   // Check record has been removed
   recordExists = await VerifyService.verifyRecordExists(verifyID4);
   expect(recordExists).toBe(false);
 
-  await UserService.deleteUser(userID);
+  await UserService.deleteUser(userID3);
 });
 
 // Test sending emails
