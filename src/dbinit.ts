@@ -150,6 +150,18 @@ export default async function initDB(prune: boolean = true): Promise<void> {
         REFERENCES Rating (id)
     );
   `;
+  const postImageTable = `
+    CREATE TABLE IF NOT EXISTS PostImage (
+      postID  CHAR(4) NOT NULL,
+      imageID CHAR(4) NOT NULL,
+
+      FOREIGN KEY (postID)
+        REFERENCES Post (id),
+
+      FOREIGN KEY (imageID)
+        REFERENCES Image (id)
+    );
+  `;
   const sessionTable = `
     CREATE TABLE IF NOT EXISTS Session (
       id         CHAR(16)     NOT NULL,
@@ -196,6 +208,7 @@ export default async function initDB(prune: boolean = true): Promise<void> {
     ratingTable,
     userTable,
     postTable,
+    postImageTable,
     sessionTable,
     verifyTable,
     passwordResetTable,

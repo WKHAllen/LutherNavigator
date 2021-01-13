@@ -260,11 +260,12 @@ export module PostService {
    *
    * @param postID A post's ID.
    * @param imageData The new binary image data.
+   * @returns The new image's ID.
    */
   export async function setPostImage(
     postID: string,
     imageData: Buffer
-  ): Promise<void> {
+  ): Promise<string> {
     let sql = `SELECT imageID from Post WHERE id = ?;`;
     let params = [postID];
     const rows: Post[] = await mainDB.execute(sql, params);
@@ -277,6 +278,8 @@ export module PostService {
 
     const imageID = rows[0]?.imageID;
     await ImageService.deleteImage(imageID);
+
+    return newImageID;
   }
 
   /**
