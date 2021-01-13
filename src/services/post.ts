@@ -62,7 +62,7 @@ export module PostService {
         id, userID, content, location, locationTypeID, program, ratingID,
         threeWords, createTime
       ) VALUES (
-        ?, ?, ?, ?, ?, ?, ?
+        ?, ?, ?, ?, ?, ?, ?,
         ?, ?
       );
     `;
@@ -120,13 +120,14 @@ export module PostService {
     let params = [postID];
     let rows: Post[] = await mainDB.execute(sql, params);
 
+    await PostImageService.deletePostImages(postID);
+
     sql = `DELETE FROM Post WHERE id = ?;`;
     params = [postID];
     await mainDB.execute(sql, params);
 
     const ratingID = rows[0]?.ratingID;
     await RatingService.deleteRating(ratingID);
-    await PostImageService.deletePostImages(postID);
   }
 
   /**
@@ -187,21 +188,22 @@ export module PostService {
     let params = [userID];
     const rows: Post[] = await mainDB.execute(sql, params);
 
+    const postIDs = rows.map((post) => post.id);
+
+    for (const postID of postIDs) {
+      await PostImageService.deletePostImages(postID);
+    }
+
     sql = `DELETE FROM Post WHERE userID = ?;`;
     params = [userID];
     await mainDB.execute(sql, params);
 
     const ratingIDs = rows.map((post) => `'${post.ratingID}'`);
-    const postIDs = rows.map((post) => post.id);
 
     if (ratingIDs.length > 0) {
       sql = `DELETE FROM Rating WHERE id IN (${ratingIDs.join(", ")});`;
       params = [];
       await mainDB.execute(sql, params);
-    }
-
-    for (const postID of postIDs) {
-      await PostImageService.deletePostImages(postID);
     }
   }
 

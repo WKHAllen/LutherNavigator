@@ -148,8 +148,11 @@ export default async function initDB(prune: boolean = true): Promise<void> {
   `;
   const postImageTable = `
     CREATE TABLE IF NOT EXISTS PostImage (
-      postID  CHAR(4) NOT NULL,
-      imageID CHAR(4) NOT NULL,
+      id      INT UNSIGNED NOT NULL AUTO_INCREMENT,
+      postID  CHAR(4)      NOT NULL,
+      imageID CHAR(4)      NOT NULL,
+
+      PRIMARY KEY (id),
 
       FOREIGN KEY (postID)
         REFERENCES Post (id),

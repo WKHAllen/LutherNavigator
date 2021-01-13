@@ -26,9 +26,14 @@ export module PostImageService {
    */
   export async function getPostImages(postID: string): Promise<Image[]> {
     const sql = `
-      SELECT * FROM Image WHERE id IN (
-        SELECT imageID FROM PostImage WHERE postID = ?
-      ) ORDER BY registerTime;`;
+      SELECT Image.id AS id, data, registerTime
+      FROM Image
+      JOIN (
+        SELECT * FROM PostImage WHERE postID = ?
+      ) AS PostImageRecords
+      ON Image.id = PostImageRecords.imageID
+      ORDER BY PostImageRecords.id;
+    `;
     const params = [postID];
     const rows: Image[] = await mainDB.execute(sql, params);
 
@@ -88,7 +93,6 @@ export module PostImageService {
 
     for (const data of imageData) {
       const imageID = await createPostImage(postID, data);
-      await setPostImage(postID, imageID);
       imageIDs.push(imageID);
     }
 
@@ -125,7 +129,7 @@ export module PostImageService {
     params = [postID];
     await mainDB.execute(sql, params);
 
-    sql = `DELETE FROM Image WHERE id IN ?;`;
+    sql = `DELETE FROM Image WHERE id IN (?);`;
     params = [imageIDs];
     await mainDB.execute(sql, params);
   }
