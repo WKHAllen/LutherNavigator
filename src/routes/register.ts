@@ -121,3 +121,16 @@ registerRouter.get(
     await renderPage(req, res, "registerSuccess");
   })
 );
+
+// Verify an account
+registerRouter.get(
+  "/verify/:verifyID",
+  wrapRoute(async (req, res) => {
+    const verifyID = req.params.verifyID;
+    const success = await VerifyService.verifyUser(verifyID);
+
+    await renderPage(req, res, "registerVerify", {
+      valid: success,
+    });
+  })
+);

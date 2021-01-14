@@ -1,0 +1,21 @@
+<div class="sm-width div-center">
+  <div class="clear-card">
+    <div class="col">
+      <h1 class="center">Account Verification</h1>
+    </div>
+    <div class="col">
+      {{#if valid}}
+      <p>
+        Success! Your account has been verified! You can now
+        <a href="/login">log in</a> and begin posting.
+      </p>
+      {{else}}
+      <p>
+        Invalid verification code. This is likely because the link expired.
+        Please <a href="/register">register again</a>, bearing in mind you have
+        one hour before the link in the email expires.
+      </p>
+      {{/if}}
+    </div>
+  </div>
+</div>
