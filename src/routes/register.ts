@@ -113,3 +113,11 @@ registerRouter.post(
     res.redirect("/register/register-success");
   })
 );
+
+// Registration success
+registerRouter.get(
+  "/register-success",
+  wrapRoute(async (req, res) => {
+    await renderPage(req, res, "registerSuccess");
+  })
+);
