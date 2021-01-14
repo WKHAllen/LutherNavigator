@@ -251,6 +251,7 @@ test("User", async () => {
   expect(same).toBe(true);
 
   // Log user in
+  await UserService.setVerified(userID);
   let success = await UserService.login(email, password);
   expect(success).toBe(true);
 
@@ -293,6 +294,7 @@ test("User", async () => {
   expect(userImage).toBe(undefined);
 
   // Check if user is verified
+  await UserService.setVerified(userID, false);
   let verified = await UserService.isVerified(userID);
   expect(verified).toBe(false);
 
@@ -358,6 +360,7 @@ test("Session", async () => {
     password,
     statusID
   );
+  await UserService.setVerified(userID);
 
   // Create session
   const sessionID = await SessionService.createSession(userID, false);
@@ -441,6 +444,7 @@ test("Post", async () => {
     password,
     statusID
   );
+  await UserService.setVerified(userID);
 
   const content = "Hello, post!";
   const location = "Mabe's Pizza";
@@ -632,6 +636,7 @@ test("PasswordReset", async () => {
     password,
     statusID
   );
+  await UserService.setVerified(userID);
 
   // Request password reset
   const resetID = await PasswordResetService.requestPasswordReset(
@@ -654,6 +659,15 @@ test("PasswordReset", async () => {
     false
   );
   expect(resetID3).toBeNull();
+
+  // Attempt request with unverified account
+  await UserService.setVerified(userID, false);
+  const resetID4 = await PasswordResetService.requestPasswordReset(
+    email,
+    false
+  );
+  expect(resetID4).toBeNull();
+  await UserService.setVerified(userID);
 
   // Check reset record exists
   let recordExists = await PasswordResetService.resetRecordExists(resetID);
@@ -679,11 +693,11 @@ test("PasswordReset", async () => {
 
   // Reset password
   const newPassword = "new password";
-  const resetID4 = await PasswordResetService.requestPasswordReset(
+  const resetID5 = await PasswordResetService.requestPasswordReset(
     email,
     false
   );
-  success = await PasswordResetService.resetPassword(resetID4, newPassword);
+  success = await PasswordResetService.resetPassword(resetID5, newPassword);
   expect(success).toBe(true);
   const newHashedPassword = (await UserService.getUser(userID)).password;
   const match = await checkPassword(newPassword, newHashedPassword);
@@ -791,6 +805,7 @@ test("PostImage", async () => {
     password,
     statusID
   );
+  await UserService.setVerified(userID);
 
   const content = "Hello, post!";
   const location = "Mabe's Pizza";
