@@ -66,7 +66,7 @@ imageRouter.get(
   "/post/:postID/:id",
   wrapRoute(async (req, res, next) => {
     const postID = req.params.postID;
-    const id = parseInt(req.params.id) - 1;
+    const id = parseInt(req.params.id);
 
     const postExists = await PostService.postExists(postID);
 
