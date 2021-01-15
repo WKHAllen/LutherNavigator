@@ -49,7 +49,10 @@
             name="locationType"
             required
           >
-            <!-- TODO: populate options -->
+            <option value="">Select...</option>
+            {{#each locationTypes}}
+            <option value="{{this.id}}">{{this.name}}</option>
+            {{/each}}
           </select>
         </div>
       </div>
