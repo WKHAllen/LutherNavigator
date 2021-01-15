@@ -4,7 +4,7 @@
  */
 
 import { Router } from "express";
-import { renderPage } from "./util";
+import { auth, renderPage } from "./util";
 import wrapRoute from "../asyncCatch";
 import { PostService, UserStatusService } from "../services";
 
@@ -16,8 +16,18 @@ export const postRouter = Router();
 // Create post page
 postRouter.get(
   "/",
+  auth,
   wrapRoute(async (req, res) => {
     await renderPage(req, res, "createPost");
+  })
+);
+
+// Create post event
+postRouter.post(
+  "/",
+  auth,
+  wrapRoute(async (req, res) => {
+    // TODO: create post
   })
 );
 
