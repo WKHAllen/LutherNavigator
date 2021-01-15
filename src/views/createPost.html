@@ -1,7 +1,9 @@
 <link rel="stylesheet" type="text/css" href="/css/createPost.css" />
+<script type="text/javascript" src="/js/createPost.js"></script>
+
 <div class="xl-width div-center">
   <div class="clear-card">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
       <div class="col">
         <h1 class="center">New Post</h1>
 
@@ -116,8 +118,23 @@
       </div>
 
       <!-- Images -->
-      <!-- TODO: add image inputs -->
-      <div class="row align-items-center"></div>
+      <div class="row align-items-center">
+        <div class="col-12 mb-4 form-group">
+          <label for="imageDiv">Images (up to 20) *</label>
+          <div class="custom-file" id="imageDiv">
+            <input
+              type="file"
+              class="custom-file-input clear-input"
+              id="images"
+              name="images"
+              accept=".jpg, .jpeg, .png"
+              multiple
+              required
+            />
+            <label class="custom-file-label" for="images">Choose files</label>
+          </div>
+        </div>
+      </div>
 
       <!-- Post button -->
       <div class="col">
