@@ -13,6 +13,14 @@ import { PostService, UserStatusService } from "../services";
  */
 export const postRouter = Router();
 
+// Create post page
+postRouter.get(
+  "/",
+  wrapRoute(async (req, res) => {
+    await renderPage(req, res, "createPost");
+  })
+);
+
 // Post page
 postRouter.get(
   "/:postID",

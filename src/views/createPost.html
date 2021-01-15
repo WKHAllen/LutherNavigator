@@ -1,0 +1,117 @@
+<div class="std-width">
+  <div class="clear-card">
+    <form method="POST">
+      <div class="col">
+        <h1 class="center">New Post</h1>
+
+        {{#if error}}
+        <div class="alert alert-danger" role="alert">{{error}}</div>
+        {{/if}}
+
+        <p class="text-h3">
+          Fill out the form below to create a post. Your post will be made
+          public once a site administrator has reviewed it.
+        </p>
+      </div>
+
+      <div class="row align-items-center mt-4">
+        <!-- Program -->
+        <div class="col-12 col-sm-4 mb-3 form-group">
+          <label for="program">Program</label>
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="program"
+            name="program"
+            maxlength="255"
+            required
+          />
+        </div>
+        <!-- Location name -->
+        <div class="col-6 col-sm-4 mb-3 form-group">
+          <label for="location">Location</label>
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="location"
+            name="program"
+            maxlength="255"
+            required
+          />
+        </div>
+        <!-- Location type -->
+        <div class="col-6 col-sm-4 mb-3 form-group">
+          <label for="locationType">Location type</label>
+          <select
+            class="form-control clear-select"
+            id="locationType"
+            name="locationType"
+            required
+          >
+            <!-- TODO: populate options -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Rating -->
+      <!-- TODO: add rating -->
+      <div class="row align-items-center"></div>
+
+      <!-- Post content -->
+      <div class="row align-items-center">
+        <div class="col-12 mb-3 form-group">
+          <label for="content">Description</label>
+          <textarea
+            class="form-control clear-input"
+            id="content"
+            name="content"
+            maxlength="750"
+            rows="4"
+            required
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Three words -->
+      <div class="row align-items-center">
+        <label for="threeWords">Three word description</label>
+        <div id="threeWords">
+          <div class="col-4 mb-3 form-group">
+            <input
+              type="text"
+              class="form-control clear-input"
+              id="wordOne"
+              name="wordOne"
+              maxlength="19"
+              required
+            />
+          </div>
+          <div class="col-4 mb-3 form-group">
+            <input
+              type="text"
+              class="form-control clear-input"
+              id="wordTwo"
+              name="wordTwo"
+              maxlength="19"
+              required
+            />
+          </div>
+          <div class="col-4 mb-3 form-group">
+            <input
+              type="text"
+              class="form-control clear-input"
+              id="wordThree"
+              name="wordThree"
+              maxlength="19"
+              required
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Images -->
+      <!-- TODO: add image inputs -->
+      <div class="row align-items-center"></div>
+    </form>
+  </div>
+</div>
