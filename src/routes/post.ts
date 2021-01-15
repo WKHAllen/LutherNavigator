@@ -4,14 +4,41 @@
  */
 
 import { Router } from "express";
-import { renderPage } from "./util";
+import { auth, renderPage } from "./util";
 import wrapRoute from "../asyncCatch";
-import { PostService, UserStatusService } from "../services";
+import {
+  PostService,
+  UserStatusService,
+  LocationTypeService,
+} from "../services";
 
 /**
  * The post router.
  */
 export const postRouter = Router();
+
+// Create post page
+postRouter.get(
+  "/",
+  auth,
+  wrapRoute(async (req, res) => {
+    const locationTypes = await LocationTypeService.getLocations();
+
+    await renderPage(req, res, "createPost", {
+      title: "New post",
+      locationTypes,
+    });
+  })
+);
+
+// Create post event
+postRouter.post(
+  "/",
+  auth,
+  wrapRoute(async (req, res) => {
+    // TODO: create post
+  })
+);
 
 // Post page
 postRouter.get(

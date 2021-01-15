@@ -1,0 +1,145 @@
+<link rel="stylesheet" type="text/css" href="/css/createPost.css" />
+<script type="text/javascript" src="/js/createPost.js"></script>
+
+<div class="xl-width div-center">
+  <div class="clear-card">
+    <form method="POST" enctype="multipart/form-data">
+      <div class="col">
+        <h1 class="center">New Post</h1>
+
+        {{#if error}}
+        <div class="alert alert-danger" role="alert">{{error}}</div>
+        {{/if}}
+
+        <p class="text-h3">
+          Fill out the form below to create a post. Your post will be made
+          public once a site administrator has reviewed it.
+        </p>
+
+        <small>* = required</small>
+      </div>
+
+      <div class="row align-items-center mt-4">
+        <!-- Program -->
+        <div class="col-12 col-sm-4 mb-3 form-group">
+          <label for="program">Program *</label>
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="program"
+            name="program"
+            maxlength="255"
+            required
+          />
+        </div>
+        <!-- Location name -->
+        <div class="col-6 col-sm-4 mb-3 form-group">
+          <label for="location">Location *</label>
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="location"
+            name="program"
+            maxlength="255"
+            required
+          />
+        </div>
+        <!-- Location type -->
+        <div class="col-6 col-sm-4 mb-3 form-group">
+          <label for="locationType">Location type *</label>
+          <select
+            class="form-control clear-select"
+            id="locationType"
+            name="locationType"
+            required
+          >
+            <option value="">Select...</option>
+            {{#each locationTypes}}
+            <option value="{{this.id}}">{{this.name}}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+
+      <!-- Rating -->
+      <!-- TODO: add rating -->
+      <div class="row align-items-center"></div>
+
+      <!-- Post content -->
+      <div class="row align-items-center">
+        <div class="col-12 mb-3 form-group">
+          <label for="postContent">Description *</label>
+          <textarea
+            class="form-control clear-input"
+            id="postContent"
+            name="postContent"
+            maxlength="750"
+            rows="4"
+            required
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Three words -->
+      <div class="col">
+        <label>Three word description *</label>
+      </div>
+      <div class="row align-items-center">
+        <div class="col-4 mb-3 form-group">
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="wordOne"
+            name="wordOne"
+            maxlength="19"
+            required
+          />
+        </div>
+        <div class="col-4 mb-3 form-group">
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="wordTwo"
+            name="wordTwo"
+            maxlength="19"
+            required
+          />
+        </div>
+        <div class="col-4 mb-3 form-group">
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="wordThree"
+            name="wordThree"
+            maxlength="19"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Images -->
+      <div class="row align-items-center">
+        <div class="col-12 mb-4 form-group">
+          <label for="imageDiv">Images (up to 20) *</label>
+          <div class="custom-file" id="imageDiv">
+            <input
+              type="file"
+              class="custom-file-input clear-input"
+              id="images"
+              name="images"
+              accept=".jpg, .jpeg, .png"
+              multiple
+              required
+            />
+            <label class="custom-file-label" for="images">Choose files</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post button -->
+      <div class="col">
+        <button type="submit" class="btn clear-button mb-3">Post</button>
+      </div>
+    </form>
+  </div>
+</div>
