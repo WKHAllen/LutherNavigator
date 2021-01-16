@@ -23,26 +23,16 @@
         <!-- Program -->
         <div class="col-12 col-sm-4 mb-3 form-group">
           <label for="program">Program *</label>
-          <input
-            type="text"
-            class="form-control clear-input"
-            id="program"
-            name="program"
-            maxlength="255"
-            required
-          />
+          <input type="text" class="form-control clear-input" id="program"
+          name="program" maxlength="255" {{#if form}} value="{{form.program}}"
+          {{/if}} required />
         </div>
         <!-- Location name -->
         <div class="col-6 col-sm-4 mb-3 form-group">
           <label for="location">Location *</label>
-          <input
-            type="text"
-            class="form-control clear-input"
-            id="location"
-            name="program"
-            maxlength="255"
-            required
-          />
+          <input type="text" class="form-control clear-input" id="location"
+          name="location" maxlength="255" {{#if form}}
+          value="{{form.location}}" {{/if}} required />
         </div>
         <!-- Location type -->
         <div class="col-6 col-sm-4 mb-3 form-group">
@@ -58,6 +48,12 @@
             <option value="{{this.id}}">{{this.name}}</option>
             {{/each}}
           </select>
+          {{#if form}}
+          <script type="text/javascript">
+            document.getElementById("locationType").value =
+              "{{form.locationType}}";
+          </script>
+          {{/if}}
         </div>
       </div>
 
@@ -76,7 +72,9 @@
             maxlength="750"
             rows="4"
             required
-          ></textarea>
+          >
+{{#if form}}{{form.postContent}}{{/if}}</textarea
+          >
         </div>
       </div>
 
@@ -86,34 +84,19 @@
       </div>
       <div class="row align-items-center">
         <div class="col-4 mb-3 form-group">
-          <input
-            type="text"
-            class="form-control clear-input"
-            id="wordOne"
-            name="wordOne"
-            maxlength="19"
-            required
-          />
+          <input type="text" class="form-control clear-input" id="wordOne"
+          name="wordOne" maxlength="19" {{#if form}} value="{{form.wordOne}}"
+          {{/if}} required />
         </div>
         <div class="col-4 mb-3 form-group">
-          <input
-            type="text"
-            class="form-control clear-input"
-            id="wordTwo"
-            name="wordTwo"
-            maxlength="19"
-            required
-          />
+          <input type="text" class="form-control clear-input" id="wordTwo"
+          name="wordTwo" maxlength="19" {{#if form}} value="{{form.wordTwo}}"
+          {{/if}} required />
         </div>
         <div class="col-4 mb-3 form-group">
-          <input
-            type="text"
-            class="form-control clear-input"
-            id="wordThree"
-            name="wordThree"
-            maxlength="19"
-            required
-          />
+          <input type="text" class="form-control clear-input" id="wordThree"
+          name="wordThree" maxlength="19" {{#if form}}
+          value="{{form.wordThree}}" {{/if}} required />
         </div>
       </div>
 

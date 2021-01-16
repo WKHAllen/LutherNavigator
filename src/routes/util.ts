@@ -19,18 +19,19 @@ const debug = !!parseInt(process.env.DEBUG);
 export const errorMessageAge = 60 * 1000; // one minute
 
 /**
+ * Form maximum age.
+ */
+export const formAge = 60 * 1000; // one minute
+
+/**
  * Maximum size an image can be (in bytes).
  */
 export const maxImageSize = 262144;
 
 /**
- * Multer disk storage.
+ * Multer memory storage.
  */
-const storage = multer.diskStorage({
-  filename: (req, file, callback) => {
-    callback(null, Date.now() + file.originalname);
-  },
-});
+const storage = multer.memoryStorage();
 
 /**
  * Multer uploader.
@@ -233,6 +234,7 @@ export function deleteSessionID(res: Response): void {
  * Get the error message cookie.
  *
  * @param req Request object.
+ * @param res Response object.
  * @returns The error message or a null value.
  */
 export function getErrorMessage(req: Request, res: Response): string | null {
@@ -250,6 +252,38 @@ export function getErrorMessage(req: Request, res: Response): string | null {
 export function setErrorMessage(res: Response, message: string): void {
   res.cookie("errorMessage", message, {
     maxAge: errorMessageAge,
+    httpOnly: true,
+  });
+}
+
+/**
+ * Get the form cookie.
+ *
+ * @param req Request object.
+ * @param res Response object.
+ * @returns The form object or a null value.
+ */
+export function getForm(req: Request, res: Response): any | null {
+  let form: any | null = null;
+
+  try {
+    form = JSON.parse(req.cookies.form) || null;
+  } catch (err) {}
+
+  res.clearCookie("form");
+  return form;
+}
+
+/**
+ * Set the form cookie.
+ *
+ * @param res Response object.
+ * @param value Form object.
+ */
+export function setForm(res: Response, value: any): void {
+  const jsonValue = JSON.stringify(value);
+  res.cookie("form", jsonValue, {
+    maxAge: formAge,
     httpOnly: true,
   });
 }
