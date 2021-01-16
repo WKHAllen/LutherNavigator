@@ -4,7 +4,6 @@
  */
 
 import { Router } from "express";
-import * as fs from "fs";
 import {
   renderPage,
   auth,

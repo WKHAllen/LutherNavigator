@@ -8,9 +8,12 @@ import {
   auth,
   upload,
   getUserID,
+  maxImageSize,
   renderPage,
   getErrorMessage,
   setErrorMessage,
+  getForm,
+  setForm,
 } from "./util";
 import wrapRoute from "../asyncCatch";
 import {
@@ -31,11 +34,13 @@ postRouter.get(
   auth,
   wrapRoute(async (req, res) => {
     const error = getErrorMessage(req, res);
+    const form = getForm(req, res);
     const locationTypes = await LocationTypeService.getLocations();
 
     await renderPage(req, res, "createPost", {
       title: "New post",
       error,
+      form,
       locationTypes,
     });
   })
@@ -47,6 +52,7 @@ postRouter.post(
   auth,
   upload.array("images", 20),
   wrapRoute(async (req, res) => {
+    const mimetypes = ["image/png", "image/jpg", "image/jpeg"];
     const userID = await getUserID(req);
 
     const content: string = req.body.postContent;
@@ -64,12 +70,23 @@ postRouter.post(
       locationTypeID
     );
     const imageData = files.map((file) => file.buffer);
+    const imageTypesGood = files.map((file) =>
+      mimetypes.includes(file.mimetype)
+    );
+    const imageSizesGood = files.map((file) => file.size < maxImageSize);
 
     // Validation
     if (content.length <= 0 || content.length > 750) {
       setErrorMessage(res, "Post content must be no more than 750 characters");
     } else if (imageData.length <= 0 || imageData.length > 20) {
       setErrorMessage(res, "Please upload between 1 and 20 images");
+    } else if (imageTypesGood.includes(false)) {
+      setErrorMessage(res, "All images must be in PNG, JPG, or JPEG format");
+    } else if (imageSizesGood.includes(false)) {
+      setErrorMessage(
+        res,
+        `All images must be less than ${Math.floor(maxImageSize / 1024)} KB`
+      );
     } else if (location.length <= 0 || location.length > 255) {
       setErrorMessage(res, "Location name must be less than 256 characters");
     } else if (!validLocationTypeID) {
@@ -103,6 +120,7 @@ postRouter.post(
       return;
     }
 
+    setForm(res, req.body);
     res.redirect("/post");
   })
 );
