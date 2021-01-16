@@ -18,6 +18,7 @@ import {
 import wrapRoute from "../asyncCatch";
 import {
   PostService,
+  UserService,
   UserStatusService,
   LocationTypeService,
   RatingParams,
@@ -131,24 +132,23 @@ postRouter.get(
   wrapRoute(async (req, res, next) => {
     const postID = req.params.postID;
     const userID = await getUserID(req);
-    const error = getErrorMessage(req, res);
+    const user = await UserService.getUser(userID);
+    let error: string = null;
 
     const post = await PostService.getPost(postID);
     if (!post) {
       next(); // 404
     }
 
-    const user = await PostService.getPostUser(postID);
+    const postUser = await PostService.getPostUser(postID);
     if (!post.approved) {
-      if (!user.admin && user.id !== userID) {
+      if (user.admin || postUser.id === userID) {
+        // The user is an admin or the creator of the post
+        error =
+          "This post has not yet been approved, and is not publicly available";
+      } else {
         next(); // 404
         return;
-      } else {
-        // The user is an admin or the creator of the post
-        setErrorMessage(
-          res,
-          "This post has not yet been approved, and is not publicly available"
-        );
       }
     }
 
