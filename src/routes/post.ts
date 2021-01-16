@@ -128,11 +128,30 @@ postRouter.post(
 // Post page
 postRouter.get(
   "/:postID",
-  wrapRoute(async (req, res) => {
+  wrapRoute(async (req, res, next) => {
     const postID = req.params.postID;
+    const userID = await getUserID(req);
+    const error = getErrorMessage(req, res);
 
     const post = await PostService.getPost(postID);
+    if (!post) {
+      next(); // 404
+    }
+
     const user = await PostService.getPostUser(postID);
+    if (!post.approved) {
+      if (!user.admin && user.id !== userID) {
+        next(); // 404
+        return;
+      } else {
+        // The user is an admin or the creator of the post
+        setErrorMessage(
+          res,
+          "This post has not yet been approved, and is not publicly available"
+        );
+      }
+    }
+
     const userStatusName = await UserStatusService.getStatusName(
       user.statusID
     );
@@ -140,6 +159,7 @@ postRouter.get(
 
     await renderPage(req, res, "post", {
       title: post.location,
+      error,
       postID,
       location: post.location,
       firstname: user.firstname,
