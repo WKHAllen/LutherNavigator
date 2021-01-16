@@ -24,13 +24,9 @@ export const errorMessageAge = 60 * 1000; // one minute
 export const maxImageSize = 262144;
 
 /**
- * Multer disk storage.
+ * Multer memory storage.
  */
-const storage = multer.diskStorage({
-  filename: (req, file, callback) => {
-    callback(null, Date.now() + file.originalname);
-  },
-});
+const storage = multer.memoryStorage();
 
 /**
  * Multer uploader.
