@@ -42,6 +42,14 @@ export module PasswordResetService {
       return null;
     }
 
+    // Confirm account is verified
+    const user = await UserService.getUserByEmail(email);
+    const verified = await UserService.isVerified(user.id);
+
+    if (!verified) {
+      return null;
+    }
+
     // Check that no password reset has already been requested
     let sql = `SELECT id FROM PasswordReset WHERE email = ?;`;
     let params: any[] = [email];

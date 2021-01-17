@@ -14,6 +14,8 @@ import { SessionService } from "../src/services/session";
 import { PostService } from "../src/services/post";
 import { MetaService } from "../src/services/meta";
 import { PasswordResetService } from "../src/services/passwordReset";
+import { VerifyService } from "../src/services/verify";
+import { PostImageService } from "../src/services/postImage";
 import { sendEmail } from "../src/emailer";
 
 async function wait(ms: number): Promise<void> {
@@ -249,6 +251,7 @@ test("User", async () => {
   expect(same).toBe(true);
 
   // Log user in
+  await UserService.setVerified(userID);
   let success = await UserService.login(email, password);
   expect(success).toBe(true);
 
@@ -291,6 +294,7 @@ test("User", async () => {
   expect(userImage).toBe(undefined);
 
   // Check if user is verified
+  await UserService.setVerified(userID, false);
   let verified = await UserService.isVerified(userID);
   expect(verified).toBe(false);
 
@@ -356,6 +360,7 @@ test("Session", async () => {
     password,
     statusID
   );
+  await UserService.setVerified(userID);
 
   // Create session
   const sessionID = await SessionService.createSession(userID, false);
@@ -439,6 +444,7 @@ test("Post", async () => {
     password,
     statusID
   );
+  await UserService.setVerified(userID);
 
   const content = "Hello, post!";
   const location = "Mabe's Pizza";
@@ -459,7 +465,7 @@ test("Post", async () => {
   const postID = await PostService.createPost(
     userID,
     content,
-    buf,
+    [buf],
     location,
     locationTypeID,
     program,
@@ -504,16 +510,18 @@ test("Post", async () => {
   const newPostContent = await PostService.getPostContent(postID);
   expect(newPostContent).toBe(newContent);
 
-  // Get post image
-  const postImage = await PostService.getPostImage(postID);
-  expect(postImage.data.toString()).toBe(buf.toString());
+  // Get post images
+  const postImages = await PostService.getPostImages(postID);
+  expect(postImages.length).toBe(1);
+  expect(postImages[0].data.toString()).toBe(buf.toString());
 
   // Set post image
   const newLen = Math.floor(Math.random() * 63) + 1;
   const newBuf = crypto.randomBytes(newLen);
-  await PostService.setPostImage(postID, newBuf);
-  const newPostImage = await PostService.getPostImage(postID);
-  expect(newPostImage.data.toString()).toBe(newBuf.toString());
+  await PostService.setPostImages(postID, [newBuf]);
+  const newPostImages = await PostService.getPostImages(postID);
+  expect(newPostImages.length).toBe(2);
+  expect(newPostImages[1].data.toString()).toBe(newBuf.toString());
 
   // Check approved
   let approved = await PostService.isApproved(postID);
@@ -528,7 +536,7 @@ test("Post", async () => {
   const postID2 = await PostService.createPost(
     userID,
     content,
-    buf,
+    [buf],
     location,
     locationTypeID,
     program,
@@ -554,7 +562,7 @@ test("Post", async () => {
   const postID3 = await PostService.createPost(
     userID,
     content,
-    buf,
+    [buf],
     location,
     locationTypeID,
     program,
@@ -599,10 +607,8 @@ test("Meta", async () => {
   // Get all
   await MetaService.set(key2, value2);
   const values = await MetaService.getAll();
-  expect(values).toMatchObject([
-    { name: key2, value: value2 },
-    { name: key1, value: value1_2 },
-  ]);
+  expect(values).toContainEqual({ name: key2, value: value2 });
+  expect(values).toContainEqual({ name: key1, value: value1_2 });
 
   // Remove
   await MetaService.remove(key1);
@@ -630,6 +636,7 @@ test("PasswordReset", async () => {
     password,
     statusID
   );
+  await UserService.setVerified(userID);
 
   // Request password reset
   const resetID = await PasswordResetService.requestPasswordReset(
@@ -652,6 +659,15 @@ test("PasswordReset", async () => {
     false
   );
   expect(resetID3).toBeNull();
+
+  // Attempt request with unverified account
+  await UserService.setVerified(userID, false);
+  const resetID4 = await PasswordResetService.requestPasswordReset(
+    email,
+    false
+  );
+  expect(resetID4).toBeNull();
+  await UserService.setVerified(userID);
 
   // Check reset record exists
   let recordExists = await PasswordResetService.resetRecordExists(resetID);
@@ -677,20 +693,210 @@ test("PasswordReset", async () => {
 
   // Reset password
   const newPassword = "new password";
-  const resetID4 = await PasswordResetService.requestPasswordReset(
+  const resetID5 = await PasswordResetService.requestPasswordReset(
     email,
     false
   );
-  const hashedPassword = (await UserService.getUser(userID)).password;
-  success = await PasswordResetService.resetPassword(resetID4, newPassword);
+  success = await PasswordResetService.resetPassword(resetID5, newPassword);
   expect(success).toBe(true);
-  const hashedPassword2 = (await UserService.getUser(userID)).password;
-  expect(hashedPassword).not.toBe(hashedPassword2);
-  await checkPassword(newPassword, hashedPassword2);
+  const newHashedPassword = (await UserService.getUser(userID)).password;
+  const match = await checkPassword(newPassword, newHashedPassword);
+  expect(match).toBe(true);
 
   // Check record has been removed
-  recordExists = await PasswordResetService.resetRecordExists(resetID);
+  recordExists = await PasswordResetService.resetRecordExists(resetID4);
   expect(recordExists).toBe(false);
+
+  await UserService.deleteUser(userID);
+});
+
+// Test verify service
+test("Verify", async () => {
+  const firstname = "Martin";
+  const lastname = "Luther";
+  const email = "lumart01@luther.edu";
+  const password = "password123";
+  const statusID = 1; // Student
+
+  // Create verification record
+  const verifyID = await VerifyService.createVerifyRecord(email, false);
+  expect(verifyID).not.toBe(null);
+  expect(verifyID.length).toBe(16);
+
+  // Create user record
+  const userID = await UserService.createUser(
+    firstname,
+    lastname,
+    email,
+    password,
+    statusID
+  );
+
+  // Attempt verification with email that already exists
+  const userID2 = await UserService.createUser(
+    firstname,
+    lastname,
+    "email",
+    password,
+    statusID
+  );
+  const verifyID2 = await VerifyService.createVerifyRecord("email", false);
+  expect(verifyID2).toBeNull();
+  await UserService.deleteUser(userID2);
+
+  // Attempt verification with the same email
+  const verifyID3 = await VerifyService.createVerifyRecord(email, false);
+  expect(verifyID3).toBeNull();
+
+  // Check verification record exists
+  let recordExists = await VerifyService.verifyRecordExists(verifyID);
+  expect(recordExists).toBe(true);
+
+  // Get verification record
+  const verifyRecord = await VerifyService.getVerifyRecord(verifyID);
+  expect(verifyRecord.id).toBe(verifyID);
+  expect(verifyRecord.email).toBe(email);
+  expect(verifyRecord.createTime - getTime()).toBeLessThanOrEqual(3);
+
+  // Delete verification record
+  await VerifyService.deleteVerifyRecord(verifyID);
+  recordExists = await VerifyService.verifyRecordExists(verifyID);
+  expect(recordExists).toBe(false);
+
+  // Attempt to verify with invalid ID
+  let success = await VerifyService.verifyUser(verifyID3);
+  expect(success).toBe(false);
+  await UserService.deleteUser(userID);
+
+  // Verify user
+  const verifyID4 = await VerifyService.createVerifyRecord(email, false);
+  const userID3 = await UserService.createUser(
+    firstname,
+    lastname,
+    email,
+    password,
+    statusID
+  );
+  let verified = (await UserService.getUser(userID3)).verified;
+  expect(verified).toBeFalsy();
+  success = await VerifyService.verifyUser(verifyID4);
+  expect(success).toBe(true);
+  verified = (await UserService.getUser(userID3)).verified;
+  expect(verified).toBeTruthy();
+
+  // Check record has been removed
+  recordExists = await VerifyService.verifyRecordExists(verifyID4);
+  expect(recordExists).toBe(false);
+
+  await UserService.deleteUser(userID3);
+});
+
+test("PostImage", async () => {
+  const firstname = "Martin";
+  const lastname = "Luther";
+  const email = "lumart01@luther.edu";
+  const password = "password123";
+  const statusID = 1; // Student
+
+  const userID = await UserService.createUser(
+    firstname,
+    lastname,
+    email,
+    password,
+    statusID
+  );
+  await UserService.setVerified(userID);
+
+  const content = "Hello, post!";
+  const location = "Mabe's Pizza";
+  const locationTypeID = 6; // Restaurant
+  const program = "N/A";
+  const threeWords = "Absolutely amazing pizza";
+
+  const rating = {
+    general: 1,
+    cost: 3,
+    safety: 7,
+  };
+
+  // Create post
+  const postID = await PostService.createPost(
+    userID,
+    content,
+    [],
+    location,
+    locationTypeID,
+    program,
+    rating,
+    threeWords
+  );
+
+  // Check no post images exist
+  let postImages = await PostImageService.getPostImages(postID);
+  expect(postImages.length).toBe(0);
+  let numImages = await PostImageService.numImages(postID);
+  expect(numImages).toBe(0);
+
+  // Check set post image
+  const len = Math.floor(Math.random() * 63) + 1;
+  const buf = crypto.randomBytes(len);
+  const imageID = await ImageService.createImage(buf);
+  await PostImageService.setPostImage(postID, imageID);
+  postImages = await PostImageService.getPostImages(postID);
+  expect(postImages.length).toBe(1);
+  expect(postImages[0].data.toString()).toBe(buf.toString());
+  numImages = await PostImageService.numImages(postID);
+  expect(numImages).toBe(1);
+
+  // Create post image
+  const len2 = Math.floor(Math.random() * 63) + 1;
+  const buf2 = crypto.randomBytes(len2);
+  const imageID2 = await PostImageService.createPostImage(postID, buf2);
+  postImages = await PostImageService.getPostImages(postID);
+  expect(postImages.length).toBe(2);
+  expect(postImages[1].id).toBe(imageID2);
+  expect(postImages[1].data.toString()).toBe(buf2.toString());
+  numImages = await PostImageService.numImages(postID);
+  expect(numImages).toBe(2);
+
+  // Create post images
+  const len3 = Math.floor(Math.random() * 63) + 1;
+  const buf3 = crypto.randomBytes(len3);
+  const len4 = Math.floor(Math.random() * 63) + 1;
+  const buf4 = crypto.randomBytes(len4);
+  const [imageID3, imageID4] = await PostImageService.createPostImages(
+    postID,
+    [buf3, buf4]
+  );
+  postImages = await PostImageService.getPostImages(postID);
+  expect(postImages.length).toBe(4);
+  expect(postImages[2].id).toBe(imageID3);
+  expect(postImages[2].data.toString()).toBe(buf3.toString());
+  expect(postImages[3].id).toBe(imageID4);
+  expect(postImages[3].data.toString()).toBe(buf4.toString());
+  numImages = await PostImageService.numImages(postID);
+  expect(numImages).toBe(4);
+
+  // Delete all post images
+  await PostImageService.deletePostImages(postID);
+  postImages = await PostImageService.getPostImages(postID);
+  expect(postImages.length).toBe(0);
+  numImages = await PostImageService.numImages(postID);
+  expect(numImages).toBe(0);
+
+  // Delete images upon post deletion
+  const len5 = Math.floor(Math.random() * 63) + 1;
+  const buf5 = crypto.randomBytes(len5);
+  const imageID5 = await PostImageService.createPostImage(postID, buf5);
+  numImages = await PostImageService.numImages(postID);
+  expect(numImages).toBe(1);
+  let imageExists = await ImageService.imageExists(imageID5);
+  expect(imageExists).toBe(true);
+  await PostService.deletePost(postID);
+  numImages = await PostImageService.numImages(postID);
+  expect(numImages).toBe(0);
+  imageExists = await ImageService.imageExists(imageID5);
+  expect(imageExists).toBe(false);
 
   await UserService.deleteUser(userID);
 });

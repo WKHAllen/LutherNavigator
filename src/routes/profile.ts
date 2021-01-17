@@ -4,7 +4,6 @@
  */
 
 import { Router } from "express";
-import * as fs from "fs";
 import {
   renderPage,
   auth,
@@ -68,11 +67,10 @@ profileRouter.post(
       );
     } else {
       const userID = await getUserID(req);
-      const imageData = await fs.promises.readFile(req.file.path);
+      const imageData = req.file.buffer;
       await UserService.setUserImage(userID, imageData);
     }
 
-    await fs.promises.unlink(req.file.path);
     res.redirect("/profile");
   })
 );

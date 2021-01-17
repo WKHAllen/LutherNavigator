@@ -4,8 +4,9 @@
  */
 
 import mainDB, {
-  prunePasswordResetRecords,
   pruneSessions,
+  pruneVerifyRecords,
+  prunePasswordResetRecords,
 } from "./services/util";
 
 /**
@@ -124,7 +125,6 @@ export default async function initDB(prune: boolean = true): Promise<void> {
       id             CHAR(4)       NOT NULL,
       userID         CHAR(4)       NOT NULL,
       content        VARCHAR(750)  NOT NULL,
-      imageID        CHAR(4)       NOT NULL,
       location       VARCHAR(255)  NOT NULL,
       locationTypeID INT           NOT NULL,
       program        VARCHAR(255)  NOT NULL,
@@ -139,14 +139,26 @@ export default async function initDB(prune: boolean = true): Promise<void> {
       FOREIGN KEY (userID)
         REFERENCES User (id),
 
-      FOREIGN KEY (imageID)
-        REFERENCES Image (id),
-      
       FOREIGN KEY (locationTypeID)
         REFERENCES LocationType (id),
 
       FOREIGN KEY (ratingID)
         REFERENCES Rating (id)
+    );
+  `;
+  const postImageTable = `
+    CREATE TABLE IF NOT EXISTS PostImage (
+      id      INT UNSIGNED NOT NULL AUTO_INCREMENT,
+      postID  CHAR(4)      NOT NULL,
+      imageID CHAR(4)      NOT NULL,
+
+      PRIMARY KEY (id),
+
+      FOREIGN KEY (postID)
+        REFERENCES Post (id),
+
+      FOREIGN KEY (imageID)
+        REFERENCES Image (id)
     );
   `;
   const sessionTable = `
@@ -160,6 +172,15 @@ export default async function initDB(prune: boolean = true): Promise<void> {
 
       FOREIGN KEY (userID)
         REFERENCES User (id)
+    );
+  `;
+  const verifyTable = `
+    CREATE TABLE IF NOT EXISTS Verify (
+      id         CHAR(16)     NOT NULL,
+      email      VARCHAR(63)  NOT NULL,
+      createTime INT UNSIGNED NOT NULL,
+
+      PRIMARY KEY(id)
     );
   `;
   const passwordResetTable = `
@@ -186,7 +207,9 @@ export default async function initDB(prune: boolean = true): Promise<void> {
     ratingTable,
     userTable,
     postTable,
+    postImageTable,
     sessionTable,
+    verifyTable,
     passwordResetTable,
     metaTable,
   ]);
@@ -238,12 +261,10 @@ export default async function initDB(prune: boolean = true): Promise<void> {
     true
   );
 
-  // Prune sessions
+  // Prune records from the database
   if (prune) {
     await pruneSessions();
-  }
-  // Prune password reset records
-  if (prune) {
+    await pruneVerifyRecords();
     await prunePasswordResetRecords();
   }
 }

@@ -7,6 +7,7 @@ import * as db from "../db";
 import * as crypto from "crypto";
 import * as bcrypt from "bcrypt";
 import { Session } from "./session";
+import { Verify, VerifyService } from "./verify";
 import { PasswordReset, PasswordResetService } from "./passwordReset";
 
 /**
@@ -25,6 +26,11 @@ export const idLength = 4;
 export const sessionIDLength = 16;
 
 /**
+ * Length of a verification ID.
+ */
+export const verifyIDLength = 16;
+
+/**
  * Length of a password reset ID.
  */
 export const passwordResetIDLength = 16;
@@ -38,6 +44,11 @@ export const saltRounds = 12;
  * Session maximum age.
  */
 export const sessionAge = 24 * 60 * 60 * 1000; // One day
+
+/**
+ * Verification maximum age.
+ */
+export const verifyAge = 60 * 60 * 1000; // One hour
 
 /**
  * Password reset maximum age.
@@ -185,6 +196,35 @@ export async function pruneSessions(): Promise<void> {
   rows.forEach((row) => {
     const timeRemaining = row.updateTime + sessionAge / 1000 - getTime();
     pruneSession(row.id, timeRemaining * 1000);
+  });
+}
+
+/**
+ * Delete a verification record when the time comes.
+ *
+ * @param verifyID A verification ID.
+ * @param timeRemaining The amount of time to wait before removing the record.
+ */
+export function pruneVerifyRecord(
+  verifyID: string,
+  timeRemaining: number = verifyAge
+): void {
+  setTimeout(async () => {
+    await VerifyService.deleteUnverifiedUser(verifyID);
+  }, timeRemaining);
+}
+
+/**
+ * Delete all active verification records when the time comes.
+ */
+export async function pruneVerifyRecords(): Promise<void> {
+  const sql = `SELECT id, createTime FROM Verify;`;
+  const params = [];
+  const rows: Verify[] = await mainDB.execute(sql, params);
+
+  rows.forEach((row) => {
+    const timeRemaining = row.createTime + verifyAge / 1000 - getTime();
+    pruneVerifyRecord(row.id, timeRemaining * 1000);
   });
 }
 

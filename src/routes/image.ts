@@ -6,13 +6,34 @@
 import { Router } from "express";
 import { renderError } from "./util";
 import wrapRoute from "../asyncCatch";
-import { UserService, PostService } from "../services";
+import { UserService, PostService, ImageService } from "../services";
 import proxy from "../proxy";
 
 /**
  * The image router.
  */
 export const imageRouter = Router();
+
+// Get an image
+imageRouter.get(
+  "/id/:imageID",
+  wrapRoute(async (req, res, next) => {
+    const imageID = req.params.imageID;
+
+    const image = await ImageService.getImage(imageID);
+
+    if (image) {
+      res.write(image.data, async (err) => {
+        if (err) {
+          await renderError(err, req, res);
+        }
+        res.end();
+      });
+    } else {
+      next(); // 404
+    }
+  })
+);
 
 // Get a user's image
 imageRouter.get(
@@ -42,19 +63,27 @@ imageRouter.get(
 
 // Get a post's image
 imageRouter.get(
-  "/post/:postID",
+  "/post/:postID/:id",
   wrapRoute(async (req, res, next) => {
-    const postExists = await PostService.postExists(req.params.postID);
+    const postID = req.params.postID;
+    const id = parseInt(req.params.id);
+
+    const postExists = await PostService.postExists(postID);
 
     if (postExists) {
-      const image = await PostService.getPostImage(req.params.postID);
+      const images = await PostService.getPostImages(postID);
+      const image = images[id]?.data;
 
-      res.write(image.data, async (err) => {
-        if (err) {
-          await renderError(err, req, res);
-        }
-        res.end();
-      });
+      if (image) {
+        res.write(image, async (err) => {
+          if (err) {
+            await renderError(err, req, res);
+          }
+          res.end();
+        });
+      } else {
+        next(); // 404
+      }
     } else {
       next(); // 404
     }
