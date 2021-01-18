@@ -142,7 +142,7 @@ postRouter.get(
 
     const postUser = await PostService.getPostUser(postID);
     if (!post.approved) {
-      if (user.admin || postUser.id === userID) {
+      if (user && (user.admin || postUser.id === userID)) {
         // The user is an admin or the creator of the post
         error =
           "This post has not yet been approved, and is not publicly available";
