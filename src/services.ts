@@ -3,6 +3,7 @@
  * @packageDocumentation
  */
 
+export * from "./services/admin";
 export * from "./services/image";
 export * from "./services/locationType";
 export * from "./services/meta";
