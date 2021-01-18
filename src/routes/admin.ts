@@ -1,0 +1,44 @@
+/**
+ * Admin routes.
+ * @packageDocumentation
+ */
+
+import { Router } from "express";
+import { adminAuth, renderPage } from "./util";
+import wrapRoute from "../asyncCatch";
+
+/**
+ * The admin router.
+ */
+export const adminRouter = Router();
+
+const adminPages = {
+  stats: "Stats",
+};
+
+// Admin home page
+adminRouter.get(
+  "/",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const firstPage = Object.keys(adminPages)[0];
+    res.redirect(`/admin/${firstPage}`);
+  })
+);
+
+// All admin pages
+adminRouter.get(
+  "/:subpage",
+  adminAuth,
+  wrapRoute(async (req, res, next) => {
+    const pageName = req.params.subpage;
+
+    if (pageName in adminPages) {
+      await renderPage(req, res, `admin-${pageName}`, {
+        pages: adminPages,
+      });
+    } else {
+      next(); // 404, invalid subpage
+    }
+  })
+);

@@ -2,6 +2,8 @@
  * Export all routes.
  * @packageDocumentation
  */
+
+export * from "./routes/admin";
 export * from "./routes/image";
 export * from "./routes/index";
 export * from "./routes/login";
