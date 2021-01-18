@@ -13,7 +13,10 @@ import wrapRoute from "../asyncCatch";
 export const adminRouter = Router();
 
 const adminPages = {
-  stats: "Stats",
+  stats: { page: "stats", name: "Stats" },
+  registration: { page: "registration", name: "Registration" },
+  posts: { page: "posts", name: "Posts" },
+  variables: { page: "variables", name: "Variables" },
 };
 
 // Admin home page
@@ -36,6 +39,7 @@ adminRouter.get(
     if (pageName in adminPages) {
       await renderPage(req, res, `admin-${pageName}`, {
         pages: adminPages,
+        page: pageName,
         noBG: true,
       });
     } else {

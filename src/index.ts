@@ -11,6 +11,7 @@ import * as cookieParser from "cookie-parser";
 import * as routes from "./routes";
 import { renderPage, renderError } from "./routes/util";
 import initDB from "./dbinit";
+import { helpers } from "./helpers";
 
 /**
  * Debug/production environment.
@@ -45,6 +46,7 @@ app.engine(
   hbs({
     extname: ".html",
     defaultLayout: "default",
+    helpers,
   })
 );
 app.set("view engine", ".html");

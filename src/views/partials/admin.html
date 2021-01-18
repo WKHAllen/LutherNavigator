@@ -2,18 +2,13 @@
 
 <h1 class="center">Admin Control Panel</h1>
 <ul class="nav nav-tabs" id="admin-tabs">
+  {{#each pages}}
   <li class="nav-item">
-    <a class="nav-link active" href="#">Active</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#">Link</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#">Link</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true"
-      >Disabled</a
+    <a
+      class="nav-link {{#is page ../page }} active {{/is}}"
+      href="/admin/{{page}}"
+      >{{name}}</a
     >
   </li>
+  {{/each}}
 </ul>
