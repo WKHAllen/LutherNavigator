@@ -1,4 +1,10 @@
 <link rel="stylesheet" type="text/css" href="/css/admin.css" />
+<script type="text/javascript" src="/js/admin.js"></script>
+<script type="text/javascript">
+  window.addEventListener("load", () => {
+    window["{{page}}Load"]();
+  });
+</script>
 
 <h1 class="center">Admin Control Panel</h1>
 <ul class="nav nav-tabs" id="admin-tabs">
