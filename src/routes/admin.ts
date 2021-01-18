@@ -12,6 +12,9 @@ import wrapRoute from "../asyncCatch";
  */
 export const adminRouter = Router();
 
+/**
+ * Map of all admin page identifiers to their names.
+ */
 const adminPages = {
   stats: "Stats",
   registration: "Registration",
