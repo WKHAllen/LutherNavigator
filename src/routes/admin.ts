@@ -13,10 +13,10 @@ import wrapRoute from "../asyncCatch";
 export const adminRouter = Router();
 
 const adminPages = {
-  stats: { page: "stats", name: "Stats" },
-  registration: { page: "registration", name: "Registration" },
-  posts: { page: "posts", name: "Posts" },
-  variables: { page: "variables", name: "Variables" },
+  stats: "Stats",
+  registration: "Registration",
+  posts: "Posts",
+  variables: "Variables",
 };
 
 // Admin home page

@@ -5,9 +5,9 @@
   {{#each pages}}
   <li class="nav-item">
     <a
-      class="nav-link {{#is page ../page }} active {{/is}}"
-      href="/admin/{{page}}"
-      >{{name}}</a
+      class="nav-link {{#is @key ../page }} active {{/is}}"
+      href="/admin/{{@key}}"
+      >{{this}}</a
     >
   </li>
   {{/each}}
