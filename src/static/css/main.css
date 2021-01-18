@@ -85,7 +85,7 @@ main {
   position: relative;
 }
 
-main::after {
+main.bg-img::after {
   content: "";
   /* stationary background */
   background-image: url("/img/vienna.jpg");

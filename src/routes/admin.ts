@@ -36,6 +36,7 @@ adminRouter.get(
     if (pageName in adminPages) {
       await renderPage(req, res, `admin-${pageName}`, {
         pages: adminPages,
+        noBG: true,
       });
     } else {
       next(); // 404, invalid subpage
