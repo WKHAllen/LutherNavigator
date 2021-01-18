@@ -121,10 +121,10 @@
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form> -->
           {{#if loggedIn}}
-          <a class="nav-link" href="/">Post</a>
+          <a class="nav-link" href="/post">Post</a>
           <a class="nav-link" href="/logout?after={{url}}">Logout</a>
           {{else}}
-          <a class="nav-link" href="/">Post</a>
+          <a class="nav-link" href="/post">Post</a>
           {{#if after}}
           <a class="nav-link" href="/login?after={{after}}">Login</a>
           {{else}}
