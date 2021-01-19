@@ -25,6 +25,7 @@ export interface User {
   password: string;
   statusID: number;
   verified: boolean;
+  approved: boolean;
   admin: boolean;
   imageID: string | null;
   joinTime: number;
@@ -220,6 +221,35 @@ export module UserService {
   ): Promise<void> {
     const sql = `UPDATE User SET verified = ? WHERE id = ?;`;
     const params = [verified, userID];
+    await mainDB.execute(sql, params);
+  }
+
+  /**
+   * Check if a user's account has been approved.
+   *
+   * @param userID A user's ID.
+   * @return Whether or not the user's account has been approved.
+   */
+  export async function isApproved(userID: string): Promise<boolean> {
+    const sql = `SELECT approved FROM User WHERE id = ?;`;
+    const params = [userID];
+    const rows: User[] = await mainDB.execute(sql, params);
+
+    return !!rows[0]?.approved;
+  }
+
+  /**
+   * Set a user's approved status.
+   *
+   * @param userID A user's ID.
+   * @param approved Approved status.
+   */
+  export async function setApproved(
+    userID: string,
+    approved: boolean = true
+  ): Promise<void> {
+    const sql = `UPDATE User SET approved = ? WHERE id = ?;`;
+    const params = [approved, userID];
     await mainDB.execute(sql, params);
   }
 
