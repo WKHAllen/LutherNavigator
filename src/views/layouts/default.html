@@ -133,9 +133,15 @@
         </div>
       </nav>
     </header>
+    {{#if noBG}}
     <main>
       <div class="clearfix" id="content">{{{body}}}</div>
     </main>
+    {{else}}
+    <main class="bg-img">
+      <div class="clearfix" id="content">{{{body}}}</div>
+    </main>
+    {{/if}}
     <footer>
       <div class="row">
         <a href="/about" class="col-sm-4">About Luther Navigator</a>

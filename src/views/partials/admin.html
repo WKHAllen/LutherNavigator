@@ -1,0 +1,22 @@
+<link rel="stylesheet" type="text/css" href="/css/admin.css" />
+<script type="text/javascript" src="/js/admin.js"></script>
+<script type="text/javascript">
+  window.addEventListener("load", () => {
+    if (window["{{page}}Load"]) {
+      window["{{page}}Load"]();
+    }
+  });
+</script>
+
+<h1 class="center">Admin Control Panel</h1>
+<ul class="nav nav-tabs" id="admin-tabs">
+  {{#each pages}}
+  <li class="nav-item">
+    <a
+      class="nav-link {{#is @key ../page }} active {{/is}}"
+      href="/admin/{{@key}}"
+      >{{this}}</a
+    >
+  </li>
+  {{/each}}
+</ul>

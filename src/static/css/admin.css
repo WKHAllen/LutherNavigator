@@ -1,0 +1,17 @@
+#admin-tabs {
+  margin: 0 -20px;
+  padding: 0 20px;
+  margin-bottom: 20px;
+}
+
+#admin-tabs .nav-link {
+  color: #007bff;
+}
+
+#admin-tabs .nav-link.active {
+  color: black;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
