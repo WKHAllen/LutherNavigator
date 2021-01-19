@@ -20,10 +20,12 @@ apiRouter.get(
   wrapRoute(async (req, res) => {
     const numUsers = await AdminService.getRecords("User");
     const numPosts = await AdminService.getRecords("Post");
+    const numLoggedIn = await AdminService.getRecords("Session");
 
     res.json({
-      numUsers,
-      numPosts,
+      Users: numUsers,
+      Posts: numPosts,
+      Sessions: numLoggedIn,
     });
   })
 );
