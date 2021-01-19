@@ -42,6 +42,7 @@ adminRouter.get(
 
     if (pageName in adminPages) {
       await renderPage(req, res, `admin-${pageName}`, {
+        title: "Admin Control Panel",
         pages: adminPages,
         page: pageName,
         noBG: true,
