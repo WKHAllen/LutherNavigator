@@ -357,4 +357,15 @@ export module UserService {
     const params = [hashedPassword, userID];
     await mainDB.execute(sql, params);
   }
+
+  /**
+   * Update a user's last post timestamp.
+   *
+   * @param userID A user's ID.
+   */
+  export async function updateLastPostTime(userID: string): Promise<void> {
+    const sql = `UPDATE User SET lastPostTime = ? WHERE id = ?;`;
+    const params = [getTime(), userID];
+    await mainDB.execute(sql, params);
+  }
 }
