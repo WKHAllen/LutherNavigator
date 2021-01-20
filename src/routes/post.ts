@@ -24,6 +24,7 @@ import {
   RatingParams,
   MetaService,
 } from "../services";
+import { metaConfig } from "../config";
 
 /**
  * The post router.
@@ -56,7 +57,9 @@ postRouter.post(
   wrapRoute(async (req, res) => {
     const mimetypes = ["image/png", "image/jpg", "image/jpeg"];
     const userID = await getUserID(req);
-    const maxImages = parseInt(await MetaService.get("Images per post"));
+    const maxImages =
+      parseInt(await MetaService.get("Images per post")) ||
+      metaConfig["Images per post"];
 
     const content: string = req.body.postContent;
     const files = req.files as Express.Multer.File[];

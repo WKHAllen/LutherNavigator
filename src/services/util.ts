@@ -10,6 +10,7 @@ import { Session } from "./session";
 import { Verify, VerifyService } from "./verify";
 import { PasswordReset, PasswordResetService } from "./passwordReset";
 import { MetaService } from "./meta";
+import { metaConfig } from "../config";
 
 /**
  * Database connection URL.
@@ -130,7 +131,9 @@ export async function hashPassword(
   rounds: number = null
 ): Promise<string> {
   if (!rounds) {
-    rounds = parseInt(await MetaService.get("Salt rounds"));
+    rounds =
+      parseInt(await MetaService.get("Salt rounds")) ||
+      metaConfig["Salt rounds"];
   }
 
   return await hashPasswordAsync(password, rounds);
@@ -168,7 +171,9 @@ export async function pruneSession(
   sessionID: string,
   timeRemaining: number = null
 ): Promise<void> {
-  const sessionAge = parseInt(await MetaService.get("Session age")) * 1000;
+  const sessionAge =
+    (parseInt(await MetaService.get("Session age")) ||
+      metaConfig["Session age"]) * 1000;
   if (timeRemaining === null) {
     timeRemaining = sessionAge;
   }
@@ -197,7 +202,9 @@ export async function pruneSessions(): Promise<void> {
   const params = [];
   const rows: Session[] = await mainDB.execute(sql, params);
 
-  const sessionAge = parseInt(await MetaService.get("Session age")) * 1000;
+  const sessionAge =
+    (parseInt(await MetaService.get("Session age")) ||
+      metaConfig["Session age"]) * 1000;
 
   rows.forEach((row) => {
     const timeRemaining = row.updateTime + sessionAge / 1000 - getTime();
@@ -215,7 +222,9 @@ export async function pruneVerifyRecord(
   verifyID: string,
   timeRemaining: number = null
 ): Promise<void> {
-  const verifyAge = parseInt(await MetaService.get("Verify age")) * 1000;
+  const verifyAge =
+    (parseInt(await MetaService.get("Verify age")) ||
+      metaConfig["Verify age"]) * 1000;
   if (timeRemaining === null) {
     timeRemaining = verifyAge;
   }
@@ -233,7 +242,9 @@ export async function pruneVerifyRecords(): Promise<void> {
   const params = [];
   const rows: Verify[] = await mainDB.execute(sql, params);
 
-  const verifyAge = parseInt(await MetaService.get("Verify age")) * 1000;
+  const verifyAge =
+    (parseInt(await MetaService.get("Verify age")) ||
+      metaConfig["Verify age"]) * 1000;
 
   rows.forEach((row) => {
     const timeRemaining = row.createTime + verifyAge / 1000 - getTime();
@@ -252,7 +263,8 @@ export async function prunePasswordResetRecord(
   timeRemaining: number = null
 ): Promise<void> {
   const passwordResetAge =
-    parseInt(await MetaService.get("Password reset age")) * 1000;
+    (parseInt(await MetaService.get("Password reset age")) ||
+      metaConfig["Password reset age"]) * 1000;
   if (timeRemaining === null) {
     timeRemaining = passwordResetAge;
   }
@@ -271,7 +283,8 @@ export async function prunePasswordResetRecords(): Promise<void> {
   const rows: PasswordReset[] = await mainDB.execute(sql, params);
 
   const passwordResetAge =
-    parseInt(await MetaService.get("Password reset age")) * 1000;
+    (parseInt(await MetaService.get("Password reset age")) ||
+      metaConfig["Password reset age"]) * 1000;
 
   rows.forEach((row) => {
     const timeRemaining = row.createTime + passwordResetAge / 1000 - getTime();

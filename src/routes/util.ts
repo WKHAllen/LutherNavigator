@@ -6,6 +6,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as multer from "multer";
 import { MetaService, UserService, SessionService } from "../services";
+import { metaConfig } from "../config";
 
 /**
  * Debug/production environment.
@@ -217,7 +218,9 @@ export async function setSessionID(
   res: Response,
   sessionID: string
 ): Promise<void> {
-  const sessionAge = parseInt(await MetaService.get("Session age")) * 1000;
+  const sessionAge =
+    (parseInt(await MetaService.get("Session age")) ||
+      metaConfig["Session age"]) * 1000;
 
   res.cookie("sessionID", sessionID, {
     maxAge: sessionAge,
