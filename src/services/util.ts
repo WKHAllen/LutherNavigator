@@ -37,11 +37,6 @@ export const verifyIDLength = 16;
 export const passwordResetIDLength = 16;
 
 /**
- * Session maximum age.
- */
-export const sessionAge = 24 * 60 * 60 * 1000; // One day
-
-/**
  * Verification maximum age.
  */
 export const verifyAge = 60 * 60 * 1000; // One hour
@@ -179,10 +174,15 @@ export async function checkPassword(
  * @param sessionID A session's ID.
  * @param timeRemaining The amount of time to wait before removing the session.
  */
-export function pruneSession(
+export async function pruneSession(
   sessionID: string,
-  timeRemaining: number = sessionAge
-): void {
+  timeRemaining: number = null
+): Promise<void> {
+  const sessionAge = parseInt(await MetaService.get("Session age")) * 1000;
+  if (timeRemaining === null) {
+    timeRemaining = sessionAge;
+  }
+
   setTimeout(async () => {
     let sql = `SELECT updateTime FROM Session WHERE id = ?;`;
     let params = [sessionID];
@@ -206,6 +206,8 @@ export async function pruneSessions(): Promise<void> {
   const sql = `SELECT id, updateTime FROM Session;`;
   const params = [];
   const rows: Session[] = await mainDB.execute(sql, params);
+
+  const sessionAge = parseInt(await MetaService.get("Session age")) * 1000;
 
   rows.forEach((row) => {
     const timeRemaining = row.updateTime + sessionAge / 1000 - getTime();

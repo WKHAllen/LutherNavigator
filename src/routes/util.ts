@@ -6,7 +6,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as multer from "multer";
 import { MetaService, UserService, SessionService } from "../services";
-import { sessionAge } from "../services/util";
 
 /**
  * Debug/production environment.
@@ -56,7 +55,7 @@ export async function auth(
     : false;
 
   if (validSession) {
-    setSessionID(res, sessionID);
+    await setSessionID(res, sessionID);
     await SessionService.updateSession(sessionID);
     next();
   } else {
@@ -90,7 +89,7 @@ export async function adminAuth(
   const admin = userID ? await UserService.isAdmin(userID) : false;
 
   if (admin) {
-    setSessionID(res, sessionID);
+    await setSessionID(res, sessionID);
     await SessionService.updateSession(sessionID);
     next();
   } else {
@@ -214,7 +213,12 @@ export function getSessionID(req: Request): string {
  * @param res Response object.
  * @param sessionID A session ID.
  */
-export function setSessionID(res: Response, sessionID: string): void {
+export async function setSessionID(
+  res: Response,
+  sessionID: string
+): Promise<void> {
+  const sessionAge = parseInt(await MetaService.get("Session age")) * 1000;
+
   res.cookie("sessionID", sessionID, {
     maxAge: sessionAge,
     httpOnly: true,

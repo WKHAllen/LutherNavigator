@@ -33,7 +33,7 @@ loginRouter.post(
     if (validLogin) {
       const user = await UserService.getUserByEmail(email);
       const sessionID = await SessionService.createSession(user.id);
-      setSessionID(res, sessionID);
+      await setSessionID(res, sessionID);
 
       const after = req.query.after as string;
 
