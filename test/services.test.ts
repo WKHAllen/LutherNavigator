@@ -228,10 +228,10 @@ test("User", async () => {
   expect(user.verified).toBeFalsy();
   expect(user.approved).toBeFalsy();
   expect(user.admin).toBeFalsy();
-  expect(user.imageID).toBe(null);
+  expect(user.imageID).toBeNull();
   expect(user.joinTime - getTime()).toBeLessThanOrEqual(3);
-  expect(user.lastLoginTime).toBe(null);
-  expect(user.lastPostTime).toBe(null);
+  expect(user.lastLoginTime).toBeNull();
+  expect(user.lastPostTime).toBeNull();
 
   // Get user by email
   user = await UserService.getUserByEmail(email);
@@ -243,10 +243,10 @@ test("User", async () => {
   expect(user.verified).toBeFalsy();
   expect(user.approved).toBeFalsy();
   expect(user.admin).toBeFalsy();
-  expect(user.imageID).toBe(null);
+  expect(user.imageID).toBeNull();
   expect(user.joinTime - getTime()).toBeLessThanOrEqual(3);
-  expect(user.lastLoginTime).toBe(null);
-  expect(user.lastPostTime).toBe(null);
+  expect(user.lastLoginTime).toBeNull();
+  expect(user.lastPostTime).toBeNull();
 
   // Check passwords match
   let same = await checkPassword(password, user.password);
@@ -513,7 +513,7 @@ test("Post", async () => {
   expect(post.threeWords).toBe(threeWords);
   expect(post.approved).toBeFalsy();
   expect(post.createTime - getTime()).toBeLessThanOrEqual(3);
-  expect(post.editTime).toBe(null);
+  expect(post.editTime).toBeNull();
 
   // Get post user
   const postUser = await PostService.getPostUser(postID);
@@ -744,7 +744,7 @@ test("Verify", async () => {
 
   // Create verification record
   const verifyID = await VerifyService.createVerifyRecord(email, false);
-  expect(verifyID).not.toBe(null);
+  expect(verifyID).not.toBeNull();
   expect(verifyID.length).toBe(16);
 
   // Create user record
