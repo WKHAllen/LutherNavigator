@@ -8,6 +8,8 @@ import mainDB, {
   pruneVerifyRecords,
   prunePasswordResetRecords,
 } from "./services/util";
+import { MetaService } from "./services";
+import { metaConfig } from "./config";
 
 /**
  * Asynchronously sleep.
@@ -50,6 +52,17 @@ export async function populateTable(
     const queryValuesStr = queryValues.join(", ");
     const query = `INSERT INTO ${table} (id, ${column}) VALUES ${queryValuesStr};`;
     await mainDB.execute(query);
+  }
+}
+
+export async function initMeta(): Promise<void> {
+  const metaRows = await MetaService.getAll();
+  const allMeta = metaRows.map((row) => row.name);
+
+  for (const item of Object.keys(metaConfig)) {
+    if (!allMeta.includes(item)) {
+      await MetaService.set(item, String(metaConfig[item]));
+    }
   }
 }
 
@@ -261,6 +274,9 @@ export default async function initDB(prune: boolean = true): Promise<void> {
     ],
     true
   );
+
+  // Populate meta table
+  await initMeta();
 
   // Prune records from the database
   if (prune) {
