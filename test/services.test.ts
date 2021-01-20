@@ -24,8 +24,8 @@ async function wait(ms: number): Promise<void> {
   });
 }
 
-// Timeout after 15 seconds
-jest.setTimeout(15000);
+// Timeout after 30 seconds
+jest.setTimeout(30000);
 
 // Setup
 beforeAll(
