@@ -9,6 +9,8 @@ import * as bcrypt from "bcrypt";
 import { Session } from "./session";
 import { Verify, VerifyService } from "./verify";
 import { PasswordReset, PasswordResetService } from "./passwordReset";
+import { MetaService } from "./meta";
+import { metaConfig } from "../config";
 
 /**
  * Database connection URL.
@@ -34,26 +36,6 @@ export const verifyIDLength = 16;
  * Length of a password reset ID.
  */
 export const passwordResetIDLength = 16;
-
-/**
- * Number of salt rounds for bcrypt to use.
- */
-export const saltRounds = 12;
-
-/**
- * Session maximum age.
- */
-export const sessionAge = 24 * 60 * 60 * 1000; // One day
-
-/**
- * Verification maximum age.
- */
-export const verifyAge = 60 * 60 * 1000; // One hour
-
-/**
- * Password reset maximum age.
- */
-export const passwordResetAge = 60 * 60 * 1000; // One hour
 
 /**
  * Database object.
@@ -116,15 +98,15 @@ export async function newUniqueID(
 }
 
 /**
- * Hash a password.
+ * Hash a password asynchronously.
  *
  * @param password The password.
  * @param rounds The number of salt rounds for bcrypt to use.
  * @returns The hashed password.
  */
-export async function hashPassword(
+export async function hashPasswordAsync(
   password: string,
-  rounds: number = saltRounds
+  rounds: number
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     bcrypt.hash(password, rounds, (err, hash) => {
@@ -135,6 +117,26 @@ export async function hashPassword(
       }
     });
   });
+}
+
+/**
+ * Hash a password.
+ *
+ * @param password The password.
+ * @param rounds The number of salt rounds for bcrypt to use.
+ * @returns The hashed password.
+ */
+export async function hashPassword(
+  password: string,
+  rounds: number = null
+): Promise<string> {
+  if (!rounds) {
+    rounds =
+      parseInt(await MetaService.get("Salt rounds")) ||
+      metaConfig["Salt rounds"];
+  }
+
+  return await hashPasswordAsync(password, rounds);
 }
 
 /**
@@ -165,10 +167,17 @@ export async function checkPassword(
  * @param sessionID A session's ID.
  * @param timeRemaining The amount of time to wait before removing the session.
  */
-export function pruneSession(
+export async function pruneSession(
   sessionID: string,
-  timeRemaining: number = sessionAge
-): void {
+  timeRemaining: number = null
+): Promise<void> {
+  const sessionAge =
+    (parseInt(await MetaService.get("Session age")) ||
+      metaConfig["Session age"]) * 1000;
+  if (timeRemaining === null) {
+    timeRemaining = sessionAge;
+  }
+
   setTimeout(async () => {
     let sql = `SELECT updateTime FROM Session WHERE id = ?;`;
     let params = [sessionID];
@@ -193,6 +202,10 @@ export async function pruneSessions(): Promise<void> {
   const params = [];
   const rows: Session[] = await mainDB.execute(sql, params);
 
+  const sessionAge =
+    (parseInt(await MetaService.get("Session age")) ||
+      metaConfig["Session age"]) * 1000;
+
   rows.forEach((row) => {
     const timeRemaining = row.updateTime + sessionAge / 1000 - getTime();
     pruneSession(row.id, timeRemaining * 1000);
@@ -205,10 +218,17 @@ export async function pruneSessions(): Promise<void> {
  * @param verifyID A verification ID.
  * @param timeRemaining The amount of time to wait before removing the record.
  */
-export function pruneVerifyRecord(
+export async function pruneVerifyRecord(
   verifyID: string,
-  timeRemaining: number = verifyAge
-): void {
+  timeRemaining: number = null
+): Promise<void> {
+  const verifyAge =
+    (parseInt(await MetaService.get("Verify age")) ||
+      metaConfig["Verify age"]) * 1000;
+  if (timeRemaining === null) {
+    timeRemaining = verifyAge;
+  }
+
   setTimeout(async () => {
     await VerifyService.deleteUnverifiedUser(verifyID);
   }, timeRemaining);
@@ -222,6 +242,10 @@ export async function pruneVerifyRecords(): Promise<void> {
   const params = [];
   const rows: Verify[] = await mainDB.execute(sql, params);
 
+  const verifyAge =
+    (parseInt(await MetaService.get("Verify age")) ||
+      metaConfig["Verify age"]) * 1000;
+
   rows.forEach((row) => {
     const timeRemaining = row.createTime + verifyAge / 1000 - getTime();
     pruneVerifyRecord(row.id, timeRemaining * 1000);
@@ -234,10 +258,17 @@ export async function pruneVerifyRecords(): Promise<void> {
  * @param resetID A password reset ID.
  * @param timeRemaining The amount of time to wait before removing the record.
  */
-export function prunePasswordResetRecord(
+export async function prunePasswordResetRecord(
   resetID: string,
-  timeRemaining: number = passwordResetAge
-): void {
+  timeRemaining: number = null
+): Promise<void> {
+  const passwordResetAge =
+    (parseInt(await MetaService.get("Password reset age")) ||
+      metaConfig["Password reset age"]) * 1000;
+  if (timeRemaining === null) {
+    timeRemaining = passwordResetAge;
+  }
+
   setTimeout(async () => {
     await PasswordResetService.deleteResetRecord(resetID);
   }, timeRemaining);
@@ -250,6 +281,10 @@ export async function prunePasswordResetRecords(): Promise<void> {
   const sql = `SELECT id, createTime FROM PasswordReset;`;
   const params = [];
   const rows: PasswordReset[] = await mainDB.execute(sql, params);
+
+  const passwordResetAge =
+    (parseInt(await MetaService.get("Password reset age")) ||
+      metaConfig["Password reset age"]) * 1000;
 
   rows.forEach((row) => {
     const timeRemaining = row.createTime + passwordResetAge / 1000 - getTime();

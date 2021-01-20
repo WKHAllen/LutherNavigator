@@ -6,7 +6,7 @@
 import { Router } from "express";
 import { adminAuth } from "./util";
 import wrapRoute from "../asyncCatch";
-import { AdminService } from "../services";
+import { AdminService, UserService } from "../services";
 
 /**
  * The API router.
@@ -27,5 +27,14 @@ apiRouter.get(
       Posts: numPosts,
       Sessions: numLoggedIn,
     });
+  })
+);
+
+// Admin registration approval
+apiRouter.get(
+  "/adminRegistration",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    res.json({});
   })
 );

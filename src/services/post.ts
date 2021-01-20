@@ -79,6 +79,7 @@ export module PostService {
     await mainDB.execute(sql, params);
 
     await PostImageService.createPostImages(postID, imageData);
+    await UserService.updateLastPostTime(userID);
 
     return postID;
   }
