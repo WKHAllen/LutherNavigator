@@ -161,7 +161,7 @@ export module UserService {
     email: string,
     password: string
   ): Promise<boolean> {
-    let sql = `SELECT password FROM User WHERE email = ? AND verified = TRUE;`;
+    let sql = `SELECT password FROM User WHERE email = ? AND verified = TRUE AND approved = TRUE;`;
     let params: any[] = [email];
     let rows: User[] = await mainDB.execute(sql, params);
 

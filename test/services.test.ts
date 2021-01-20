@@ -226,6 +226,7 @@ test("User", async () => {
   expect(user.email).toBe(email);
   expect(user.statusID).toBe(statusID);
   expect(user.verified).toBeFalsy();
+  expect(user.approved).toBeFalsy();
   expect(user.admin).toBeFalsy();
   expect(user.imageID).toBe(null);
   expect(user.joinTime - getTime()).toBeLessThanOrEqual(3);
@@ -240,6 +241,7 @@ test("User", async () => {
   expect(user.email).toBe(email);
   expect(user.statusID).toBe(statusID);
   expect(user.verified).toBeFalsy();
+  expect(user.approved).toBeFalsy();
   expect(user.admin).toBeFalsy();
   expect(user.imageID).toBe(null);
   expect(user.joinTime - getTime()).toBeLessThanOrEqual(3);
@@ -252,6 +254,7 @@ test("User", async () => {
 
   // Log user in
   await UserService.setVerified(userID);
+  await UserService.setApproved(userID);
   let success = await UserService.login(email, password);
   expect(success).toBe(true);
 
@@ -303,6 +306,16 @@ test("User", async () => {
   verified = await UserService.isVerified(userID);
   expect(verified).toBe(true);
 
+  // Check if user has been approved
+  await UserService.setApproved(userID, false);
+  let approved = await UserService.isApproved(userID);
+  expect(approved).toBe(false);
+
+  // Set user to approved
+  await UserService.setApproved(userID);
+  approved = await UserService.isApproved(userID);
+  expect(approved).toBe(true);
+
   // Check if user is an admin
   let admin = await UserService.isAdmin(userID);
   expect(admin).toBe(false);
@@ -332,6 +345,13 @@ test("User", async () => {
   // Check login with old password fails
   success = await UserService.login(email, password);
   expect(success).toBe(false);
+
+  // Update post timestamp
+  let lastPostTime = (await UserService.getUser(userID)).lastPostTime;
+  expect(lastPostTime).toBeNull();
+  await UserService.updateLastPostTime(userID);
+  lastPostTime = (await UserService.getUser(userID)).lastPostTime;
+  expect(lastPostTime - getTime()).toBeLessThanOrEqual(3);
 
   // Delete user
   await UserService.deleteUser(userID);
@@ -462,6 +482,8 @@ test("Post", async () => {
   };
 
   // Create post
+  let lastPostTime = (await UserService.getUser(userID)).lastPostTime;
+  expect(lastPostTime).toBeNull();
   const postID = await PostService.createPost(
     userID,
     content,
@@ -473,6 +495,8 @@ test("Post", async () => {
     threeWords
   );
   expect(postID.length).toBe(4);
+  lastPostTime = (await UserService.getUser(userID)).lastPostTime;
+  expect(lastPostTime - getTime()).toBeLessThanOrEqual(3);
 
   // Check post exists
   let postExists = await PostService.postExists(postID);
