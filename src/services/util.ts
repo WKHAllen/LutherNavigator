@@ -9,6 +9,7 @@ import * as bcrypt from "bcrypt";
 import { Session } from "./session";
 import { Verify, VerifyService } from "./verify";
 import { PasswordReset, PasswordResetService } from "./passwordReset";
+import { MetaService } from "./meta";
 
 /**
  * Database connection URL.
@@ -34,11 +35,6 @@ export const verifyIDLength = 16;
  * Length of a password reset ID.
  */
 export const passwordResetIDLength = 16;
-
-/**
- * Number of salt rounds for bcrypt to use.
- */
-export const saltRounds = 12;
 
 /**
  * Session maximum age.
@@ -116,15 +112,15 @@ export async function newUniqueID(
 }
 
 /**
- * Hash a password.
+ * Hash a password asynchronously.
  *
  * @param password The password.
  * @param rounds The number of salt rounds for bcrypt to use.
  * @returns The hashed password.
  */
-export async function hashPassword(
+export async function hashPasswordAsync(
   password: string,
-  rounds: number = saltRounds
+  rounds: number
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     bcrypt.hash(password, rounds, (err, hash) => {
@@ -135,6 +131,24 @@ export async function hashPassword(
       }
     });
   });
+}
+
+/**
+ * Hash a password.
+ *
+ * @param password The password.
+ * @param rounds The number of salt rounds for bcrypt to use.
+ * @returns The hashed password.
+ */
+export async function hashPassword(
+  password: string,
+  rounds: number = null
+): Promise<string> {
+  if (!rounds) {
+    rounds = parseInt(await MetaService.get("Salt rounds"));
+  }
+
+  return await hashPasswordAsync(password, rounds);
 }
 
 /**
