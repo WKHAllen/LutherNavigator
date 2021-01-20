@@ -37,16 +37,6 @@ export const verifyIDLength = 16;
 export const passwordResetIDLength = 16;
 
 /**
- * Verification maximum age.
- */
-export const verifyAge = 60 * 60 * 1000; // One hour
-
-/**
- * Password reset maximum age.
- */
-export const passwordResetAge = 60 * 60 * 1000; // One hour
-
-/**
  * Database object.
  */
 const mainDB = new db.DB(dbURL);
@@ -221,10 +211,15 @@ export async function pruneSessions(): Promise<void> {
  * @param verifyID A verification ID.
  * @param timeRemaining The amount of time to wait before removing the record.
  */
-export function pruneVerifyRecord(
+export async function pruneVerifyRecord(
   verifyID: string,
-  timeRemaining: number = verifyAge
-): void {
+  timeRemaining: number = null
+): Promise<void> {
+  const verifyAge = parseInt(await MetaService.get("Verify age")) * 1000;
+  if (timeRemaining === null) {
+    timeRemaining = verifyAge;
+  }
+
   setTimeout(async () => {
     await VerifyService.deleteUnverifiedUser(verifyID);
   }, timeRemaining);
@@ -238,6 +233,8 @@ export async function pruneVerifyRecords(): Promise<void> {
   const params = [];
   const rows: Verify[] = await mainDB.execute(sql, params);
 
+  const verifyAge = parseInt(await MetaService.get("Verify age")) * 1000;
+
   rows.forEach((row) => {
     const timeRemaining = row.createTime + verifyAge / 1000 - getTime();
     pruneVerifyRecord(row.id, timeRemaining * 1000);
@@ -250,10 +247,16 @@ export async function pruneVerifyRecords(): Promise<void> {
  * @param resetID A password reset ID.
  * @param timeRemaining The amount of time to wait before removing the record.
  */
-export function prunePasswordResetRecord(
+export async function prunePasswordResetRecord(
   resetID: string,
-  timeRemaining: number = passwordResetAge
-): void {
+  timeRemaining: number = null
+): Promise<void> {
+  const passwordResetAge =
+    parseInt(await MetaService.get("Password reset age")) * 1000;
+  if (timeRemaining === null) {
+    timeRemaining = passwordResetAge;
+  }
+
   setTimeout(async () => {
     await PasswordResetService.deleteResetRecord(resetID);
   }, timeRemaining);
@@ -266,6 +269,9 @@ export async function prunePasswordResetRecords(): Promise<void> {
   const sql = `SELECT id, createTime FROM PasswordReset;`;
   const params = [];
   const rows: PasswordReset[] = await mainDB.execute(sql, params);
+
+  const passwordResetAge =
+    parseInt(await MetaService.get("Password reset age")) * 1000;
 
   rows.forEach((row) => {
     const timeRemaining = row.createTime + passwordResetAge / 1000 - getTime();
