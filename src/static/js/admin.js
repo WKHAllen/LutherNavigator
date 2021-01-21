@@ -138,6 +138,12 @@ async function populateVariables() {
   }
 }
 
+async function refreshVariables() {
+  clearElement("variables");
+  appendTo("variables", "Fetching variables...");
+  await populateVariables();
+}
+
 // On stats page load
 function statsLoad() {
   populateStats();
