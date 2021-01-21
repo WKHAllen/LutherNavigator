@@ -1,4 +1,5 @@
 const statsTimeout = 60 * 1000; // One minute
+const variablesTimeout = 60 * 1000; // One minute
 
 // Get the JSON response from a URL
 async function fetchJSON(url, options) {
@@ -36,6 +37,16 @@ function hideError() {
   $("#admin-error").addClass("hidden");
 }
 
+// Create a new element
+function newElement(tag) {
+  return $(`<${tag}></${tag}>`);
+}
+
+// Get an element's HTML
+function elementHTML(element) {
+  return element.wrap("<p/>").parent().html();
+}
+
 // Populate data on the stats page
 async function populateStats() {
   const statsURL = "/api/adminStats";
@@ -57,6 +68,82 @@ async function populateStats() {
   }
 }
 
+// Set a variable
+function setVariable(name, value) {
+  $.ajax({
+    url: "/api/setVariable",
+    data: {
+      name,
+      value,
+    },
+    success: () => {
+      hideError();
+    },
+    error: () => {
+      showError("Failed to set variable");
+    },
+  });
+}
+
+// Create a new variable element
+function createVariable(variable) {
+  const varName = newElement("span").text(variable.name);
+  const varNameDiv = newElement("div")
+    .addClass("col-4 col-sm-3 col-md-2")
+    .append(varName);
+  const varValue = newElement("input")
+    .addClass("form-control")
+    .attr({ type: "text", name: "value", value: variable.value });
+  const varValueDiv = newElement("div").addClass("col").append(varValue);
+  const varButton = newElement("button")
+    .addClass("btn btn-primary")
+    .attr({
+      type: "submit",
+    })
+    .text("Save");
+  const varButtonDiv = newElement("div")
+    .addClass("col-auto flex-end")
+    .append(varButton);
+  const row = newElement("div")
+    .addClass("row mt-3")
+    .append(varNameDiv, varValueDiv, varButtonDiv);
+  const form = newElement("form")
+    .append(row)
+    .submit((event) => {
+      event.preventDefault();
+      setVariable(variable.name, $(event.target.value).val());
+    });
+  return form;
+}
+
+// Populate data on the variables page
+async function populateVariables() {
+  const variablesURL = "/api/adminVariables";
+  let variables = null;
+
+  try {
+    variables = await fetchJSON(variablesURL);
+  } catch (err) {
+    showError("Failed to update variables");
+  }
+
+  if (variables) {
+    hideError();
+    clearElement("variables");
+
+    for (const variable of variables) {
+      const newItem = createVariable(variable);
+      appendTo("variables", newItem);
+    }
+  }
+}
+
+async function refreshVariables() {
+  clearElement("variables");
+  appendTo("variables", "Fetching variables...");
+  await populateVariables();
+}
+
 // On stats page load
 function statsLoad() {
   populateStats();
@@ -64,4 +151,9 @@ function statsLoad() {
   setInterval(() => {
     populateStats();
   }, statsTimeout);
+}
+
+// On variables page load
+function variablesLoad() {
+  populateVariables();
 }

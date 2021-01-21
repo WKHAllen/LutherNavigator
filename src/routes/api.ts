@@ -6,7 +6,7 @@
 import { Router } from "express";
 import { adminAuth } from "./util";
 import wrapRoute from "../asyncCatch";
-import { AdminService, UserService } from "../services";
+import { AdminService, MetaService } from "../services";
 
 /**
  * The API router.
@@ -30,11 +30,31 @@ apiRouter.get(
   })
 );
 
-// Admin registration approval
+// Admin variables
 apiRouter.get(
-  "/adminRegistration",
+  "/adminVariables",
   adminAuth,
   wrapRoute(async (req, res) => {
-    res.json({});
+    const variables = await MetaService.getAll();
+
+    res.json(variables);
+  })
+);
+
+// Set variable
+apiRouter.get(
+  "/setVariable",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const name = req.query.name as string;
+    const value = req.query.value as string;
+
+    const exists = await MetaService.exists(name);
+
+    if (exists) {
+      await MetaService.set(name, value);
+    }
+
+    res.end();
   })
 );

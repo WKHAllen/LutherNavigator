@@ -205,6 +205,11 @@ table {
   display: none;
 }
 
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+
 /*tablet 768px*/
 @media screen and (min-width: 425px) {
   .mainbody {
