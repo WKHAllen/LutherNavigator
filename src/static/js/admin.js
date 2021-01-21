@@ -68,6 +68,23 @@ async function populateStats() {
   }
 }
 
+// Set a variable
+function setVariable(name, value) {
+  $.ajax({
+    url: "/api/setVariable",
+    data: {
+      name,
+      value,
+    },
+    success: () => {
+      hideError();
+    },
+    error: () => {
+      showError("Failed to set variable");
+    },
+  });
+}
+
 // Create a new variable element
 function createVariable(variable) {
   const varName = newElement("span").text(variable.name);
@@ -82,7 +99,6 @@ function createVariable(variable) {
     .addClass("btn btn-primary")
     .attr({
       type: "submit",
-      formaction: `/api/setVariable?name=${variable.name}`,
     })
     .text("Save");
   const varButtonDiv = newElement("div")
@@ -91,7 +107,12 @@ function createVariable(variable) {
   const row = newElement("div")
     .addClass("row mt-3")
     .append(varNameDiv, varValueDiv, varButtonDiv);
-  const form = newElement("form").attr("method", "POST").append(row);
+  const form = newElement("form")
+    .append(row)
+    .submit((event) => {
+      event.preventDefault();
+      setVariable(variable.name, $(event.target.value).val());
+    });
   return form;
 }
 
@@ -112,7 +133,7 @@ async function populateVariables() {
 
     for (const variable of variables) {
       const newItem = createVariable(variable);
-      appendTo("variables", elementHTML(newItem));
+      appendTo("variables", newItem);
     }
   }
 }

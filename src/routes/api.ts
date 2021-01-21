@@ -40,3 +40,21 @@ apiRouter.get(
     res.json(variables);
   })
 );
+
+// Set variable
+apiRouter.get(
+  "/setVariable",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const name = req.query.name as string;
+    const value = req.query.value as string;
+
+    const exists = await MetaService.exists(name);
+
+    if (exists) {
+      await MetaService.set(name, value);
+    }
+
+    res.end();
+  })
+);
