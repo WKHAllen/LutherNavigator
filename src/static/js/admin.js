@@ -268,6 +268,13 @@ async function populateRegistration() {
   }
 }
 
+// Refresh unapproved users
+async function refreshRegistration() {
+  clearElement("unapproved");
+  showElement("registration-status");
+  await populateRegistration();
+}
+
 // On stats page load
 function statsLoad() {
   populateStats();
