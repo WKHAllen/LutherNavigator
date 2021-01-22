@@ -194,13 +194,35 @@ function createUserRow(user) {
   const joinTime = newElement("td").text(
     new Date(parseInt(user.joinTime) * 1000).toLocaleString()
   );
+  const approveButton = newElement("button")
+    .addClass("btn btn-light")
+    .attr({
+      type: "button",
+    })
+    .html('<i class="fas fa-check"></i>')
+    .click(() => {
+      console.log("APPROVED");
+    });
+  const disapproveButton = newElement("button")
+    .addClass("btn btn-light")
+    .attr({
+      type: "button",
+    })
+    .html('<i class="fas fa-times"></i>')
+    .click(() => {
+      console.log("NOT APPROVED");
+    });
+  const approve = newElement("td")
+    .addClass("nowrap")
+    .append(approveButton, disapproveButton);
   const row = newElement("tr").append(
     userID,
     firstname,
     lastname,
     email,
     status,
-    joinTime
+    joinTime,
+    approve
   );
   return row;
 }

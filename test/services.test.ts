@@ -267,6 +267,8 @@ test("User", async () => {
   await UserService.setApproved(userID);
   let success = await UserService.login(email, password);
   expect(success).toBe(true);
+  unapproved = await UserService.getUnapproved();
+  expect(unapproved.length).toBe(0);
 
   // Check last login timestamp has changed
   user = await UserService.getUser(userID);
