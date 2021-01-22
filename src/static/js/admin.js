@@ -1,5 +1,5 @@
 const statsTimeout = 60 * 1000; // One minute
-const variablesTimeout = 60 * 1000; // One minute
+const registrationTimeout = 60 * 1000; // One minute
 
 // Get the JSON response from a URL
 async function fetchJSON(url, options) {
@@ -47,6 +47,14 @@ function elementHTML(element) {
   return element.wrap("<p/>").parent().html();
 }
 
+// Replace spaces in a variable name
+function replaceSpaces(name) {
+  while (name.includes(" ")) {
+    name = name.replace(" ", "_");
+  }
+  return name;
+}
+
 // Populate data on the stats page
 async function populateStats() {
   const statsURL = "/api/adminStats";
@@ -85,6 +93,23 @@ function setVariable(name, value) {
   });
 }
 
+// Reset a variable
+function resetVariable(name) {
+  $.ajax({
+    url: "/api/resetVariable",
+    data: {
+      name,
+    },
+    success: (value) => {
+      hideError();
+      $(`#var-${replaceSpaces(name)}`).val(value);
+    },
+    error: () => {
+      showError("Failed to reset variable");
+    },
+  });
+}
+
 // Create a new variable element
 function createVariable(variable) {
   const varName = newElement("span").text(variable.name);
@@ -93,17 +118,31 @@ function createVariable(variable) {
     .append(varName);
   const varValue = newElement("input")
     .addClass("form-control")
-    .attr({ type: "text", name: "value", value: variable.value });
+    .attr({
+      type: "text",
+      id: `var-${replaceSpaces(variable.name)}`,
+      name: "value",
+      value: variable.value,
+    });
   const varValueDiv = newElement("div").addClass("col").append(varValue);
-  const varButton = newElement("button")
-    .addClass("btn btn-primary")
+  const varSaveButton = newElement("button")
+    .addClass("btn btn-primary mr-1")
     .attr({
       type: "submit",
     })
     .text("Save");
+  const varResetButton = newElement("button")
+    .addClass("btn btn-danger")
+    .attr({
+      type: "button",
+    })
+    .text("Reset")
+    .click(() => {
+      resetVariable(variable.name);
+    });
   const varButtonDiv = newElement("div")
     .addClass("col-auto flex-end")
-    .append(varButton);
+    .append(varSaveButton, varResetButton);
   const row = newElement("div")
     .addClass("row mt-3")
     .append(varNameDiv, varValueDiv, varButtonDiv);
@@ -138,10 +177,102 @@ async function populateVariables() {
   }
 }
 
+// Refresh all variables
 async function refreshVariables() {
   clearElement("variables");
   appendTo("variables", "Fetching variables...");
   await populateVariables();
+}
+
+// Set a user's approved status
+function setApproved(userID, approved, thisElement) {
+  $.ajax({
+    url: "/api/approveRegistration",
+    data: {
+      userID,
+      approved,
+    },
+    success: () => {
+      hideError();
+      thisElement.closest("tr").remove();
+    },
+    error: () => {
+      showError("Failed to reset variable");
+    },
+  });
+}
+
+// Create a row in the unapproved users table
+function createUserRow(user) {
+  const userID = newElement("td").text(user.userID);
+  const firstname = newElement("td").text(user.firstname);
+  const lastname = newElement("td").text(user.lastname);
+  const email = newElement("td").text(user.email);
+  const status = newElement("td").text(user.status);
+  const joinTime = newElement("td").text(
+    new Date(parseInt(user.joinTime) * 1000).toLocaleString()
+  );
+  const approveButton = newElement("button")
+    .addClass("btn btn-light")
+    .attr({
+      type: "button",
+    })
+    .html('<i class="fas fa-check"></i>')
+    .click(function () {
+      setApproved(user.userID, true, $(this));
+    });
+  const disapproveButton = newElement("button")
+    .addClass("btn btn-light")
+    .attr({
+      type: "button",
+    })
+    .html('<i class="fas fa-times"></i>')
+    .click(function () {
+      setApproved(user.userID, false, $(this));
+    });
+  const approve = newElement("td")
+    .addClass("nowrap")
+    .append(approveButton, disapproveButton);
+  const row = newElement("tr").append(
+    userID,
+    firstname,
+    lastname,
+    email,
+    status,
+    joinTime,
+    approve
+  );
+  return row;
+}
+
+// Populate data on the registration approval page
+async function populateRegistration() {
+  const registrationURL = "/api/unapprovedUsers";
+  let unapproved = null;
+
+  try {
+    unapproved = await fetchJSON(registrationURL);
+  } catch (err) {
+    showError("Failed to update users");
+  }
+
+  if (unapproved) {
+    hideError();
+    hideElement("registration-status");
+    clearElement("unapproved");
+
+    for (const user of unapproved) {
+      const newItem = createUserRow(user);
+      appendTo("unapproved", newItem);
+    }
+  }
+}
+
+// Refresh unapproved users
+async function refreshRegistration() {
+  clearElement("unapproved");
+  showElement("registration-status");
+  await populateRegistration();
 }
 
 // On stats page load
@@ -156,4 +287,13 @@ function statsLoad() {
 // On variables page load
 function variablesLoad() {
   populateVariables();
+}
+
+// On registration approval page load
+function registrationLoad() {
+  populateRegistration();
+
+  setInterval(() => {
+    populateRegistration();
+  }, registrationTimeout);
 }
