@@ -1,5 +1,5 @@
 const statsTimeout = 60 * 1000; // One minute
-const variablesTimeout = 60 * 1000; // One minute
+const registrationTimeout = 60 * 1000; // One minute
 
 // Get the JSON response from a URL
 async function fetchJSON(url, options) {
@@ -177,10 +177,55 @@ async function populateVariables() {
   }
 }
 
+// Refresh all variables
 async function refreshVariables() {
   clearElement("variables");
   appendTo("variables", "Fetching variables...");
   await populateVariables();
+}
+
+// Create a row in the unapproved users table
+function createUserRow(user) {
+  const userID = newElement("td").text(user.userID);
+  const firstname = newElement("td").text(user.firstname);
+  const lastname = newElement("td").text(user.lastname);
+  const email = newElement("td").text(user.email);
+  const status = newElement("td").text(user.status);
+  const joinTime = newElement("td").text(
+    new Date(parseInt(user.joinTime) * 1000).toLocaleString()
+  );
+  const row = newElement("tr").append(
+    userID,
+    firstname,
+    lastname,
+    email,
+    status,
+    joinTime
+  );
+  return row;
+}
+
+// Populate data on the registration approval page
+async function populateRegistration() {
+  const registrationURL = "/api/unapprovedUsers";
+  let unapproved = null;
+
+  try {
+    unapproved = await fetchJSON(registrationURL);
+  } catch (err) {
+    showError("Failed to update users");
+  }
+
+  if (unapproved) {
+    hideError();
+    hideElement("registration-status");
+    clearElement("unapproved");
+
+    for (const user of unapproved) {
+      const newItem = createUserRow(user);
+      appendTo("unapproved", newItem);
+    }
+  }
 }
 
 // On stats page load
@@ -195,4 +240,13 @@ function statsLoad() {
 // On variables page load
 function variablesLoad() {
   populateVariables();
+}
+
+// On registration approval page load
+function registrationLoad() {
+  populateRegistration();
+
+  setInterval(() => {
+    populateRegistration();
+  }, registrationTimeout);
 }
