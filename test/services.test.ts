@@ -252,6 +252,16 @@ test("User", async () => {
   let same = await checkPassword(password, user.password);
   expect(same).toBe(true);
 
+  // Get unapproved users
+  let unapproved = await UserService.getUnapproved();
+  expect(unapproved.length).toBe(1);
+  expect(unapproved[0]["userID"]).toBe(userID);
+  expect(unapproved[0].firstname).toBe(firstname);
+  expect(unapproved[0].lastname).toBe(lastname);
+  expect(unapproved[0].email).toBe(email);
+  expect(unapproved[0]["status"]).toBe("Student");
+  expect(unapproved[0].joinTime - getTime()).toBeLessThanOrEqual(3);
+
   // Log user in
   await UserService.setVerified(userID);
   await UserService.setApproved(userID);
