@@ -6,7 +6,7 @@
 import { Router } from "express";
 import { adminAuth } from "./util";
 import wrapRoute from "../asyncCatch";
-import { AdminService, MetaService } from "../services";
+import { AdminService, MetaService, UserService } from "../services";
 import { metaConfig } from "../config";
 
 /**
@@ -71,5 +71,38 @@ apiRouter.get(
     }
 
     res.send(String(metaConfig[name])).end();
+  })
+);
+
+// Get unapproved users
+apiRouter.get(
+  "/unapprovedUsers",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const unapproved = await UserService.getUnapproved();
+
+    res.json(unapproved);
+  })
+);
+
+// Approve registration
+apiRouter.get(
+  "/approveRegistration",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const userID = req.query.userID as string;
+    const approved = req.query.approved as string;
+
+    if (approved === undefined || approved === "true") {
+      await UserService.setApproved(userID);
+    } else {
+      const isApproved = await UserService.isApproved(userID);
+
+      if (!isApproved) {
+        await UserService.deleteUser(userID);
+      }
+    }
+
+    res.end();
   })
 );

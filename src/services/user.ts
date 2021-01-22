@@ -254,6 +254,24 @@ export module UserService {
   }
 
   /**
+   * Get all unapproved users.
+   *
+   * @returns All unapproved users.
+   */
+  export async function getUnapproved(): Promise<User[]> {
+    const sql = `
+      SELECT
+        User.id AS userID, firstname, lastname, email, name AS status, joinTime
+      FROM User JOIN UserStatus
+      ON User.statusID = UserStatus.id
+      ORDER BY joinTime;
+    `;
+    const rows: User[] = await mainDB.execute(sql);
+
+    return rows;
+  }
+
+  /**
    * Check if a user is an admin.
    *
    * @param userID A user's ID.

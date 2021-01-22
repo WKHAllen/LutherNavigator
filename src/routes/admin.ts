@@ -18,9 +18,9 @@ export const adminRouter = Router();
  */
 const adminPages = {
   stats: "Stats",
+  variables: "Variables",
   registration: "Registration",
   posts: "Posts",
-  variables: "Variables",
 };
 
 // Admin home page
