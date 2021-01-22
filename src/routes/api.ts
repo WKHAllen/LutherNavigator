@@ -7,6 +7,7 @@ import { Router } from "express";
 import { adminAuth } from "./util";
 import wrapRoute from "../asyncCatch";
 import { AdminService, MetaService } from "../services";
+import { metaConfig } from "../config";
 
 /**
  * The API router.
@@ -48,7 +49,6 @@ apiRouter.get(
   wrapRoute(async (req, res) => {
     const name = req.query.name as string;
     const value = req.query.value as string;
-
     const exists = await MetaService.exists(name);
 
     if (exists) {
@@ -56,5 +56,20 @@ apiRouter.get(
     }
 
     res.end();
+  })
+);
+
+// Reset variable
+apiRouter.get(
+  "/resetVariable",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const name = req.query.name as string;
+
+    if (name in metaConfig) {
+      await MetaService.set(name, metaConfig[name]);
+    }
+
+    res.send(String(metaConfig[name])).end();
   })
 );

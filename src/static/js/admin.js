@@ -47,6 +47,14 @@ function elementHTML(element) {
   return element.wrap("<p/>").parent().html();
 }
 
+// Replace spaces in a variable name
+function replaceSpaces(name) {
+  while (name.includes(" ")) {
+    name = name.replace(" ", "_");
+  }
+  return name;
+}
+
 // Populate data on the stats page
 async function populateStats() {
   const statsURL = "/api/adminStats";
@@ -85,6 +93,23 @@ function setVariable(name, value) {
   });
 }
 
+// Reset a variable
+function resetVariable(name) {
+  $.ajax({
+    url: "/api/resetVariable",
+    data: {
+      name,
+    },
+    success: (value) => {
+      hideError();
+      $(`#var-${replaceSpaces(name)}`).val(value);
+    },
+    error: () => {
+      showError("Failed to reset variable");
+    },
+  });
+}
+
 // Create a new variable element
 function createVariable(variable) {
   const varName = newElement("span").text(variable.name);
@@ -93,17 +118,31 @@ function createVariable(variable) {
     .append(varName);
   const varValue = newElement("input")
     .addClass("form-control")
-    .attr({ type: "text", name: "value", value: variable.value });
+    .attr({
+      type: "text",
+      id: `var-${replaceSpaces(variable.name)}`,
+      name: "value",
+      value: variable.value,
+    });
   const varValueDiv = newElement("div").addClass("col").append(varValue);
-  const varButton = newElement("button")
-    .addClass("btn btn-primary")
+  const varSaveButton = newElement("button")
+    .addClass("btn btn-primary mr-1")
     .attr({
       type: "submit",
     })
     .text("Save");
+  const varResetButton = newElement("button")
+    .addClass("btn btn-danger")
+    .attr({
+      type: "button",
+    })
+    .text("Reset")
+    .click(() => {
+      resetVariable(variable.name);
+    });
   const varButtonDiv = newElement("div")
     .addClass("col-auto flex-end")
-    .append(varButton);
+    .append(varSaveButton, varResetButton);
   const row = newElement("div")
     .addClass("row mt-3")
     .append(varNameDiv, varValueDiv, varButtonDiv);
