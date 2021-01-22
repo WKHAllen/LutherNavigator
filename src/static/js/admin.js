@@ -184,6 +184,24 @@ async function refreshVariables() {
   await populateVariables();
 }
 
+// Set a user's approved status
+function setApproved(userID, approved, thisElement) {
+  $.ajax({
+    url: "/api/approveRegistration",
+    data: {
+      userID,
+      approved,
+    },
+    success: () => {
+      hideError();
+      thisElement.closest("tr").remove();
+    },
+    error: () => {
+      showError("Failed to reset variable");
+    },
+  });
+}
+
 // Create a row in the unapproved users table
 function createUserRow(user) {
   const userID = newElement("td").text(user.userID);
@@ -200,8 +218,8 @@ function createUserRow(user) {
       type: "button",
     })
     .html('<i class="fas fa-check"></i>')
-    .click(() => {
-      console.log("APPROVED");
+    .click(function () {
+      setApproved(user.userID, true, $(this));
     });
   const disapproveButton = newElement("button")
     .addClass("btn btn-light")
@@ -209,8 +227,8 @@ function createUserRow(user) {
       type: "button",
     })
     .html('<i class="fas fa-times"></i>')
-    .click(() => {
-      console.log("NOT APPROVED");
+    .click(function () {
+      setApproved(user.userID, false, $(this));
     });
   const approve = newElement("td")
     .addClass("nowrap")
