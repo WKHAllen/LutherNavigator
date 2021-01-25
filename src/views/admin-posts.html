@@ -1,3 +1,23 @@
 {{> admin }}
 
-<h2>Posts</h2>
+<div class="flex-between mb-4">
+  <h2>Post Approval</h2>
+  <button type="button" class="btn btn-primary" onclick="refreshPosts();">
+    Refresh
+  </button>
+</div>
+<table class="table table-striped table-hover table-responsive-lg">
+  <thead>
+    <th scope="col">ID</th>
+    <th scope="col">User</th>
+    <th scope="col">Location</th>
+    <th scope="col">Location type</th>
+    <th scope="col">Program</th>
+    <th scope="col">Three word description</th>
+    <th scope="col">Content</th>
+    <th scope="col">Create time</th>
+    <th scope="col">Approve</th>
+  </thead>
+  <tbody id="unapproved-posts"></tbody>
+</table>
+<p id="posts-status">Fetching unapproved posts...</p>
