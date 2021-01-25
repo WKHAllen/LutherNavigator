@@ -6,7 +6,12 @@
 import { Router } from "express";
 import { adminAuth } from "./util";
 import wrapRoute from "../asyncCatch";
-import { AdminService, MetaService, UserService } from "../services";
+import {
+  AdminService,
+  MetaService,
+  UserService,
+  PostService,
+} from "../services";
 import { metaConfig } from "../config";
 
 /**
@@ -100,6 +105,39 @@ apiRouter.get(
 
       if (!isApproved) {
         await UserService.deleteUser(userID);
+      }
+    }
+
+    res.end();
+  })
+);
+
+// Get unapproved posts
+apiRouter.get(
+  "/unapprovedPosts",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const unapproved = await PostService.getUnapproved();
+
+    res.json(unapproved);
+  })
+);
+
+// Approve a post
+apiRouter.get(
+  "/approvePost",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const postID = req.query.postID as string;
+    const approved = req.query.approved as string;
+
+    if (approved === undefined || approved === "true") {
+      await PostService.setApproved(postID);
+    } else {
+      const isApproved = await PostService.isApproved(postID);
+
+      if (!isApproved) {
+        await PostService.deletePost(postID);
       }
     }
 
