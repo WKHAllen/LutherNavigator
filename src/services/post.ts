@@ -290,4 +290,28 @@ export module PostService {
     const params = [approved, postID];
     await mainDB.execute(sql, params);
   }
+
+  /**
+   * Get all unapproved posts.
+   *
+   * @returns All unapproved posts.
+   */
+  export async function getUnapproved(): Promise<Post[]> {
+    const sql = `
+      SELECT
+        Post.id AS postID, User.firstname AS firstname, User.lastname AS lastname,
+        content, location, LocationType.name AS locationType, program,
+        threeWords, createTime
+      FROM Post
+      JOIN User
+        ON Post.userID = User.id
+      JOIN LocationType
+        ON Post.locationTypeID = LocationType.id
+      WHERE Post.approved = FALSE
+      ORDER BY createTime;
+    `;
+    const rows: Post[] = await mainDB.execute(sql);
+
+    return rows;
+  }
 }

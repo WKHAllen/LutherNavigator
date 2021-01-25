@@ -527,6 +527,19 @@ test("Post", async () => {
   expect(post.createTime - getTime()).toBeLessThanOrEqual(3);
   expect(post.editTime).toBeNull();
 
+  // Get unapproved posts
+  let unapproved = await PostService.getUnapproved();
+  expect(unapproved.length).toBe(1);
+  expect(unapproved[0]["postID"]).toBe(postID);
+  expect(unapproved[0]["firstname"]).toBe(firstname);
+  expect(unapproved[0]["lastname"]).toBe(lastname);
+  expect(unapproved[0].content).toBe(content);
+  expect(unapproved[0].location).toBe(location);
+  expect(unapproved[0]["locationType"]).toBe("Restaurant");
+  expect(unapproved[0].program).toBe(program);
+  expect(unapproved[0].threeWords).toBe(threeWords);
+  expect(unapproved[0].createTime - getTime()).toBeLessThanOrEqual(3);
+
   // Get post user
   const postUser = await PostService.getPostUser(postID);
   const user = await UserService.getUser(userID);
@@ -567,6 +580,8 @@ test("Post", async () => {
   await PostService.setApproved(postID);
   approved = await PostService.isApproved(postID);
   expect(approved).toBe(true);
+  unapproved = await PostService.getUnapproved();
+  expect(unapproved.length).toBe(0);
 
   // Get all user posts
   const postID2 = await PostService.createPost(

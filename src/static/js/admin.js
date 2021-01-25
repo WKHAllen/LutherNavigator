@@ -1,5 +1,6 @@
 const statsTimeout = 60 * 1000; // One minute
 const registrationTimeout = 60 * 1000; // One minute
+const postsTimeout = 60 * 1000; // One minute
 
 // Get the JSON response from a URL
 async function fetchJSON(url, options) {
@@ -185,7 +186,7 @@ async function refreshVariables() {
 }
 
 // Set a user's approved status
-function setApproved(userID, approved, thisElement) {
+function approveUser(userID, approved, thisElement) {
   $.ajax({
     url: "/api/approveRegistration",
     data: {
@@ -197,7 +198,7 @@ function setApproved(userID, approved, thisElement) {
       thisElement.closest("tr").remove();
     },
     error: () => {
-      showError("Failed to reset variable");
+      showError("Failed to approve user account");
     },
   });
 }
@@ -219,7 +220,7 @@ function createUserRow(user) {
     })
     .html('<i class="fas fa-check"></i>')
     .click(function () {
-      setApproved(user.userID, true, $(this));
+      approveUser(user.userID, true, $(this));
     });
   const disapproveButton = newElement("button")
     .addClass("btn btn-light")
@@ -228,7 +229,7 @@ function createUserRow(user) {
     })
     .html('<i class="fas fa-times"></i>')
     .click(function () {
-      setApproved(user.userID, false, $(this));
+      approveUser(user.userID, false, $(this));
     });
   const approve = newElement("td")
     .addClass("nowrap")
@@ -259,20 +260,120 @@ async function populateRegistration() {
   if (unapproved) {
     hideError();
     hideElement("registration-status");
-    clearElement("unapproved");
+    clearElement("unapproved-registration");
 
     for (const user of unapproved) {
       const newItem = createUserRow(user);
-      appendTo("unapproved", newItem);
+      appendTo("unapproved-registration", newItem);
     }
   }
 }
 
 // Refresh unapproved users
 async function refreshRegistration() {
-  clearElement("unapproved");
+  clearElement("unapproved-registration");
   showElement("registration-status");
   await populateRegistration();
+}
+
+// Set a post's approved status
+function approvePost(postID, approved, thisElement) {
+  $.ajax({
+    url: "/api/approvePost",
+    data: {
+      postID,
+      approved,
+    },
+    success: () => {
+      hideError();
+      thisElement.closest("tr").remove();
+    },
+    error: () => {
+      showError("Failed to approve post");
+    },
+  });
+}
+
+// Create a row in the unapproved posts table
+function createPostRow(post) {
+  const postLink = newElement("a")
+    .attr({
+      href: `/post/${post.postID}`,
+    })
+    .text(post.postID);
+  const postID = newElement("td").append(postLink);
+  const user = newElement("td").text(`${post.firstname} ${post.lastname}`);
+  const location = newElement("td").text(post.location);
+  const locationType = newElement("td").text(post.locationType);
+  const program = newElement("td").text(post.program);
+  const threeWords = newElement("td").text(post.threeWords);
+  const content = newElement("td").text(post.content);
+  const createTime = newElement("td").text(
+    new Date(parseInt(post.createTime) * 1000).toLocaleString()
+  );
+  const approveButton = newElement("button")
+    .addClass("btn btn-light")
+    .attr({
+      type: "button",
+    })
+    .html('<i class="fas fa-check"></i>')
+    .click(function () {
+      approvePost(post.postID, true, $(this));
+    });
+  const disapproveButton = newElement("button")
+    .addClass("btn btn-light")
+    .attr({
+      type: "button",
+    })
+    .html('<i class="fas fa-times"></i>')
+    .click(function () {
+      approvePost(post.postID, false, $(this));
+    });
+  const approve = newElement("td")
+    .addClass("nowrap")
+    .append(approveButton, disapproveButton);
+  const row = newElement("tr").append(
+    postID,
+    user,
+    location,
+    locationType,
+    program,
+    threeWords,
+    content,
+    createTime,
+    approve
+  );
+  return row;
+}
+
+// Populate data on the post approval page
+async function populatePosts() {
+  const postsURL = "/api/unapprovedPosts";
+  let unapproved = null;
+
+  try {
+    unapproved = await fetchJSON(postsURL);
+  } catch (err) {
+    showError("Failed to update posts");
+  }
+
+  if (unapproved) {
+    hideError();
+    hideElement("posts-status");
+    clearElement("unapproved-posts");
+
+    for (const post of unapproved) {
+      const newItem = createPostRow(post);
+      appendTo("unapproved-posts", newItem);
+    }
+  }
+}
+
+// Refresh unapproved posts
+async function refreshPosts() {
+  clearElement("unapproved-posts");
+  showElement("posts-status");
+  await populatePosts();
 }
 
 // On stats page load
@@ -296,4 +397,13 @@ function registrationLoad() {
   setInterval(() => {
     populateRegistration();
   }, registrationTimeout);
+}
+
+// On post approval page load
+function postsLoad() {
+  populatePosts();
+
+  setInterval(() => {
+    populatePosts();
+  }, postsTimeout);
 }
