@@ -11,6 +11,7 @@ import * as cookieParser from "cookie-parser";
 import * as routes from "./routes";
 import { renderPage, renderError } from "./routes/util";
 import initDB from "./dbinit";
+import { helpers } from "./helpers";
 
 /**
  * Debug/production environment.
@@ -45,6 +46,7 @@ app.engine(
   hbs({
     extname: ".html",
     defaultLayout: "default",
+    helpers,
   })
 );
 app.set("view engine", ".html");
@@ -60,6 +62,8 @@ app.use(express.static("static"));
 
 // Use routes
 app.use("/", routes.indexRouter);
+app.use("/admin", routes.adminRouter);
+app.use("/api", routes.apiRouter);
 app.use("/image", routes.imageRouter);
 app.use("/login", routes.loginRouter);
 app.use("/logout", routes.logoutRouter);
@@ -67,6 +71,7 @@ app.use("/password-reset", routes.passwordResetRouter);
 app.use("/post", routes.postRouter);
 app.use("/profile", routes.profileRouter);
 app.use("/register", routes.registerRouter);
+app.use("/restaurant", routes.restaurantRouter);
 
 // Error 404 (not found)
 app.use((req, res) => {

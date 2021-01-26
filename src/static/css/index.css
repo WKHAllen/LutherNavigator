@@ -5,14 +5,55 @@
 
 .menu-button {
   padding: 0.5rem;
-  font-size: 1.75rem;
+  font-size: 18pt;
 }
 
 .menu-button:hover {
   border: solid 1px #003882;
 }
 
+.clear-card {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+h3 {
+  text-align: left;
+  padding-bottom: 10px;
+  font-size: 18pt;
+}
+
+.sample-3 {
+  font-size: 16pt;
+  display: block;
+}
+
+img {
+  width: inherit;
+}
+
+.dev-fav {
+  text-align: center;
+}
+
+.fav-place {
+  display: inline-block;
+  margin: 0;
+}
+
+.col-sm-4 {
+  flex: 0 0 32%;
+  max-width: 32%;
+}
+
 /* Home page / index */
 .homepage {
   margin-top: 20px;
+}
+
+@media screen and (min-width: 768px) {
+  .clear-card {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
 }

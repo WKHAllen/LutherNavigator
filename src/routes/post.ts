@@ -22,7 +22,9 @@ import {
   UserStatusService,
   LocationTypeService,
   RatingParams,
+  MetaService,
 } from "../services";
+import { metaConfig } from "../config";
 
 /**
  * The post router.
@@ -51,10 +53,13 @@ postRouter.get(
 postRouter.post(
   "/",
   auth,
-  upload.array("images", 20),
+  upload.array("images", 25),
   wrapRoute(async (req, res) => {
     const mimetypes = ["image/png", "image/jpg", "image/jpeg"];
     const userID = await getUserID(req);
+    const maxImages =
+      parseInt(await MetaService.get("Images per post")) ||
+      metaConfig["Images per post"];
 
     const content: string = req.body.postContent;
     const files = req.files as Express.Multer.File[];
@@ -79,8 +84,8 @@ postRouter.post(
     // Validation
     if (content.length <= 0 || content.length > 750) {
       setErrorMessage(res, "Post content must be no more than 750 characters");
-    } else if (imageData.length <= 0 || imageData.length > 20) {
-      setErrorMessage(res, "Please upload between 1 and 20 images");
+    } else if (imageData.length <= 0 || imageData.length > maxImages) {
+      setErrorMessage(res, `Please upload between 1 and ${maxImages} images`);
     } else if (imageTypesGood.includes(false)) {
       setErrorMessage(res, "All images must be in PNG, JPG, or JPEG format");
     } else if (imageSizesGood.includes(false)) {
@@ -142,7 +147,7 @@ postRouter.get(
 
     const postUser = await PostService.getPostUser(postID);
     if (!post.approved) {
-      if (user.admin || postUser.id === userID) {
+      if (user && (user.admin || postUser.id === userID)) {
         // The user is an admin or the creator of the post
         error =
           "This post has not yet been approved, and is not publicly available";

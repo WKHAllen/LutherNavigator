@@ -2,35 +2,60 @@
 <!-- Do we want this menu on every page? POST page? -->
 <div class="menus row">
   <!--    col-sm-12-->
-  <button class="btn menu-button col-md-4 col-sm-12" type="button">
-    Accommodation
-  </button>
-  <button
-    class="btn menu-button col-md-4 col-sm-12"
-    type="button"
-    onclick="window.location.href='/post/test'"
-  >
+  <a class="btn menu-button col-md-4 col-sm-12" href="/"> Accommodations </a>
+  <a class="btn menu-button col-md-4 col-sm-12" href="/restaurant">
     Restaurants
-  </button>
-  <button class="btn menu-button col-md-4 col-sm-12" type="button">
+  </a>
+  <a class="btn menu-button col-md-4 col-sm-12" href="/post/test">
     Attractions
-  </button>
+  </a>
 </div>
 
-<div class="homepage clear-card">
-  <h1>Luther Navigator</h1>
-  <h3>Where will you go, Norse?</h3>
-  <p>
-    Use this app to find cool places around the globe. All locations are
-    hand-picked by your fellow Luther students, faculty, staff, parents, and
-    neighbors.
-  </p>
+<div class="homepage">
+  <div class="clear-card">
+    <h1>Where do you want to go?</h1>
+    <p>
+      Find Luther's favorite places around the globe. All locations are
+      hand-picked by your fellow Luther students, faculty, staff, parents, and
+      neighbors.
+    </p>
+  </div>
+  <div class="clear-card dev-fav">
+    <h3>Filter by Popular Luther Programs</h3>
+    <div class="fav-place clear-card col-12 col-sm-4">
+      <a href="/" class="sample-3">Nottingham</a>
+      <img src="/img/vienna.jpg" alt="Vienna" />
+    </div>
+    <div class="fav-place clear-card col-12 col-sm-4">
+      <a href="/" class="sample-3">Malta</a>
+      <img src="/img/vienna.jpg" alt="Vienna" />
+    </div>
+    <div class="fav-place clear-card col-12 col-sm-4">
+      <a href="/" class="sample-3">Vienna</a>
+      <img src="/img/vienna.jpg" alt="Vienna" />
+    </div>
+  </div>
+  <div class="clear-card dev-fav">
+    <h3>Developer Favorites</h3>
+    <div class="fav-place clear-card col-12 col-sm-4">
+      <a href="/" class="sample-3">Somewhere in Vienna</a>
+      <img src="/img/vienna.jpg" alt="Vienna" />
+    </div>
+    <div class="fav-place clear-card col-12 col-sm-4">
+      <a href="/" class="sample-3">Hai Di Lao</a>
+      <img src="/img/vienna.jpg" alt="Vienna" />
+    </div>
+    <div class="fav-place clear-card col-12 col-sm-4">
+      <a href="/" class="sample-3">Somewhere</a>
+      <img src="/img/vienna.jpg" alt="Vienna" />
+    </div>
+  </div>
 </div>
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script
   async
-  src="https://www.googletagmanager.com/gtag/js?id=G-Q31B8E494D"
+  src="https://www.googletagmanager.com/gtag/js?id={{ googleAnalyticsID }}"
 ></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -39,5 +64,5 @@
   }
   gtag("js", new Date());
 
-  gtag("config", "G-Q31B8E494D");
+  gtag("config", "{{ googleAnalyticsID }}");
 </script>

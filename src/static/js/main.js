@@ -15,6 +15,16 @@ function improveTimestamps() {
   }
 }
 
+// Hide an element
+function hideElement(elementID) {
+  $(`#${elementID}`).addClass("hidden");
+}
+
+// Show an element
+function showElement(elementID) {
+  $(`#${elementID}`).removeClass("hidden");
+}
+
 // When page loads
 window.addEventListener("load", () => {
   improveTimestamps();

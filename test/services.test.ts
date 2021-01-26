@@ -24,8 +24,8 @@ async function wait(ms: number): Promise<void> {
   });
 }
 
-// Timeout after 15 seconds
-jest.setTimeout(15000);
+// Timeout after 30 seconds
+jest.setTimeout(30000);
 
 // Setup
 beforeAll(
@@ -226,11 +226,12 @@ test("User", async () => {
   expect(user.email).toBe(email);
   expect(user.statusID).toBe(statusID);
   expect(user.verified).toBeFalsy();
+  expect(user.approved).toBeFalsy();
   expect(user.admin).toBeFalsy();
-  expect(user.imageID).toBe(null);
+  expect(user.imageID).toBeNull();
   expect(user.joinTime - getTime()).toBeLessThanOrEqual(3);
-  expect(user.lastLoginTime).toBe(null);
-  expect(user.lastPostTime).toBe(null);
+  expect(user.lastLoginTime).toBeNull();
+  expect(user.lastPostTime).toBeNull();
 
   // Get user by email
   user = await UserService.getUserByEmail(email);
@@ -240,20 +241,34 @@ test("User", async () => {
   expect(user.email).toBe(email);
   expect(user.statusID).toBe(statusID);
   expect(user.verified).toBeFalsy();
+  expect(user.approved).toBeFalsy();
   expect(user.admin).toBeFalsy();
-  expect(user.imageID).toBe(null);
+  expect(user.imageID).toBeNull();
   expect(user.joinTime - getTime()).toBeLessThanOrEqual(3);
-  expect(user.lastLoginTime).toBe(null);
-  expect(user.lastPostTime).toBe(null);
+  expect(user.lastLoginTime).toBeNull();
+  expect(user.lastPostTime).toBeNull();
 
   // Check passwords match
   let same = await checkPassword(password, user.password);
   expect(same).toBe(true);
 
+  // Get unapproved users
+  let unapproved = await UserService.getUnapproved();
+  expect(unapproved.length).toBe(1);
+  expect(unapproved[0]["userID"]).toBe(userID);
+  expect(unapproved[0].firstname).toBe(firstname);
+  expect(unapproved[0].lastname).toBe(lastname);
+  expect(unapproved[0].email).toBe(email);
+  expect(unapproved[0]["status"]).toBe("Student");
+  expect(unapproved[0].joinTime - getTime()).toBeLessThanOrEqual(3);
+
   // Log user in
   await UserService.setVerified(userID);
+  await UserService.setApproved(userID);
   let success = await UserService.login(email, password);
   expect(success).toBe(true);
+  unapproved = await UserService.getUnapproved();
+  expect(unapproved.length).toBe(0);
 
   // Check last login timestamp has changed
   user = await UserService.getUser(userID);
@@ -303,6 +318,16 @@ test("User", async () => {
   verified = await UserService.isVerified(userID);
   expect(verified).toBe(true);
 
+  // Check if user has been approved
+  await UserService.setApproved(userID, false);
+  let approved = await UserService.isApproved(userID);
+  expect(approved).toBe(false);
+
+  // Set user to approved
+  await UserService.setApproved(userID);
+  approved = await UserService.isApproved(userID);
+  expect(approved).toBe(true);
+
   // Check if user is an admin
   let admin = await UserService.isAdmin(userID);
   expect(admin).toBe(false);
@@ -332,6 +357,13 @@ test("User", async () => {
   // Check login with old password fails
   success = await UserService.login(email, password);
   expect(success).toBe(false);
+
+  // Update post timestamp
+  let lastPostTime = (await UserService.getUser(userID)).lastPostTime;
+  expect(lastPostTime).toBeNull();
+  await UserService.updateLastPostTime(userID);
+  lastPostTime = (await UserService.getUser(userID)).lastPostTime;
+  expect(lastPostTime - getTime()).toBeLessThanOrEqual(3);
 
   // Delete user
   await UserService.deleteUser(userID);
@@ -462,6 +494,8 @@ test("Post", async () => {
   };
 
   // Create post
+  let lastPostTime = (await UserService.getUser(userID)).lastPostTime;
+  expect(lastPostTime).toBeNull();
   const postID = await PostService.createPost(
     userID,
     content,
@@ -473,6 +507,8 @@ test("Post", async () => {
     threeWords
   );
   expect(postID.length).toBe(4);
+  lastPostTime = (await UserService.getUser(userID)).lastPostTime;
+  expect(lastPostTime - getTime()).toBeLessThanOrEqual(3);
 
   // Check post exists
   let postExists = await PostService.postExists(postID);
@@ -489,7 +525,20 @@ test("Post", async () => {
   expect(post.threeWords).toBe(threeWords);
   expect(post.approved).toBeFalsy();
   expect(post.createTime - getTime()).toBeLessThanOrEqual(3);
-  expect(post.editTime).toBe(null);
+  expect(post.editTime).toBeNull();
+
+  // Get unapproved posts
+  let unapproved = await PostService.getUnapproved();
+  expect(unapproved.length).toBe(1);
+  expect(unapproved[0]["postID"]).toBe(postID);
+  expect(unapproved[0]["firstname"]).toBe(firstname);
+  expect(unapproved[0]["lastname"]).toBe(lastname);
+  expect(unapproved[0].content).toBe(content);
+  expect(unapproved[0].location).toBe(location);
+  expect(unapproved[0]["locationType"]).toBe("Restaurant");
+  expect(unapproved[0].program).toBe(program);
+  expect(unapproved[0].threeWords).toBe(threeWords);
+  expect(unapproved[0].createTime - getTime()).toBeLessThanOrEqual(3);
 
   // Get post user
   const postUser = await PostService.getPostUser(postID);
@@ -531,6 +580,8 @@ test("Post", async () => {
   await PostService.setApproved(postID);
   approved = await PostService.isApproved(postID);
   expect(approved).toBe(true);
+  unapproved = await PostService.getUnapproved();
+  expect(unapproved.length).toBe(0);
 
   // Get all user posts
   const postID2 = await PostService.createPost(
@@ -720,7 +771,7 @@ test("Verify", async () => {
 
   // Create verification record
   const verifyID = await VerifyService.createVerifyRecord(email, false);
-  expect(verifyID).not.toBe(null);
+  expect(verifyID).not.toBeNull();
   expect(verifyID.length).toBe(16);
 
   // Create user record

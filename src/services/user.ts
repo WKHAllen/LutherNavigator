@@ -25,6 +25,7 @@ export interface User {
   password: string;
   statusID: number;
   verified: boolean;
+  approved: boolean;
   admin: boolean;
   imageID: string | null;
   joinTime: number;
@@ -160,7 +161,7 @@ export module UserService {
     email: string,
     password: string
   ): Promise<boolean> {
-    let sql = `SELECT password FROM User WHERE email = ? AND verified = TRUE;`;
+    let sql = `SELECT password FROM User WHERE email = ? AND verified = TRUE AND approved = TRUE;`;
     let params: any[] = [email];
     let rows: User[] = await mainDB.execute(sql, params);
 
@@ -221,6 +222,54 @@ export module UserService {
     const sql = `UPDATE User SET verified = ? WHERE id = ?;`;
     const params = [verified, userID];
     await mainDB.execute(sql, params);
+  }
+
+  /**
+   * Check if a user's account has been approved.
+   *
+   * @param userID A user's ID.
+   * @return Whether or not the user's account has been approved.
+   */
+  export async function isApproved(userID: string): Promise<boolean> {
+    const sql = `SELECT approved FROM User WHERE id = ?;`;
+    const params = [userID];
+    const rows: User[] = await mainDB.execute(sql, params);
+
+    return !!rows[0]?.approved;
+  }
+
+  /**
+   * Set a user's approved status.
+   *
+   * @param userID A user's ID.
+   * @param approved Approved status.
+   */
+  export async function setApproved(
+    userID: string,
+    approved: boolean = true
+  ): Promise<void> {
+    const sql = `UPDATE User SET approved = ? WHERE id = ?;`;
+    const params = [approved, userID];
+    await mainDB.execute(sql, params);
+  }
+
+  /**
+   * Get all unapproved users.
+   *
+   * @returns All unapproved users.
+   */
+  export async function getUnapproved(): Promise<User[]> {
+    const sql = `
+      SELECT
+        User.id AS userID, firstname, lastname, email, name AS status, joinTime
+      FROM User JOIN UserStatus
+      ON User.statusID = UserStatus.id
+      WHERE approved = FALSE
+      ORDER BY joinTime;
+    `;
+    const rows: User[] = await mainDB.execute(sql);
+
+    return rows;
   }
 
   /**
@@ -325,6 +374,17 @@ export module UserService {
 
     const sql = `UPDATE User SET password = ? WHERE id = ?;`;
     const params = [hashedPassword, userID];
+    await mainDB.execute(sql, params);
+  }
+
+  /**
+   * Update a user's last post timestamp.
+   *
+   * @param userID A user's ID.
+   */
+  export async function updateLastPostTime(userID: string): Promise<void> {
+    const sql = `UPDATE User SET lastPostTime = ? WHERE id = ?;`;
+    const params = [getTime(), userID];
     await mainDB.execute(sql, params);
   }
 }
