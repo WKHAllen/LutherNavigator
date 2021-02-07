@@ -70,8 +70,8 @@ app.use("/logout", routes.logoutRouter);
 app.use("/password-reset", routes.passwordResetRouter);
 app.use("/post", routes.postRouter);
 app.use("/profile", routes.profileRouter);
+app.use("/query", routes.queryRouter);
 app.use("/register", routes.registerRouter);
-app.use("/restaurant", routes.restaurantRouter);
 
 // Error 404 (not found)
 app.use((req, res) => {
