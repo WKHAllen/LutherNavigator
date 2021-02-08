@@ -2,29 +2,32 @@ h5 {
   margin-top: 10px;
 }
 
-fieldset {
-  display: inline;
-  float: left;
+.filter-menu {
+  display: block;
+  border: 1px solid #495057;
+  padding: 0px 10px;
 }
 
+.sorting-category {
+  display: inline;
+  width: 25%;
+  float: left;
+}
+/*
 legend {
   font-size: 14pt;
-}
+} */
 
 label {
   display: block;
   font-size: 10pt;
 }
 
-.filter-menu {
-  border: 1px solid #495057;
-  padding: 10px 0px;
-}
-
 .sample-3 {
   display: block;
   color: #212529;
   text-align: center;
+  padding: 2px;
 }
 
 .sample-3:hover {
@@ -34,7 +37,7 @@ label {
 
 .fav-place {
   display: inline-block;
-  margin: 2px;
+  /* margin: 2px; */
 }
 
 img {
@@ -46,7 +49,12 @@ img {
   padding: 15px 0px;
 }
 
-.col-md-3 {
-  flex: 0 0 24%;
-  max-width: 24%;
+.col-md-6 {
+  /* flex: 0 0 24%; */
+  min-width: 49%;
+}
+
+.col-lg-3 {
+  /* flex: 0 0 24%; */
+  min-width: 24%;
 }
