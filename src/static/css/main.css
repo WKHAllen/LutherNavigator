@@ -1,5 +1,5 @@
 body {
-  font-family: "Comfortaa", cursive;
+  font-family: "Comfortaa", sans-serif;
   /* font-family: "Maven Pro", sans-serif; */
   margin: 0px;
   /* sticky footer */
@@ -103,7 +103,7 @@ main.bg-img::after {
 }
 
 header {
-  background-color: #0061A3;
+  background-color: #0061a3;
 }
 
 /* NAVBAR is header*/
@@ -161,15 +161,15 @@ header {
 }
 
 .clear-button:hover {
-  color: #0061A3;
-  border: 1px solid #0061A3;
+  color: #0061a3;
+  border: 1px solid #0061a3;
 }
 
 /* FOOTER */
 footer {
   clear: left;
   padding: 10px 10px;
-  background-color: #0061A3;
+  background-color: #0061a3;
   color: white;
   text-align: center;
   bottom: 0;

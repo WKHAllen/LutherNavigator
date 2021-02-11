@@ -3,16 +3,9 @@ h5 {
 }
 
 .filter-menu {
-  display: block;
   border: 1px solid #495057;
   padding: 0px 10px;
   margin-bottom: 20px;
-}
-
-.filter-category {
-  display: inline;
-  width: 25%;
-  float: left;
 }
 
 label {
@@ -28,7 +21,7 @@ label {
 }
 
 .sample-3:hover {
-  color: #0061A3;
+  color: #0061a3;
   text-decoration: none;
 }
 
@@ -44,14 +37,4 @@ img {
 .query-page {
   display: block;
   padding: 15px 0px;
-}
-
-.col-md-6 {
-  /* flex: 0 0 24%; */
-  min-width: 49%;
-}
-
-.col-lg-3 {
-  /* flex: 0 0 24%; */
-  min-width: 24%;
 }
