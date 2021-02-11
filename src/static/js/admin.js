@@ -56,6 +56,15 @@ function replaceSpaces(name) {
   return name;
 }
 
+// Set the notification number for an admin page
+function setNotificationNumber(page, value) {
+  if (value === 0) {
+    $(`#admin-${page}-notification`).addClass("hidden").text(value);
+  } else {
+    $(`#admin-${page}-notification`).removeClass("hidden").text(value);
+  }
+}
+
 // Populate data on the stats page
 async function populateStats() {
   const statsURL = "/api/adminStats";
@@ -180,6 +189,7 @@ async function populateVariables() {
 
 // Refresh all variables
 async function refreshVariables() {
+  updateNotifications();
   clearElement("variables");
   appendTo("variables", "Fetching variables...");
   await populateVariables();
@@ -271,6 +281,7 @@ async function populateRegistration() {
 
 // Refresh unapproved users
 async function refreshRegistration() {
+  updateNotifications();
   clearElement("unapproved-registration");
   showElement("registration-status");
   await populateRegistration();
@@ -371,6 +382,7 @@ async function populatePosts() {
 
 // Refresh unapproved posts
 async function refreshPosts() {
+  updateNotifications();
   clearElement("unapproved-posts");
   showElement("posts-status");
   await populatePosts();
@@ -378,23 +390,28 @@ async function refreshPosts() {
 
 // On stats page load
 function statsLoad() {
+  updateNotifications();
   populateStats();
 
   setInterval(() => {
+    updateNotifications();
     populateStats();
   }, statsTimeout);
 }
 
 // On variables page load
 function variablesLoad() {
+  updateNotifications();
   populateVariables();
 }
 
 // On registration approval page load
 function registrationLoad() {
+  updateNotifications();
   populateRegistration();
 
   setInterval(() => {
+    updateNotifications();
     populateRegistration();
   }, registrationTimeout);
 }
@@ -406,4 +423,27 @@ function postsLoad() {
   setInterval(() => {
     populatePosts();
   }, postsTimeout);
+}
+
+// Update admin notifications
+async function updateNotifications() {
+  const registrationURL = "/api/unapprovedUsers";
+  const postsURL = "/api/unapprovedPosts";
+  let unapprovedUsers = null;
+  let unapprovedPosts = null;
+
+  try {
+    unapprovedUsers = await fetchJSON(registrationURL);
+    unapprovedPosts = await fetchJSON(postsURL);
+  } catch (err) {
+    return;
+  }
+
+  setNotificationNumber("registration", unapprovedUsers.length);
+  setNotificationNumber("posts", unapprovedPosts.length);
+}
+
+// On all admin page load
+async function main() {
+  await updateNotifications();
 }
