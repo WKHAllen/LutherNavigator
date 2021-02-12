@@ -118,6 +118,7 @@ function resetVariable(name) {
       showError("Failed to reset variable");
     },
   });
+  updateNotifications();
 }
 
 // Create a new variable element
@@ -211,6 +212,7 @@ function approveUser(userID, approved, thisElement) {
       showError("Failed to approve user account");
     },
   });
+  updateNotifications();
 }
 
 // Create a row in the unapproved users table
@@ -303,6 +305,7 @@ function approvePost(postID, approved, thisElement) {
       showError("Failed to approve post");
     },
   });
+  updateNotifications();
 }
 
 // Create a row in the unapproved posts table
