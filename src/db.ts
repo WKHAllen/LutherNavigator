@@ -116,6 +116,21 @@ export class DB {
     });
   }
 
+  public async getConnection(): Promise<DBConnection> {
+    return new Promise((resolve) => {
+      this.pool.getConnection(async (err, conn) => {
+        if (err) {
+          conn.release();
+          logError("", [], null, err);
+          resolve(null);
+        }
+
+        const connection = new DBConnection(conn);
+        resolve(connection);
+      });
+    });
+  }
+
   /**
    * Close the connection to the database.
    */
@@ -129,5 +144,52 @@ export class DB {
         }
       });
     });
+  }
+}
+
+/**
+ * Control the database through a single connection.
+ */
+export class DBConnection {
+  /**
+   * Connection object.
+   */
+  private conn: mysql.PoolConnection;
+
+  /**
+   * Database connection constructor.
+   *
+   * @param connection The database connection.
+   * @returns The database connection object.
+   */
+  constructor(connection: mysql.PoolConnection) {
+    this.conn = connection;
+  }
+
+  /**
+   * Execute a SQL query.
+   *
+   * @param stmt SQL statement.
+   * @param params Values to be inserted into the statement.
+   * @returns Query results.
+   */
+  public async execute(stmt: string, params: any[] = []): Promise<any> {
+    let results: any;
+    let fields: mysql.FieldInfo[];
+
+    try {
+      [results, fields] = await doQuery(this.conn, stmt, params);
+      return results;
+    } catch (err) {
+      logError(stmt, params, results, err);
+      return null;
+    }
+  }
+
+  /**
+   * Close the connection.
+   */
+  public close(): void {
+    this.conn.release();
   }
 }
