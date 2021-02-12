@@ -152,13 +152,35 @@ apiRouter.get(
     const approved =
       req.query.approved === undefined || req.query.approved === "true";
 
+    const post = await PostService.getPost(postID);
+    const user = await PostService.getPostUser(postID);
+
     if (approved) {
       await PostService.setApproved(postID);
+      await sendFormattedEmail(
+        user.email,
+        "Luther Navigator - Post Approved",
+        "postApproved",
+        {
+          host: getHostname(req),
+          postID,
+          location: post.location,
+        }
+      );
     } else {
       const isApproved = await PostService.isApproved(postID);
 
       if (!isApproved) {
         await PostService.deletePost(postID);
+        await sendFormattedEmail(
+          user.email,
+          "Luther Navigator - Post Not Approved",
+          "postNotApproved",
+          {
+            host: getHostname(req),
+            location: post.location,
+          }
+        );
       }
     }
 

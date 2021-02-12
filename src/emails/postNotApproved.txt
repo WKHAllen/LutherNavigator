@@ -1,0 +1,8 @@
+Hello, your post was not approved. Location: {location}
+
+You can try to create the post again at the link below. If you would like to contact us, you can do so through our website.
+
+{host}/post
+
+Sincerely,
+The Luther Navigator Team
