@@ -4,7 +4,7 @@
  */
 
 import { Router } from "express";
-import { adminAuth } from "./util";
+import { adminAuth, getHostname } from "./util";
 import wrapRoute from "../asyncCatch";
 import {
   AdminService,
@@ -13,6 +13,7 @@ import {
   PostService,
 } from "../services";
 import { metaConfig } from "../config";
+import { sendFormattedEmail } from "../emailer";
 
 /**
  * The API router.
@@ -96,15 +97,34 @@ apiRouter.get(
   adminAuth,
   wrapRoute(async (req, res) => {
     const userID = req.query.userID as string;
-    const approved = req.query.approved as string;
+    const approved =
+      req.query.approved === undefined || req.query.approved === "true";
 
-    if (approved === undefined || approved === "true") {
+    const user = await UserService.getUser(userID);
+
+    if (approved) {
       await UserService.setApproved(userID);
+      await sendFormattedEmail(
+        user.email,
+        "Luther Navigator - Account Approved",
+        "accountApproved",
+        {
+          host: getHostname(req),
+        }
+      );
     } else {
       const isApproved = await UserService.isApproved(userID);
 
       if (!isApproved) {
         await UserService.deleteUser(userID);
+        await sendFormattedEmail(
+          user.email,
+          "Luther Navigator - Account Not Approved",
+          "accountNotApproved",
+          {
+            host: getHostname(req),
+          }
+        );
       }
     }
 
@@ -129,15 +149,38 @@ apiRouter.get(
   adminAuth,
   wrapRoute(async (req, res) => {
     const postID = req.query.postID as string;
-    const approved = req.query.approved as string;
+    const approved =
+      req.query.approved === undefined || req.query.approved === "true";
 
-    if (approved === undefined || approved === "true") {
+    const post = await PostService.getPost(postID);
+    const user = await PostService.getPostUser(postID);
+
+    if (approved) {
       await PostService.setApproved(postID);
+      await sendFormattedEmail(
+        user.email,
+        "Luther Navigator - Post Approved",
+        "postApproved",
+        {
+          host: getHostname(req),
+          postID,
+          location: post.location,
+        }
+      );
     } else {
       const isApproved = await PostService.isApproved(postID);
 
       if (!isApproved) {
         await PostService.deletePost(postID);
+        await sendFormattedEmail(
+          user.email,
+          "Luther Navigator - Post Not Approved",
+          "postNotApproved",
+          {
+            host: getHostname(req),
+            location: post.location,
+          }
+        );
       }
     }
 

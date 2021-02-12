@@ -1,0 +1,8 @@
+Hello, your account was not approved.
+
+Please register again using the link below. If you would like to contact us, you can do so through our website.
+
+{host}/register
+
+Sincerely,
+The Luther Navigator Team
