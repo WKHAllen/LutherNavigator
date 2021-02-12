@@ -1,0 +1,8 @@
+Hello, your post was approved! Location: {location}
+
+You can view it at the link below.
+
+{host}/post/{postID}
+
+Sincerely,
+The Luther Navigator Team
