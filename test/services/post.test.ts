@@ -1,5 +1,5 @@
 import * as crypto from "crypto";
-import { wait } from "./main.test";
+import { wait } from "./main";
 import { getTime } from "../../src/services/util";
 import { PostService } from "../../src/services/post";
 import { UserService } from "../../src/services/user";

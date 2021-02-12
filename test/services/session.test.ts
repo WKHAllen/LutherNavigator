@@ -1,4 +1,4 @@
-import { wait } from "./main.test";
+import { wait } from "./main";
 import { getTime, checkPassword } from "../../src/services/util";
 import { SessionService } from "../../src/services/session";
 import { UserService } from "../../src/services/user";
