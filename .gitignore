@@ -117,3 +117,6 @@ docs/
 *.DS_Store
 .env
 todo.txt
+
+# Screenshots
+screenshots/
