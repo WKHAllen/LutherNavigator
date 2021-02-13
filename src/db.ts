@@ -187,6 +187,27 @@ export class DBConnection {
   }
 
   /**
+   * Start a transaction.
+   */
+  public async startTransaction(): Promise<void> {
+    await this.execute("START TRANSACTION;");
+  }
+
+  /**
+   * Commit a transaction.
+   */
+  public async commit(): Promise<void> {
+    await this.execute("COMMIT;");
+  }
+
+  /**
+   * Rollback a transaction.
+   */
+  public async rollback(): Promise<void> {
+    await this.execute("ROLLBACK;");
+  }
+
+  /**
    * Close the connection.
    */
   public close(): void {
