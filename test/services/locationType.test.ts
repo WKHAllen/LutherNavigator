@@ -1,9 +1,11 @@
-import { LocationTypeService } from "../../src/services/locationType";
+import { getDBM, closeDBM } from "./util";
 
 // Test location type service
 test("LocationType", async () => {
+  const dbm = await getDBM();
+
   // Get locations
-  const locations = await LocationTypeService.getLocations();
+  const locations = await dbm.locationTypeService.getLocations();
   expect(locations).toMatchObject([
     { id: 1, name: "Hotel" },
     { id: 2, name: "Hostel" },
@@ -20,20 +22,22 @@ test("LocationType", async () => {
   ]);
 
   // Get location name
-  let locationName = await LocationTypeService.getLocationName(1);
+  let locationName = await dbm.locationTypeService.getLocationName(1);
   expect(locationName).toBe("Hotel");
-  locationName = await LocationTypeService.getLocationName(11);
+  locationName = await dbm.locationTypeService.getLocationName(11);
   expect(locationName).toBe("Historical attraction");
-  locationName = await LocationTypeService.getLocationName(1000);
+  locationName = await dbm.locationTypeService.getLocationName(1000);
   expect(locationName).toBe("Other");
-  locationName = await LocationTypeService.getLocationName(999);
+  locationName = await dbm.locationTypeService.getLocationName(999);
   expect(locationName).toBe(undefined);
 
   // Check valid locations
-  let validLocation = await LocationTypeService.validLocation(2);
+  let validLocation = await dbm.locationTypeService.validLocation(2);
   expect(validLocation).toBe(true);
-  validLocation = await LocationTypeService.validLocation(10);
+  validLocation = await dbm.locationTypeService.validLocation(10);
   expect(validLocation).toBe(true);
-  validLocation = await LocationTypeService.validLocation(999);
+  validLocation = await dbm.locationTypeService.validLocation(999);
   expect(validLocation).toBe(false);
+
+  await closeDBM(dbm);
 });

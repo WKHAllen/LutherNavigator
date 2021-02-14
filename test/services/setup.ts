@@ -1,7 +1,9 @@
-import initDB, { useConnection } from "../../src/dbinit";
+import { getDBM, closeDBM } from "./util";
+import initDB from "../../src/dbinit";
 
 // Setup
 export = async function () {
-  await useConnection();
-  await initDB(false);
+  const dbm = await getDBM();
+  await initDB(dbm, false);
+  await closeDBM(dbm);
 };

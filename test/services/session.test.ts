@@ -1,46 +1,48 @@
-import { wait } from "./main";
+import { getDBM, closeDBM, wait } from "./util";
 import { getTime, checkPassword } from "../../src/services/util";
-import { SessionService } from "../../src/services/session";
-import { UserService } from "../../src/services/user";
 
 // Test session service
 test("Session", async () => {
+  const dbm = await getDBM();
+
   const firstname = "Martin";
   const lastname = "Luther";
   const email = "lumart01@luther.edu";
   const password = "password123";
   const statusID = 1; // Student
 
-  const userID = await UserService.createUser(
+  const userID = await dbm.userService.createUser(
     firstname,
     lastname,
     email,
     password,
     statusID
   );
-  await UserService.setVerified(userID);
+  await dbm.userService.setVerified(userID);
 
   // Create session
-  const sessionID = await SessionService.createSession(userID, false);
+  const sessionID = await dbm.sessionService.createSession(userID, false);
   expect(sessionID.length).toBe(16);
 
   // Check session exists
-  let sessionExists = await SessionService.sessionExists(sessionID);
+  let sessionExists = await dbm.sessionService.sessionExists(sessionID);
   expect(sessionExists).toBe(true);
 
   // Get session
-  let session = await SessionService.getSession(sessionID);
+  let session = await dbm.sessionService.getSession(sessionID);
   expect(session.id).toBe(sessionID);
   expect(session.userID).toBe(userID);
   expect(session.createTime - getTime()).toBeLessThanOrEqual(3);
   expect(session.updateTime - getTime()).toBeLessThanOrEqual(3);
 
   // Get userID by sessionID
-  const sessionUserID = await SessionService.getUserIDBySessionID(sessionID);
+  const sessionUserID = await dbm.sessionService.getUserIDBySessionID(
+    sessionID
+  );
   expect(sessionUserID).toBe(userID);
 
   // Get user by sessionID
-  const sessionUser = await SessionService.getUserBySessionID(sessionID);
+  const sessionUser = await dbm.sessionService.getUserBySessionID(sessionID);
   expect(sessionUser.id).toBe(userID);
   expect(sessionUser.firstname).toBe(firstname);
   expect(sessionUser.lastname).toBe(lastname);
@@ -52,37 +54,39 @@ test("Session", async () => {
   // Update session
   const previousUpdateTime = session.updateTime;
   await wait(1000);
-  await SessionService.updateSession(sessionID, false);
-  session = await SessionService.getSession(sessionID);
+  await dbm.sessionService.updateSession(sessionID, false);
+  session = await dbm.sessionService.getSession(sessionID);
   expect(session.updateTime).toBeGreaterThan(previousUpdateTime);
   expect(session.updateTime - getTime()).toBeLessThanOrEqual(3);
 
   // Get all sessions
   await wait(1000);
-  const sessionID2 = await SessionService.createSession(userID, false);
-  let sessions = await SessionService.getUserSessions(userID);
+  const sessionID2 = await dbm.sessionService.createSession(userID, false);
+  let sessions = await dbm.sessionService.getUserSessions(userID);
   expect(sessions.length).toBe(2);
   expect(sessions[0].id).toBe(sessionID);
   expect(sessions[1].id).toBe(sessionID2);
 
   // Delete all sessions
-  await SessionService.deleteUserSessions(userID);
-  sessions = await SessionService.getUserSessions(userID);
+  await dbm.sessionService.deleteUserSessions(userID);
+  sessions = await dbm.sessionService.getUserSessions(userID);
   expect(sessions.length).toBe(0);
-  sessionExists = await SessionService.sessionExists(sessionID);
+  sessionExists = await dbm.sessionService.sessionExists(sessionID);
   expect(sessionExists).toBe(false);
-  sessionExists = await SessionService.sessionExists(sessionID2);
+  sessionExists = await dbm.sessionService.sessionExists(sessionID2);
   expect(sessionExists).toBe(false);
 
   // Delete session
-  const sessionID3 = await SessionService.createSession(userID, false);
-  sessionExists = await SessionService.sessionExists(sessionID3);
+  const sessionID3 = await dbm.sessionService.createSession(userID, false);
+  sessionExists = await dbm.sessionService.sessionExists(sessionID3);
   expect(sessionExists).toBe(true);
-  await SessionService.deleteSession(sessionID3);
+  await dbm.sessionService.deleteSession(sessionID3);
 
   // Check session is gone
-  sessionExists = await SessionService.sessionExists(sessionID3);
+  sessionExists = await dbm.sessionService.sessionExists(sessionID3);
   expect(sessionExists).toBe(false);
 
-  await UserService.deleteUser(userID);
+  await dbm.userService.deleteUser(userID);
+
+  await closeDBM(dbm);
 });

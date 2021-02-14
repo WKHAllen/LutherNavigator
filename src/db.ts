@@ -47,6 +47,7 @@ export class DB {
    */
   private pool: mysql.Pool;
   private conn: DBConnection = null;
+  private closed: boolean = false;
 
   /**
    * Database controller constructor.
@@ -164,17 +165,62 @@ export class DB {
   }
 
   /**
+   * Start a transaction.
+   */
+  public async startTransaction(): Promise<void> {
+    if (this.conn) {
+      this.conn.startTransaction();
+    } else {
+      throw new Error(
+        "Must be using a single connection to start a transaction"
+      );
+    }
+  }
+
+  /**
+   * Commit a transaction.
+   */
+  public async commit(): Promise<void> {
+    if (this.conn) {
+      this.conn.commit();
+    } else {
+      throw new Error(
+        "Must be using a single connection to commit a transaction"
+      );
+    }
+  }
+
+  /**
+   * Rollback a transaction.
+   */
+  public async rollback(): Promise<void> {
+    if (this.conn) {
+      this.conn.rollback();
+    } else {
+      throw new Error(
+        "Must be using a single connection to rollback a transaction"
+      );
+    }
+  }
+
+  /**
    * Close the connection to the database.
    */
   public async close(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.pool.end((err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
+      if (!this.closed) {
+        if (this.conn) {
+          this.conn.close();
         }
-      });
+
+        this.pool.end((err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      }
     });
   }
 }

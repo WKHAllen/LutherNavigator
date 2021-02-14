@@ -6,7 +6,6 @@ const config: Config.InitialOptions = {
   verbose: true,
   testMatch: ["**/test/services/*.test.ts"],
   globalSetup: "./test/services/setup.ts",
-  globalTeardown: "./test/services/teardown.ts",
   testTimeout: 30000,
 };
 
