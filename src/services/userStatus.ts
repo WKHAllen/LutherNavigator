@@ -3,7 +3,7 @@
  * @packageDocumentation
  */
 
-import mainDB from "./util";
+import { BaseService } from "./util";
 
 /**
  * User status architecture.
@@ -16,15 +16,15 @@ export interface UserStatus {
 /**
  * User status services.
  */
-export module UserStatusService {
+export class UserStatusService extends BaseService {
   /**
    * Get all user statuses.
    *
    * @returns A list of all user statuses.
    */
-  export async function getStatuses(): Promise<UserStatus[]> {
+  public async getStatuses(): Promise<UserStatus[]> {
     const sql = `SELECT id, name FROM UserStatus ORDER BY id;`;
-    const rows: UserStatus[] = await mainDB.execute(sql);
+    const rows: UserStatus[] = await this.dbm.execute(sql);
 
     return rows;
   }
@@ -35,10 +35,10 @@ export module UserStatusService {
    * @param statusID A status's ID.
    * @returns The status's name.
    */
-  export async function getStatusName(statusID: number): Promise<string> {
+  public async getStatusName(statusID: number): Promise<string> {
     const sql = `SELECT name FROM UserStatus WHERE id = ?;`;
     const params = [statusID];
-    const rows: UserStatus[] = await mainDB.execute(sql, params);
+    const rows: UserStatus[] = await this.dbm.execute(sql, params);
 
     return rows[0]?.name;
   }
@@ -49,10 +49,10 @@ export module UserStatusService {
    * @param statusID A status's ID.
    * @returns Whether or not the status is valid.
    */
-  export async function validStatus(statusID: number): Promise<boolean> {
+  public async validStatus(statusID: number): Promise<boolean> {
     const sql = `SELECT id FROM UserStatus WHERE id = ?;`;
     const params = [statusID];
-    const rows: UserStatus[] = await mainDB.execute(sql, params);
+    const rows: UserStatus[] = await this.dbm.execute(sql, params);
 
     return rows.length > 0;
   }

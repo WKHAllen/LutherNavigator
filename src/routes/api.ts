@@ -4,14 +4,8 @@
  */
 
 import { Router } from "express";
-import { adminAuth, getHostname } from "./util";
+import { adminAuth, getDBM, getHostname } from "./util";
 import wrapRoute from "../asyncCatch";
-import {
-  AdminService,
-  MetaService,
-  UserService,
-  PostService,
-} from "../services";
 import { metaConfig } from "../config";
 import { sendFormattedEmail } from "../emailer";
 
@@ -25,9 +19,11 @@ apiRouter.get(
   "/adminStats",
   adminAuth,
   wrapRoute(async (req, res) => {
-    const numUsers = await AdminService.getRecords("User");
-    const numPosts = await AdminService.getRecords("Post");
-    const numLoggedIn = await AdminService.getRecords("Session");
+    const dbm = getDBM(req);
+
+    const numUsers = await dbm.adminService.getRecords("User");
+    const numPosts = await dbm.adminService.getRecords("Post");
+    const numLoggedIn = await dbm.adminService.getRecords("Session");
 
     res.json({
       Users: numUsers,
@@ -42,7 +38,9 @@ apiRouter.get(
   "/adminVariables",
   adminAuth,
   wrapRoute(async (req, res) => {
-    const variables = await MetaService.getAll();
+    const dbm = getDBM(req);
+
+    const variables = await dbm.metaService.getAll();
 
     res.json(variables);
   })
@@ -53,12 +51,14 @@ apiRouter.get(
   "/setVariable",
   adminAuth,
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const name = req.query.name as string;
     const value = req.query.value as string;
-    const exists = await MetaService.exists(name);
+    const exists = await dbm.metaService.exists(name);
 
     if (exists) {
-      await MetaService.set(name, value);
+      await dbm.metaService.set(name, value);
     }
 
     res.end();
@@ -70,10 +70,12 @@ apiRouter.get(
   "/resetVariable",
   adminAuth,
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const name = req.query.name as string;
 
     if (name in metaConfig) {
-      await MetaService.set(name, metaConfig[name]);
+      await dbm.metaService.set(name, metaConfig[name]);
     }
 
     res.send(String(metaConfig[name])).end();
@@ -85,7 +87,9 @@ apiRouter.get(
   "/unapprovedUsers",
   adminAuth,
   wrapRoute(async (req, res) => {
-    const unapproved = await UserService.getUnapproved();
+    const dbm = getDBM(req);
+
+    const unapproved = await dbm.userService.getUnapproved();
 
     res.json(unapproved);
   })
@@ -96,14 +100,16 @@ apiRouter.get(
   "/approveRegistration",
   adminAuth,
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const userID = req.query.userID as string;
     const approved =
       req.query.approved === undefined || req.query.approved === "true";
 
-    const user = await UserService.getUser(userID);
+    const user = await dbm.userService.getUser(userID);
 
     if (approved) {
-      await UserService.setApproved(userID);
+      await dbm.userService.setApproved(userID);
       await sendFormattedEmail(
         user.email,
         "Luther Navigator - Account Approved",
@@ -113,10 +119,10 @@ apiRouter.get(
         }
       );
     } else {
-      const isApproved = await UserService.isApproved(userID);
+      const isApproved = await dbm.userService.isApproved(userID);
 
       if (!isApproved) {
-        await UserService.deleteUser(userID);
+        await dbm.userService.deleteUser(userID);
         await sendFormattedEmail(
           user.email,
           "Luther Navigator - Account Not Approved",
@@ -137,7 +143,9 @@ apiRouter.get(
   "/unapprovedPosts",
   adminAuth,
   wrapRoute(async (req, res) => {
-    const unapproved = await PostService.getUnapproved();
+    const dbm = getDBM(req);
+
+    const unapproved = await dbm.postService.getUnapproved();
 
     res.json(unapproved);
   })
@@ -148,15 +156,17 @@ apiRouter.get(
   "/approvePost",
   adminAuth,
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const postID = req.query.postID as string;
     const approved =
       req.query.approved === undefined || req.query.approved === "true";
 
-    const post = await PostService.getPost(postID);
-    const user = await PostService.getPostUser(postID);
+    const post = await dbm.postService.getPost(postID);
+    const user = await dbm.postService.getPostUser(postID);
 
     if (approved) {
-      await PostService.setApproved(postID);
+      await dbm.postService.setApproved(postID);
       await sendFormattedEmail(
         user.email,
         "Luther Navigator - Post Approved",
@@ -168,10 +178,10 @@ apiRouter.get(
         }
       );
     } else {
-      const isApproved = await PostService.isApproved(postID);
+      const isApproved = await dbm.postService.isApproved(postID);
 
       if (!isApproved) {
-        await PostService.deletePost(postID);
+        await dbm.postService.deletePost(postID);
         await sendFormattedEmail(
           user.email,
           "Luther Navigator - Post Not Approved",

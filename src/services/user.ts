@@ -3,16 +3,14 @@
  * @packageDocumentation
  */
 
-import mainDB, {
+import {
+  BaseService,
   getTime,
   newUniqueID,
   hashPassword,
   checkPassword,
 } from "./util";
-import { UserStatusService } from "./userStatus";
-import { Image, ImageService } from "./image";
-import { SessionService } from "./session";
-import { PostService } from "./post";
+import { Image } from "./image";
 
 /**
  * User architecture.
@@ -36,7 +34,7 @@ export interface User {
 /**
  * User services.
  */
-export module UserService {
+export class UserService extends BaseService {
   /**
    * Create a user.
    *
@@ -47,15 +45,15 @@ export module UserService {
    * @param statusID The status ID of the user.
    * @returns The new user's ID.
    */
-  export async function createUser(
+  public async createUser(
     firstname: string,
     lastname: string,
     email: string,
     password: string,
     statusID: number
   ): Promise<string> {
-    const userID = await newUniqueID("User");
-    const hashedPassword = await hashPassword(password);
+    const userID = await newUniqueID(this.dbm, "User");
+    const hashedPassword = await hashPassword(this.dbm, password);
 
     const sql = `
       INSERT INTO User (
@@ -73,7 +71,7 @@ export module UserService {
       statusID,
       getTime(),
     ];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
 
     return userID;
   }
@@ -84,10 +82,10 @@ export module UserService {
    * @param userID A user's ID.
    * @returns Whether or not the user exists.
    */
-  export async function userExists(userID: string): Promise<boolean> {
+  public async userExists(userID: string): Promise<boolean> {
     const sql = `SELECT id FROM User WHERE id = ?;`;
     const params = [userID];
-    const rows: User[] = await mainDB.execute(sql, params);
+    const rows: User[] = await this.dbm.execute(sql, params);
 
     return rows.length > 0;
   }
@@ -98,10 +96,10 @@ export module UserService {
    * @param userID A user's ID.
    * @returns The user.
    */
-  export async function getUser(userID: string): Promise<User> {
+  public async getUser(userID: string): Promise<User> {
     const sql = `SELECT * FROM User WHERE id = ?;`;
     const params = [userID];
-    const rows: User[] = await mainDB.execute(sql, params);
+    const rows: User[] = await this.dbm.execute(sql, params);
 
     return rows[0];
   }
@@ -111,15 +109,15 @@ export module UserService {
    *
    * @param userID A user's ID.
    */
-  export async function deleteUser(userID: string): Promise<void> {
-    await deleteUserImage(userID);
+  public async deleteUser(userID: string): Promise<void> {
+    await this.deleteUserImage(userID);
 
     const sql = `DELETE FROM User WHERE id = ?;`;
     const params = [userID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
 
-    await SessionService.deleteUserSessions(userID);
-    await PostService.deleteUserPosts(userID);
+    await this.dbm.sessionService.deleteUserSessions(userID);
+    await this.dbm.postService.deleteUserPosts(userID);
   }
 
   /**
@@ -128,10 +126,10 @@ export module UserService {
    * @param email An email address.
    * @returns The user.
    */
-  export async function getUserByEmail(email: string): Promise<User> {
+  public async getUserByEmail(email: string): Promise<User> {
     const sql = `SELECT * FROM User WHERE email = ?;`;
     const params = [email];
-    const rows: User[] = await mainDB.execute(sql, params);
+    const rows: User[] = await this.dbm.execute(sql, params);
 
     return rows[0];
   }
@@ -142,10 +140,10 @@ export module UserService {
    * @param email An email address.
    * @returns Whether or not the email address is unique.
    */
-  export async function uniqueEmail(email: string): Promise<boolean> {
+  public async uniqueEmail(email: string): Promise<boolean> {
     const sql = `SELECT email FROM User WHERE email = ?;`;
     const params = [email];
-    const rows: User[] = await mainDB.execute(sql, params);
+    const rows: User[] = await this.dbm.execute(sql, params);
 
     return rows.length === 0;
   }
@@ -157,13 +155,10 @@ export module UserService {
    * @param password The user's password.
    * @returns Whether or not the login was successful.
    */
-  export async function login(
-    email: string,
-    password: string
-  ): Promise<boolean> {
+  public async login(email: string, password: string): Promise<boolean> {
     let sql = `SELECT password FROM User WHERE email = ? AND verified = TRUE AND approved = TRUE;`;
     let params: any[] = [email];
-    let rows: User[] = await mainDB.execute(sql, params);
+    let rows: User[] = await this.dbm.execute(sql, params);
 
     const hash = rows[0]?.password || "";
     const same = await checkPassword(password, hash);
@@ -173,7 +168,7 @@ export module UserService {
 
     sql = `UPDATE User SET lastLoginTime = ? WHERE email = ?;`;
     params = [getTime(), email];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
 
     return true;
   }
@@ -184,13 +179,13 @@ export module UserService {
    * @param userID A user's ID.
    * @returns The name of the user's status.
    */
-  export async function getUserStatusName(userID: string): Promise<string> {
+  public async getUserStatusName(userID: string): Promise<string> {
     const sql = `SELECT statusID FROM User WHERE id = ?;`;
     const params = [userID];
-    const rows: User[] = await mainDB.execute(sql, params);
+    const rows: User[] = await this.dbm.execute(sql, params);
 
     const statusID = rows[0]?.statusID;
-    const statusName = await UserStatusService.getStatusName(statusID);
+    const statusName = await this.dbm.userStatusService.getStatusName(statusID);
 
     return statusName;
   }
@@ -201,10 +196,10 @@ export module UserService {
    * @param userID A user's ID.
    * @returns Whether or not the user's account has been verified.
    */
-  export async function isVerified(userID: string): Promise<boolean> {
+  public async isVerified(userID: string): Promise<boolean> {
     const sql = `SELECT verified FROM User WHERE id = ?;`;
     const params = [userID];
-    const rows: User[] = await mainDB.execute(sql, params);
+    const rows: User[] = await this.dbm.execute(sql, params);
 
     return !!rows[0]?.verified;
   }
@@ -215,13 +210,13 @@ export module UserService {
    * @param userID A user's ID.
    * @param verified Verification status.
    */
-  export async function setVerified(
+  public async setVerified(
     userID: string,
     verified: boolean = true
   ): Promise<void> {
     const sql = `UPDATE User SET verified = ? WHERE id = ?;`;
     const params = [verified, userID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
   }
 
   /**
@@ -230,10 +225,10 @@ export module UserService {
    * @param userID A user's ID.
    * @return Whether or not the user's account has been approved.
    */
-  export async function isApproved(userID: string): Promise<boolean> {
+  public async isApproved(userID: string): Promise<boolean> {
     const sql = `SELECT approved FROM User WHERE id = ?;`;
     const params = [userID];
-    const rows: User[] = await mainDB.execute(sql, params);
+    const rows: User[] = await this.dbm.execute(sql, params);
 
     return !!rows[0]?.approved;
   }
@@ -244,13 +239,13 @@ export module UserService {
    * @param userID A user's ID.
    * @param approved Approved status.
    */
-  export async function setApproved(
+  public async setApproved(
     userID: string,
     approved: boolean = true
   ): Promise<void> {
     const sql = `UPDATE User SET approved = ? WHERE id = ?;`;
     const params = [approved, userID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
   }
 
   /**
@@ -258,7 +253,7 @@ export module UserService {
    *
    * @returns All unapproved users.
    */
-  export async function getUnapproved(): Promise<User[]> {
+  public async getUnapproved(): Promise<User[]> {
     const sql = `
       SELECT
         User.id AS userID, firstname, lastname, email, name AS status, joinTime
@@ -267,7 +262,7 @@ export module UserService {
       WHERE approved = FALSE
       ORDER BY joinTime;
     `;
-    const rows: User[] = await mainDB.execute(sql);
+    const rows: User[] = await this.dbm.execute(sql);
 
     return rows;
   }
@@ -278,10 +273,10 @@ export module UserService {
    * @param userID A user's ID.
    * @returns Whether or not the user is an admin.
    */
-  export async function isAdmin(userID: string): Promise<boolean> {
+  public async isAdmin(userID: string): Promise<boolean> {
     const sql = `SELECT admin FROM User WHERE id = ?;`;
     const params = [userID];
-    const rows: User[] = await mainDB.execute(sql, params);
+    const rows: User[] = await this.dbm.execute(sql, params);
 
     return !!rows[0]?.admin;
   }
@@ -292,13 +287,10 @@ export module UserService {
    * @param userID A user's ID.
    * @param admin Admin status.
    */
-  export async function setAdmin(
-    userID: string,
-    admin: boolean = true
-  ): Promise<void> {
+  public async setAdmin(userID: string, admin: boolean = true): Promise<void> {
     const sql = `UPDATE User SET admin = ? WHERE id = ?;`;
     const params = [admin, userID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
   }
 
   /**
@@ -307,13 +299,13 @@ export module UserService {
    * @param userID A user's ID.
    * @returns The user's profile image.
    */
-  export async function getUserImage(userID: string): Promise<Image> {
+  public async getUserImage(userID: string): Promise<Image> {
     const sql = `SELECT imageID from User WHERE id = ?;`;
     const params = [userID];
-    const rows: User[] = await mainDB.execute(sql, params);
+    const rows: User[] = await this.dbm.execute(sql, params);
 
     const imageID = rows[0]?.imageID;
-    const image = await ImageService.getImage(imageID);
+    const image = await this.dbm.imageService.getImage(imageID);
 
     return image;
   }
@@ -324,22 +316,19 @@ export module UserService {
    * @param userID A user's ID.
    * @param imageData The new binary image data.
    */
-  export async function setUserImage(
-    userID: string,
-    imageData: Buffer
-  ): Promise<void> {
+  public async setUserImage(userID: string, imageData: Buffer): Promise<void> {
     let sql = `SELECT imageID from User WHERE id = ?;`;
     let params = [userID];
-    const rows: User[] = await mainDB.execute(sql, params);
+    const rows: User[] = await this.dbm.execute(sql, params);
 
-    const newImageID = await ImageService.createImage(imageData);
+    const newImageID = await this.dbm.imageService.createImage(imageData);
 
     sql = `UPDATE User SET imageID = ? WHERE id = ?`;
     params = [newImageID, userID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
 
     const imageID = rows[0]?.imageID;
-    await ImageService.deleteImage(imageID);
+    await this.dbm.imageService.deleteImage(imageID);
   }
 
   /**
@@ -347,17 +336,17 @@ export module UserService {
    *
    * @param userID A user's ID.
    */
-  export async function deleteUserImage(userID: string): Promise<void> {
+  public async deleteUserImage(userID: string): Promise<void> {
     let sql = `SELECT imageID from User WHERE id = ?;`;
     let params = [userID];
-    const rows: User[] = await mainDB.execute(sql, params);
+    const rows: User[] = await this.dbm.execute(sql, params);
 
     sql = `UPDATE User SET imageID = ? WHERE id = ?`;
     params = [null, userID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
 
     const imageID = rows[0]?.imageID;
-    await ImageService.deleteImage(imageID);
+    await this.dbm.imageService.deleteImage(imageID);
   }
 
   /**
@@ -366,15 +355,15 @@ export module UserService {
    * @param userID A user's ID.
    * @param password The user's new password.
    */
-  export async function setUserPassword(
+  public async setUserPassword(
     userID: string,
     password: string
   ): Promise<void> {
-    const hashedPassword = await hashPassword(password);
+    const hashedPassword = await hashPassword(this.dbm, password);
 
     const sql = `UPDATE User SET password = ? WHERE id = ?;`;
     const params = [hashedPassword, userID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
   }
 
   /**
@@ -382,9 +371,9 @@ export module UserService {
    *
    * @param userID A user's ID.
    */
-  export async function updateLastPostTime(userID: string): Promise<void> {
+  public async updateLastPostTime(userID: string): Promise<void> {
     const sql = `UPDATE User SET lastPostTime = ? WHERE id = ?;`;
     const params = [getTime(), userID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
   }
 }

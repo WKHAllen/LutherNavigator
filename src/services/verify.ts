@@ -3,13 +3,13 @@
  * @packageDocumentation
  */
 
-import mainDB, {
+import {
+  BaseService,
   getTime,
   newUniqueID,
   pruneVerifyRecord,
   verifyIDLength,
 } from "./util";
-import { UserService } from "./user";
 
 /**
  * Verify architecture.
@@ -23,7 +23,7 @@ export interface Verify {
 /**
  * Verification services.
  */
-export module VerifyService {
+export class VerifyService extends BaseService {
   /**
    * Create a user verification record.
    *
@@ -31,12 +31,12 @@ export module VerifyService {
    * @param prune Whether or not to prune the record when the time comes.
    * @returns The new verification record's ID.
    */
-  export async function createVerifyRecord(
+  public async createVerifyRecord(
     email: string,
     prune: boolean = true
   ): Promise<string> {
     // Confirm that the email address does not exist
-    const emailUnused = await UserService.uniqueEmail(email);
+    const emailUnused = await this.dbm.userService.uniqueEmail(email);
 
     if (!emailUnused) {
       return null;
@@ -45,14 +45,14 @@ export module VerifyService {
     // Check that no verification record has already been created
     let sql = `SELECT id FROM Verify WHERE email = ?;`;
     let params: any[] = [email];
-    let rows: Verify[] = await mainDB.execute(sql, params);
+    let rows: Verify[] = await this.dbm.execute(sql, params);
 
     if (rows.length > 0) {
       return null;
     }
 
     // Create the verification record
-    const newVerifyID = await newUniqueID("Verify", verifyIDLength);
+    const newVerifyID = await newUniqueID(this.dbm, "Verify", verifyIDLength);
 
     sql = `
       INSERT INTO Verify (
@@ -62,10 +62,10 @@ export module VerifyService {
       );
     `;
     params = [newVerifyID, email, getTime()];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
 
     if (prune) {
-      pruneVerifyRecord(newVerifyID);
+      pruneVerifyRecord(this.dbm, newVerifyID);
     }
 
     return newVerifyID;
@@ -77,12 +77,10 @@ export module VerifyService {
    * @param verifyID A verification record's ID.
    * @returns Whether or not the verification record exists.
    */
-  export async function verifyRecordExists(
-    verifyID: string
-  ): Promise<boolean> {
+  public async verifyRecordExists(verifyID: string): Promise<boolean> {
     const sql = `SELECT id FROM Verify WHERE id = ?;`;
     const params = [verifyID];
-    const rows: Verify[] = await mainDB.execute(sql, params);
+    const rows: Verify[] = await this.dbm.execute(sql, params);
 
     return rows.length > 0;
   }
@@ -93,10 +91,10 @@ export module VerifyService {
    * @param verifyID A verification record's ID.
    * @returns The verification record.
    */
-  export async function getVerifyRecord(verifyID: string): Promise<Verify> {
+  public async getVerifyRecord(verifyID: string): Promise<Verify> {
     const sql = `SELECT * FROM Verify WHERE id = ?;`;
     const params = [verifyID];
-    const rows: Verify[] = await mainDB.execute(sql, params);
+    const rows: Verify[] = await this.dbm.execute(sql, params);
 
     return rows[0];
   }
@@ -106,10 +104,10 @@ export module VerifyService {
    *
    * @param verifyID A verification record's ID.
    */
-  export async function deleteVerifyRecord(verifyID: string): Promise<void> {
+  public async deleteVerifyRecord(verifyID: string): Promise<void> {
     const sql = `DELETE FROM Verify WHERE id = ?;`;
     const params = [verifyID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
   }
 
   /**
@@ -117,17 +115,19 @@ export module VerifyService {
    *
    * @param verifyID A verification record's ID.
    */
-  export async function deleteUnverifiedUser(verifyID: string): Promise<void> {
-    const verifyRecord = await getVerifyRecord(verifyID);
+  public async deleteUnverifiedUser(verifyID: string): Promise<void> {
+    const verifyRecord = await this.getVerifyRecord(verifyID);
 
     if (verifyRecord) {
-      const user = await UserService.getUserByEmail(verifyRecord.email);
+      const user = await this.dbm.userService.getUserByEmail(
+        verifyRecord.email
+      );
 
       if (user && !user.verified) {
-        await UserService.deleteUser(user.id);
+        await this.dbm.userService.deleteUser(user.id);
       }
 
-      await deleteVerifyRecord(verifyID);
+      await this.deleteVerifyRecord(verifyID);
     }
   }
 
@@ -137,21 +137,21 @@ export module VerifyService {
    * @param verifyID A verification record's ID.
    * @returns Whether or not the verification was successful.
    */
-  export async function verifyUser(verifyID: string): Promise<boolean> {
-    const verifyRecord = await getVerifyRecord(verifyID);
+  public async verifyUser(verifyID: string): Promise<boolean> {
+    const verifyRecord = await this.getVerifyRecord(verifyID);
 
     if (!verifyRecord) {
       return false;
     }
 
-    const user = await UserService.getUserByEmail(verifyRecord.email);
+    const user = await this.dbm.userService.getUserByEmail(verifyRecord.email);
 
     if (!user) {
       return false;
     }
 
-    await UserService.setVerified(user.id);
-    await deleteVerifyRecord(verifyID);
+    await this.dbm.userService.setVerified(user.id);
+    await this.deleteVerifyRecord(verifyID);
 
     return true;
   }

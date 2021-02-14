@@ -3,11 +3,10 @@
  * @packageDocumentation
  */
 
-import mainDB, { getTime, newUniqueID } from "./util";
+import { BaseService, getTime, newUniqueID } from "./util";
 import { Image } from "./image";
-import { Rating, RatingParams, RatingService } from "./rating";
-import { User, UserService } from "./user";
-import { PostImageService } from "./postImage";
+import { Rating, RatingParams } from "./rating";
+import { User } from "./user";
 
 /**
  * Post architecture.
@@ -29,7 +28,7 @@ export interface Post {
 /**
  * Post services.
  */
-export module PostService {
+export class PostService extends BaseService {
   /**
    * Create a post.
    *
@@ -43,7 +42,7 @@ export module PostService {
    * @param threeWords Three words to describe the location.
    * @returns The new post's ID.
    */
-  export async function createPost(
+  public async createPost(
     userID: string,
     content: string,
     imageData: Buffer[],
@@ -53,8 +52,8 @@ export module PostService {
     rating: RatingParams,
     threeWords: string
   ): Promise<string> {
-    const postID = await newUniqueID("Post");
-    const ratingID = await RatingService.createRating(rating);
+    const postID = await newUniqueID(this.dbm, "Post");
+    const ratingID = await this.dbm.ratingService.createRating(rating);
 
     const sql = `
       INSERT INTO Post (
@@ -76,10 +75,10 @@ export module PostService {
       threeWords,
       getTime(),
     ];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
 
-    await PostImageService.createPostImages(postID, imageData);
-    await UserService.updateLastPostTime(userID);
+    await this.dbm.postImageService.createPostImages(postID, imageData);
+    await this.dbm.userService.updateLastPostTime(userID);
 
     return postID;
   }
@@ -90,10 +89,10 @@ export module PostService {
    * @param postID A post's ID.
    * @returns Whether or not the post exists.
    */
-  export async function postExists(postID: string): Promise<boolean> {
+  public async postExists(postID: string): Promise<boolean> {
     const sql = `SELECT id FROM Post WHERE id = ?;`;
     const params = [postID];
-    const rows: Post[] = await mainDB.execute(sql, params);
+    const rows: Post[] = await this.dbm.execute(sql, params);
 
     return rows.length > 0;
   }
@@ -104,10 +103,10 @@ export module PostService {
    * @param postID A post's ID.
    * @returns The post.
    */
-  export async function getPost(postID: string): Promise<Post> {
+  public async getPost(postID: string): Promise<Post> {
     const sql = `SELECT * FROM Post WHERE id = ?;`;
     const params = [postID];
-    const rows: Post[] = await mainDB.execute(sql, params);
+    const rows: Post[] = await this.dbm.execute(sql, params);
 
     return rows[0];
   }
@@ -117,19 +116,19 @@ export module PostService {
    *
    * @param postID A post's ID.
    */
-  export async function deletePost(postID: string): Promise<void> {
+  public async deletePost(postID: string): Promise<void> {
     let sql = `SELECT ratingID FROM Post WHERE id = ?;`;
     let params = [postID];
-    let rows: Post[] = await mainDB.execute(sql, params);
+    let rows: Post[] = await this.dbm.execute(sql, params);
 
-    await PostImageService.deletePostImages(postID);
+    await this.dbm.postImageService.deletePostImages(postID);
 
     sql = `DELETE FROM Post WHERE id = ?;`;
     params = [postID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
 
     const ratingID = rows[0]?.ratingID;
-    await RatingService.deleteRating(ratingID);
+    await this.dbm.ratingService.deleteRating(ratingID);
   }
 
   /**
@@ -138,13 +137,13 @@ export module PostService {
    * @param postID A post's ID.
    * @returns The user who made the post.
    */
-  export async function getPostUser(postID: string): Promise<User> {
+  public async getPostUser(postID: string): Promise<User> {
     const sql = `SELECT userID FROM Post WHERE id = ?;`;
     const params = [postID];
-    const rows: Post[] = await mainDB.execute(sql, params);
+    const rows: Post[] = await this.dbm.execute(sql, params);
 
     const userID = rows[0]?.userID;
-    const user = await UserService.getUser(userID);
+    const user = await this.dbm.userService.getUser(userID);
 
     return user;
   }
@@ -155,13 +154,13 @@ export module PostService {
    * @param postID A post's ID.
    * @returns The post's rating.
    */
-  export async function getPostRating(postID: string): Promise<Rating> {
+  public async getPostRating(postID: string): Promise<Rating> {
     const sql = `SELECT ratingID FROM Post WHERE id = ?;`;
     const params = [postID];
-    const rows: Post[] = await mainDB.execute(sql, params);
+    const rows: Post[] = await this.dbm.execute(sql, params);
 
     const ratingID = rows[0]?.ratingID;
-    const rating = await RatingService.getRating(ratingID);
+    const rating = await this.dbm.ratingService.getRating(ratingID);
 
     return rating;
   }
@@ -172,10 +171,10 @@ export module PostService {
    * @param userID A user's ID.
    * @returns A list of all posts made by the user.
    */
-  export async function getUserPosts(userID: string): Promise<Post[]> {
+  public async getUserPosts(userID: string): Promise<Post[]> {
     const sql = `SELECT * FROM Post WHERE userID = ? ORDER BY createTime;`;
     const params = [userID];
-    const rows: Post[] = await mainDB.execute(sql, params);
+    const rows: Post[] = await this.dbm.execute(sql, params);
 
     return rows;
   }
@@ -185,27 +184,27 @@ export module PostService {
    *
    * @param userID A user's ID.
    */
-  export async function deleteUserPosts(userID: string): Promise<void> {
+  public async deleteUserPosts(userID: string): Promise<void> {
     let sql = `SELECT id, ratingID FROM Post WHERE userID = ?;`;
     let params = [userID];
-    const rows: Post[] = await mainDB.execute(sql, params);
+    const rows: Post[] = await this.dbm.execute(sql, params);
 
     const postIDs = rows.map((post) => post.id);
 
     for (const postID of postIDs) {
-      await PostImageService.deletePostImages(postID);
+      await this.dbm.postImageService.deletePostImages(postID);
     }
 
     sql = `DELETE FROM Post WHERE userID = ?;`;
     params = [userID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
 
     const ratingIDs = rows.map((post) => `'${post.ratingID}'`);
 
     if (ratingIDs.length > 0) {
       sql = `DELETE FROM Rating WHERE id IN (${ratingIDs.join(", ")});`;
       params = [];
-      await mainDB.execute(sql, params);
+      await this.dbm.execute(sql, params);
     }
   }
 
@@ -215,10 +214,10 @@ export module PostService {
    * @param postID A post's ID.
    * @returns The post's text content.
    */
-  export async function getPostContent(postID: string): Promise<string> {
+  public async getPostContent(postID: string): Promise<string> {
     const sql = `SELECT content FROM Post WHERE id = ?;`;
     const params = [postID];
-    const rows: Post[] = await mainDB.execute(sql, params);
+    const rows: Post[] = await this.dbm.execute(sql, params);
 
     return rows[0]?.content;
   }
@@ -229,13 +228,10 @@ export module PostService {
    * @param postID A post's ID.
    * @param content The new text content of a post.
    */
-  export async function setPostContent(
-    postID: string,
-    content: string
-  ): Promise<void> {
+  public async setPostContent(postID: string, content: string): Promise<void> {
     const sql = `UPDATE Post SET content = ? WHERE id = ?;`;
     const params = [content, postID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
   }
 
   /**
@@ -244,8 +240,8 @@ export module PostService {
    * @param postID A post's ID.
    * @returns The images associated with the post.
    */
-  export async function getPostImages(postID: string): Promise<Image[]> {
-    return await PostImageService.getPostImages(postID);
+  public async getPostImages(postID: string): Promise<Image[]> {
+    return await this.dbm.postImageService.getPostImages(postID);
   }
 
   /**
@@ -255,11 +251,11 @@ export module PostService {
    * @param imageData The binary data of the new images.
    * @returns The IDs of the new images.
    */
-  export async function setPostImages(
+  public async setPostImages(
     postID: string,
     imageData: Buffer[]
   ): Promise<string[]> {
-    return await PostImageService.createPostImages(postID, imageData);
+    return await this.dbm.postImageService.createPostImages(postID, imageData);
   }
 
   /**
@@ -268,10 +264,10 @@ export module PostService {
    * @param postID A post's ID.
    * @returns Whether or not the post has been approved by an admin.
    */
-  export async function isApproved(postID: string): Promise<boolean> {
+  public async isApproved(postID: string): Promise<boolean> {
     const sql = `SELECT approved FROM Post WHERE id = ?;`;
     const params = [postID];
-    const rows: Post[] = await mainDB.execute(sql, params);
+    const rows: Post[] = await this.dbm.execute(sql, params);
 
     return !!rows[0]?.approved;
   }
@@ -282,13 +278,13 @@ export module PostService {
    * @param postID A post's ID.
    * @param approved Approved status.
    */
-  export async function setApproved(
+  public async setApproved(
     postID: string,
     approved: boolean = true
   ): Promise<void> {
     const sql = `UPDATE Post SET approved = ? WHERE id = ?;`;
     const params = [approved, postID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
   }
 
   /**
@@ -296,7 +292,7 @@ export module PostService {
    *
    * @returns All unapproved posts.
    */
-  export async function getUnapproved(): Promise<Post[]> {
+  public async getUnapproved(): Promise<Post[]> {
     const sql = `
       SELECT
         Post.id AS postID, User.firstname AS firstname, User.lastname AS lastname,
@@ -310,7 +306,7 @@ export module PostService {
       WHERE Post.approved = FALSE
       ORDER BY createTime;
     `;
-    const rows: Post[] = await mainDB.execute(sql);
+    const rows: Post[] = await this.dbm.execute(sql);
 
     return rows;
   }
