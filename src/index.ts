@@ -10,6 +10,7 @@ import * as bodyParser from "body-parser";
 import * as cookieParser from "cookie-parser";
 import * as routes from "./routes";
 import { renderPage, renderError } from "./routes/util";
+import DatabaseManager from "./services";
 import initDB from "./dbinit";
 import { helpers } from "./helpers";
 
@@ -22,6 +23,11 @@ const debug = !!parseInt(process.env.DEBUG);
  * Port number to use.
  */
 const port = parseInt(process.env.PORT);
+
+/**
+ * Database URL.
+ */
+const dbURL = process.env.DATABASE_URL;
 
 /**
  * Express app.
@@ -90,8 +96,11 @@ app.use(
   }
 );
 
+// Create the database manager
+const dbm = new DatabaseManager(dbURL);
+
 // Initialize the database
-initDB().then(() => {
+initDB(dbm).then(() => {
   // Listen for connections
   app.listen(port, () => {
     console.log(`App running on port ${port}`);
