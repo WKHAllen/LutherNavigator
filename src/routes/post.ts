@@ -7,6 +7,7 @@ import { Router } from "express";
 import {
   auth,
   upload,
+  getDBM,
   getUserID,
   maxImageSize,
   renderPage,
@@ -16,14 +17,7 @@ import {
   setForm,
 } from "./util";
 import wrapRoute from "../asyncCatch";
-import {
-  PostService,
-  UserService,
-  UserStatusService,
-  LocationTypeService,
-  RatingParams,
-  MetaService,
-} from "../services";
+import { RatingParams } from "../services/rating";
 import { metaConfig } from "../config";
 
 /**
@@ -36,9 +30,11 @@ postRouter.get(
   "/",
   auth,
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const error = getErrorMessage(req, res);
     const form = getForm(req, res);
-    const locationTypes = await LocationTypeService.getLocations();
+    const locationTypes = await dbm.locationTypeService.getLocations();
 
     await renderPage(req, res, "createPost", {
       title: "New post",
@@ -55,10 +51,12 @@ postRouter.post(
   auth,
   upload.array("images", 25),
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const mimetypes = ["image/png", "image/jpg", "image/jpeg"];
     const userID = await getUserID(req);
     const maxImages =
-      parseInt(await MetaService.get("Images per post")) ||
+      parseInt(await dbm.metaService.get("Images per post")) ||
       metaConfig["Images per post"];
 
     const content: string = req.body.postContent;
@@ -72,7 +70,7 @@ postRouter.post(
       req.body.wordThree,
     ].join(", ");
 
-    const validLocationTypeID = LocationTypeService.validLocation(
+    const validLocationTypeID = dbm.locationTypeService.validLocation(
       locationTypeID
     );
     const imageData = files.map((file) => file.buffer);
@@ -111,7 +109,7 @@ postRouter.post(
         general: 5,
       };
 
-      const postID = await PostService.createPost(
+      const postID = await dbm.postService.createPost(
         userID,
         content,
         imageData,
@@ -135,17 +133,19 @@ postRouter.post(
 postRouter.get(
   "/:postID",
   wrapRoute(async (req, res, next) => {
+    const dbm = getDBM(req);
+
     const postID = req.params.postID;
     const userID = await getUserID(req);
-    const user = await UserService.getUser(userID);
+    const user = await dbm.userService.getUser(userID);
     let error: string = null;
 
-    const post = await PostService.getPost(postID);
+    const post = await dbm.postService.getPost(postID);
     if (!post) {
       next(); // 404
     }
 
-    const postUser = await PostService.getPostUser(postID);
+    const postUser = await dbm.postService.getPostUser(postID);
     if (!post.approved) {
       if (user && (user.admin || postUser.id === userID)) {
         // The user is an admin or the creator of the post
@@ -157,10 +157,10 @@ postRouter.get(
       }
     }
 
-    const userStatusName = await UserStatusService.getStatusName(
+    const userStatusName = await dbm.userStatusService.getStatusName(
       user.statusID
     );
-    const images = await PostService.getPostImages(postID);
+    const images = await dbm.postService.getPostImages(postID);
 
     await renderPage(req, res, "post", {
       title: post.location,

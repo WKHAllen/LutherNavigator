@@ -8,6 +8,7 @@ import {
   renderPage,
   auth,
   upload,
+  getDBM,
   getUserID,
   maxImageSize,
   setErrorMessage,
@@ -15,7 +16,6 @@ import {
   getSessionID,
 } from "./util";
 import wrapRoute from "../asyncCatch";
-import { UserService, PostService, SessionService } from "../services";
 import { checkPassword } from "../services/util";
 
 /**
@@ -28,9 +28,11 @@ profileRouter.get(
   "/",
   auth,
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const userID = await getUserID(req);
-    const user = await UserService.getUser(userID);
-    const posts = await PostService.getUserPosts(userID);
+    const user = await dbm.userService.getUser(userID);
+    const posts = await dbm.postService.getUserPosts(userID);
 
     await renderPage(req, res, "profile", {
       title: "Your profile",
@@ -53,13 +55,10 @@ profileRouter.post(
   auth,
   upload.single("image"),
   wrapRoute(async (req, res) => {
-    if (
-      !["image/png", "image/jpg", "image/jpeg"].includes(req.file.mimetype)
-    ) {
-      setErrorMessage(
-        res,
-        "Profile image must be in PNG, JPG, or JPEG format"
-      );
+    const dbm = getDBM(req);
+
+    if (!["image/png", "image/jpg", "image/jpeg"].includes(req.file.mimetype)) {
+      setErrorMessage(res, "Profile image must be in PNG, JPG, or JPEG format");
     } else if (req.file.size >= maxImageSize) {
       setErrorMessage(
         res,
@@ -68,7 +67,7 @@ profileRouter.post(
     } else {
       const userID = await getUserID(req);
       const imageData = req.file.buffer;
-      await UserService.setUserImage(userID, imageData);
+      await dbm.userService.setUserImage(userID, imageData);
     }
 
     res.redirect("/profile");
@@ -80,6 +79,8 @@ profileRouter.post(
   "/changePassword",
   auth,
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const currentPassword: string = req.body.currentPassword;
     const newPassword: string = req.body.newPassword;
     const confirmNewPassword: string = req.body.confirmNewPassword;
@@ -90,13 +91,13 @@ profileRouter.post(
       setErrorMessage(res, "New password must be at least 8 characters");
     } else {
       const sessionID = getSessionID(req);
-      const user = await SessionService.getUserBySessionID(sessionID);
+      const user = await dbm.sessionService.getUserBySessionID(sessionID);
       const match = await checkPassword(currentPassword, user.password);
 
       if (!match) {
         setErrorMessage(res, "Incorrect password");
       } else {
-        await UserService.setUserPassword(user.id, newPassword);
+        await dbm.userService.setUserPassword(user.id, newPassword);
       }
     }
 

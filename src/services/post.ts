@@ -52,7 +52,7 @@ export class PostService extends BaseService {
     rating: RatingParams,
     threeWords: string
   ): Promise<string> {
-    const postID = await newUniqueID("Post");
+    const postID = await newUniqueID(this.dbm, "Post");
     const ratingID = await this.dbm.ratingService.createRating(rating);
 
     const sql = `

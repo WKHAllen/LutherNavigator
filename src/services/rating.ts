@@ -41,7 +41,7 @@ export class RatingService extends BaseService {
    * @returns The new rating's ID.
    */
   public async createRating(rating: RatingParams): Promise<string> {
-    const ratingID = await newUniqueID("Rating");
+    const ratingID = await newUniqueID(this.dbm, "Rating");
     const cols = Object.keys(rating);
     const values = Object.values(rating);
 

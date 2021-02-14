@@ -52,8 +52,8 @@ export class UserService extends BaseService {
     password: string,
     statusID: number
   ): Promise<string> {
-    const userID = await newUniqueID("User");
-    const hashedPassword = await hashPassword(password);
+    const userID = await newUniqueID(this.dbm, "User");
+    const hashedPassword = await hashPassword(this.dbm, password);
 
     const sql = `
       INSERT INTO User (
@@ -359,7 +359,7 @@ export class UserService extends BaseService {
     userID: string,
     password: string
   ): Promise<void> {
-    const hashedPassword = await hashPassword(password);
+    const hashedPassword = await hashPassword(this.dbm, password);
 
     const sql = `UPDATE User SET password = ? WHERE id = ?;`;
     const params = [hashedPassword, userID];

@@ -37,7 +37,11 @@ export class SessionService extends BaseService {
     userID: string,
     prune: boolean = true
   ): Promise<string> {
-    const newSessionID = await newUniqueID("Session", sessionIDLength);
+    const newSessionID = await newUniqueID(
+      this.dbm,
+      "Session",
+      sessionIDLength
+    );
 
     const sql = `
       INSERT INTO Session (
@@ -51,7 +55,7 @@ export class SessionService extends BaseService {
     await this.dbm.execute(sql, params);
 
     if (prune) {
-      pruneSession(newSessionID);
+      pruneSession(this.dbm, newSessionID);
     }
 
     return newSessionID;
@@ -165,7 +169,7 @@ export class SessionService extends BaseService {
     await this.dbm.execute(sql, params);
 
     if (prune) {
-      pruneSession(sessionID);
+      pruneSession(this.dbm, sessionID);
     }
   }
 }

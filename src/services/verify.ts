@@ -52,7 +52,7 @@ export class VerifyService extends BaseService {
     }
 
     // Create the verification record
-    const newVerifyID = await newUniqueID("Verify", verifyIDLength);
+    const newVerifyID = await newUniqueID(this.dbm, "Verify", verifyIDLength);
 
     sql = `
       INSERT INTO Verify (
@@ -65,7 +65,7 @@ export class VerifyService extends BaseService {
     await this.dbm.execute(sql, params);
 
     if (prune) {
-      pruneVerifyRecord(newVerifyID);
+      pruneVerifyRecord(this.dbm, newVerifyID);
     }
 
     return newVerifyID;

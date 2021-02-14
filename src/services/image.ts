@@ -25,7 +25,7 @@ export class ImageService extends BaseService {
    * @returns The new image's ID.
    */
   public async createImage(data: Buffer): Promise<string> {
-    const imageID = await newUniqueID("Image");
+    const imageID = await newUniqueID(this.dbm, "Image");
 
     const sql = `INSERT INTO Image (id, data, registerTime) VALUES (?, ?, ?);`;
     const params = [imageID, data, getTime()];

@@ -101,6 +101,9 @@ const dbm = new DatabaseManager(dbURL);
 
 // Initialize the database
 initDB(dbm).then(() => {
+  // Put the database manager in the app object
+  app.set("dbm", dbm);
+
   // Listen for connections
   app.listen(port, () => {
     console.log(`App running on port ${port}`);

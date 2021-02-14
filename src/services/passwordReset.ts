@@ -61,6 +61,7 @@ export class PasswordResetService extends BaseService {
 
     // Create the password reset record
     const newPasswordResetID = await newUniqueID(
+      this.dbm,
       "PasswordReset",
       passwordResetIDLength
     );
@@ -76,7 +77,7 @@ export class PasswordResetService extends BaseService {
     await this.dbm.execute(sql, params);
 
     if (prune) {
-      prunePasswordResetRecord(newPasswordResetID);
+      prunePasswordResetRecord(this.dbm, newPasswordResetID);
     }
 
     return newPasswordResetID;
