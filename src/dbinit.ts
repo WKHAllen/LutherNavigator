@@ -38,7 +38,7 @@ export async function populateTable(
   other: boolean = false,
   otherID: number = 1000
 ): Promise<void> {
-  const rows = await mainDB.execute(`SELECT ${column} from ${table}`);
+  const rows = await mainDB.execute(`SELECT ${column} FROM ${table};`);
 
   if (rows.length === 0) {
     let queryValues = values.map(
@@ -55,6 +55,9 @@ export async function populateTable(
   }
 }
 
+/**
+ * Initialize values in the meta table.
+ */
 export async function initMeta(): Promise<void> {
   const metaRows = await MetaService.getAll();
   const allMeta = metaRows.map((row) => row.name);
@@ -64,6 +67,21 @@ export async function initMeta(): Promise<void> {
       await MetaService.set(item, String(metaConfig[item]));
     }
   }
+}
+
+/**
+ * Switch to using a single database connection.
+ */
+export async function useConnection(): Promise<void> {
+  const conn = await mainDB.getConnection();
+  mainDB.setConnection(conn);
+}
+
+/**
+ * Switch to using the database connection pool.
+ */
+export async function clearConnection(): Promise<void> {
+  mainDB.setConnection(null);
 }
 
 /**

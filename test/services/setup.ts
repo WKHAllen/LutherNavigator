@@ -1,6 +1,7 @@
-import initDB from "../../src/dbinit";
+import initDB, { useConnection } from "../../src/dbinit";
 
 // Setup
 export = async function () {
+  await useConnection();
   await initDB(false);
 };
