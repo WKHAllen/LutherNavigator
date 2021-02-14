@@ -3,7 +3,7 @@
  * @packageDocumentation
  */
 
-import mainDB, { newUniqueID } from "./util";
+import { BaseService, newUniqueID } from "./util";
 
 /**
  * Rating architecture.
@@ -33,14 +33,14 @@ export interface RatingParams {
 /**
  * Rating services.
  */
-export module RatingService {
+export class RatingService extends BaseService {
   /**
    * Create a rating.
    *
    * @param rating The user's rating.
    * @returns The new rating's ID.
    */
-  export async function createRating(rating: RatingParams): Promise<string> {
+  public async createRating(rating: RatingParams): Promise<string> {
     const ratingID = await newUniqueID("Rating");
     const cols = Object.keys(rating);
     const values = Object.values(rating);
@@ -53,7 +53,7 @@ export module RatingService {
       );
     `;
     const params = [ratingID, ...values];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
 
     return ratingID;
   }
@@ -64,10 +64,10 @@ export module RatingService {
    * @param ratingID A rating's ID.
    * @returns Whether or not the rating exists.
    */
-  export async function ratingExists(ratingID: string): Promise<boolean> {
+  public async ratingExists(ratingID: string): Promise<boolean> {
     const sql = `SELECT id FROM Rating WHERE id = ?;`;
     const params = [ratingID];
-    const rows: Rating[] = await mainDB.execute(sql, params);
+    const rows: Rating[] = await this.dbm.execute(sql, params);
 
     return rows.length > 0;
   }
@@ -78,10 +78,10 @@ export module RatingService {
    * @param ratingID A rating's ID.
    * @returns The rating.
    */
-  export async function getRating(ratingID: string): Promise<Rating> {
+  public async getRating(ratingID: string): Promise<Rating> {
     const sql = `SELECT * FROM Rating WHERE id = ?;`;
     const params = [ratingID];
-    const rows: Rating[] = await mainDB.execute(sql, params);
+    const rows: Rating[] = await this.dbm.execute(sql, params);
 
     return rows[0];
   }
@@ -91,9 +91,9 @@ export module RatingService {
    *
    * @param ratingID A rating's ID.
    */
-  export async function deleteRating(ratingID: string): Promise<void> {
+  public async deleteRating(ratingID: string): Promise<void> {
     const sql = `DELETE FROM Rating WHERE id = ?;`;
     const params = [ratingID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
   }
 }

@@ -3,7 +3,7 @@
  * @packageDocumentation
  */
 
-import mainDB from "./util";
+import { BaseService } from "./util";
 
 /**
  * Meta architecture.
@@ -16,17 +16,17 @@ export interface Meta {
 /**
  * Meta services.
  */
-export module MetaService {
+export class MetaService extends BaseService {
   /**
    * Check if a key name exists.
    *
    * @param name The key name.
    * @returns Whether or not the name exists.
    */
-  export async function exists(name: string): Promise<boolean> {
+  public async exists(name: string): Promise<boolean> {
     const sql = `SELECT name FROM Meta WHERE name = ?;`;
     const params = [name];
-    const rows: Meta[] = await mainDB.execute(sql, params);
+    const rows: Meta[] = await this.dbm.execute(sql, params);
 
     return rows.length > 0;
   }
@@ -37,10 +37,10 @@ export module MetaService {
    * @param name The key name.
    * @returns The value.
    */
-  export async function get(name: string): Promise<string> {
+  public async get(name: string): Promise<string> {
     const sql = `SELECT value FROM Meta WHERE name = ?;`;
     const params = [name];
-    const rows: Meta[] = await mainDB.execute(sql, params);
+    const rows: Meta[] = await this.dbm.execute(sql, params);
 
     return rows[0]?.value;
   }
@@ -51,8 +51,8 @@ export module MetaService {
    * @param name The key name.
    * @param value The value.
    */
-  export async function set(name: string, value: string): Promise<void> {
-    const nameExists = await exists(name);
+  public async set(name: string, value: string): Promise<void> {
+    const nameExists = await this.exists(name);
 
     let sql: string;
     let params: string[];
@@ -71,7 +71,7 @@ export module MetaService {
       params = [value, name];
     }
 
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
   }
 
   /**
@@ -79,10 +79,10 @@ export module MetaService {
    *
    * @param name The key name.
    */
-  export async function remove(name: string): Promise<void> {
+  public async remove(name: string): Promise<void> {
     const sql = `DELETE FROM Meta WHERE name = ?;`;
     const params = [name];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
   }
 
   /**
@@ -90,10 +90,10 @@ export module MetaService {
    *
    * @returns Key names and values.
    */
-  export async function getAll(): Promise<Meta[]> {
+  public async getAll(): Promise<Meta[]> {
     const sql = `SELECT * FROM Meta;`;
     const params = [];
-    const rows: Meta[] = await mainDB.execute(sql, params);
+    const rows: Meta[] = await this.dbm.execute(sql, params);
 
     return rows;
   }
