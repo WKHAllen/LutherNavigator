@@ -46,6 +46,8 @@ export class DB {
    * Connection pool.
    */
   private pool: mysql.Pool;
+  private conn: DBConnection = null;
+  private closed: boolean = false;
 
   /**
    * Database controller constructor.
@@ -66,13 +68,17 @@ export class DB {
    */
   public async execute(stmt: string, params: any[] = []): Promise<any[]> {
     return new Promise((resolve) => {
-      this.pool.query(stmt, params, (err, results, fields) => {
-        if (err) {
-          logError(stmt, params, results, err);
-        }
+      if (!this.conn) {
+        this.pool.query(stmt, params, (err, results, fields) => {
+          if (err) {
+            logError(stmt, params, results, err);
+          }
 
-        resolve(results);
-      });
+          resolve(results);
+        });
+      } else {
+        this.conn.execute(stmt, params).then(resolve);
+      }
     });
   }
 
@@ -88,32 +94,113 @@ export class DB {
     params: any[][] = []
   ): Promise<any[][]> {
     return new Promise((resolve) => {
+      if (!this.conn) {
+        this.pool.getConnection(async (err, conn) => {
+          if (err) {
+            conn.release();
+            logError("", [], null, err);
+            resolve([]);
+          }
+
+          let reses: any[][] = [];
+
+          for (let i = 0; i < stmts.length; i++) {
+            let results: any;
+            let fields: mysql.FieldInfo[];
+
+            try {
+              [results, fields] = await doQuery(
+                conn,
+                stmts[i],
+                params[i] || []
+              );
+            } catch (err) {
+              logError(stmts[i], params[i] || [], results, err);
+            } finally {
+              reses.push(results);
+            }
+          }
+
+          conn.release();
+          resolve(reses);
+        });
+      } else {
+        this.conn.executeMany(stmts, params).then(resolve);
+      }
+    });
+  }
+
+  /**
+   * Get a single connection object from the pool.
+   *
+   * @returns The connection object.
+   */
+  public async getConnection(): Promise<DBConnection> {
+    return new Promise((resolve) => {
       this.pool.getConnection(async (err, conn) => {
         if (err) {
           conn.release();
           logError("", [], null, err);
-          resolve([]);
+          resolve(null);
         }
 
-        let reses: any[][] = [];
-
-        for (let i = 0; i < stmts.length; i++) {
-          let results: any;
-          let fields: mysql.FieldInfo[];
-
-          try {
-            [results, fields] = await doQuery(conn, stmts[i], params[i] || []);
-          } catch (err) {
-            logError(stmts[i], params[i] || [], results, err);
-          } finally {
-            reses.push(results);
-          }
-        }
-
-        conn.release();
-        resolve(reses);
+        const connection = new DBConnection(conn);
+        resolve(connection);
       });
     });
+  }
+
+  /**
+   * Set the database controller's current connection object.
+   * `null` can be passed to use the connection pool.
+   *
+   * @param conn The connection object.
+   */
+  public setConnection(conn: DBConnection): void {
+    if (this.conn instanceof DBConnection) {
+      this.conn.close();
+    }
+
+    this.conn = conn;
+  }
+
+  /**
+   * Start a transaction.
+   */
+  public async startTransaction(): Promise<void> {
+    if (this.conn) {
+      this.conn.startTransaction();
+    } else {
+      throw new Error(
+        "Must be using a single connection to start a transaction"
+      );
+    }
+  }
+
+  /**
+   * Commit a transaction.
+   */
+  public async commit(): Promise<void> {
+    if (this.conn) {
+      this.conn.commit();
+    } else {
+      throw new Error(
+        "Must be using a single connection to commit a transaction"
+      );
+    }
+  }
+
+  /**
+   * Rollback a transaction.
+   */
+  public async rollback(): Promise<void> {
+    if (this.conn) {
+      this.conn.rollback();
+    } else {
+      throw new Error(
+        "Must be using a single connection to rollback a transaction"
+      );
+    }
   }
 
   /**
@@ -121,13 +208,120 @@ export class DB {
    */
   public async close(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.pool.end((err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
+      if (!this.closed) {
+        if (this.conn) {
+          this.conn.close();
         }
-      });
+
+        this.pool.end((err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      }
     });
+  }
+}
+
+/**
+ * Control the database through a single connection.
+ */
+export class DBConnection {
+  /**
+   * Connection object.
+   */
+  private conn: mysql.PoolConnection;
+  private closed: boolean = false;
+
+  /**
+   * Database connection constructor.
+   *
+   * @param connection The database connection.
+   * @returns The database connection object.
+   */
+  constructor(connection: mysql.PoolConnection) {
+    this.conn = connection;
+  }
+
+  /**
+   * Execute a SQL query.
+   *
+   * @param stmt SQL statement.
+   * @param params Values to be inserted into the statement.
+   * @returns Query results.
+   */
+  public async execute(stmt: string, params: any[] = []): Promise<any> {
+    let results: any;
+    let fields: mysql.FieldInfo[];
+
+    try {
+      [results, fields] = await doQuery(this.conn, stmt, params);
+      return results;
+    } catch (err) {
+      logError(stmt, params, results, err);
+      return null;
+    }
+  }
+
+  /**
+   * Execute multiple SQL queries, each one right after the last
+   *
+   * @param stmts SQL statement.
+   * @param params Values to be inserted into the statement.
+   * @returns Results of all queries.
+   */
+  public async executeMany(
+    stmts: string[],
+    params: any[][] = []
+  ): Promise<any[][]> {
+    let reses: any[][] = [];
+
+    for (let i = 0; i < stmts.length; i++) {
+      let results: any;
+      let fields: mysql.FieldInfo[];
+
+      try {
+        [results, fields] = await doQuery(this.conn, stmts[i], params[i] || []);
+      } catch (err) {
+        logError(stmts[i], params[i] || [], results, err);
+      } finally {
+        reses.push(results);
+      }
+    }
+
+    return reses;
+  }
+
+  /**
+   * Start a transaction.
+   */
+  public async startTransaction(): Promise<void> {
+    await this.execute("START TRANSACTION;");
+  }
+
+  /**
+   * Commit a transaction.
+   */
+  public async commit(): Promise<void> {
+    await this.execute("COMMIT;");
+  }
+
+  /**
+   * Rollback a transaction.
+   */
+  public async rollback(): Promise<void> {
+    await this.execute("ROLLBACK;");
+  }
+
+  /**
+   * Close the connection.
+   */
+  public close(): void {
+    if (!this.closed) {
+      this.conn.release();
+      this.closed = true;
+    }
   }
 }

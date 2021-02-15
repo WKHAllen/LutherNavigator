@@ -3,7 +3,8 @@
  * @packageDocumentation
  */
 
-import mainDB, {
+import {
+  BaseService,
   getTime,
   newUniqueID,
   pruneSession,
@@ -24,7 +25,7 @@ export interface Session {
 /**
  * Session services.
  */
-export module SessionService {
+export class SessionService extends BaseService {
   /**
    * Create a session.
    *
@@ -32,11 +33,15 @@ export module SessionService {
    * @param prune Whether or not to prune the session when the time comes.
    * @returns The new session's ID.
    */
-  export async function createSession(
+  public async createSession(
     userID: string,
     prune: boolean = true
   ): Promise<string> {
-    const newSessionID = await newUniqueID("Session", sessionIDLength);
+    const newSessionID = await newUniqueID(
+      this.dbm,
+      "Session",
+      sessionIDLength
+    );
 
     const sql = `
       INSERT INTO Session (
@@ -47,10 +52,10 @@ export module SessionService {
     `;
     const now = getTime();
     const params = [newSessionID, userID, now, now];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
 
     if (prune) {
-      pruneSession(newSessionID);
+      pruneSession(this.dbm, newSessionID);
     }
 
     return newSessionID;
@@ -62,10 +67,10 @@ export module SessionService {
    * @param sessionID A session's ID.
    * @returns Whether or not the session exists.
    */
-  export async function sessionExists(sessionID: string): Promise<boolean> {
+  public async sessionExists(sessionID: string): Promise<boolean> {
     const sql = `SELECT id FROM Session WHERE id = ?;`;
     const params = [sessionID];
-    const rows: Session[] = await mainDB.execute(sql, params);
+    const rows: Session[] = await this.dbm.execute(sql, params);
 
     return rows.length > 0;
   }
@@ -76,10 +81,10 @@ export module SessionService {
    * @param sessionID A session's ID.
    * @returns The session.
    */
-  export async function getSession(sessionID: string): Promise<Session> {
+  public async getSession(sessionID: string): Promise<Session> {
     const sql = `SELECT * FROM Session WHERE id = ?;`;
     const params = [sessionID];
-    const rows: Session[] = await mainDB.execute(sql, params);
+    const rows: Session[] = await this.dbm.execute(sql, params);
 
     return rows[0];
   }
@@ -89,10 +94,10 @@ export module SessionService {
    *
    * @param sessionID A session's ID.
    */
-  export async function deleteSession(sessionID: string): Promise<void> {
+  public async deleteSession(sessionID: string): Promise<void> {
     const sql = `DELETE FROM Session WHERE id = ?;`;
     const params = [sessionID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
   }
 
   /**
@@ -101,10 +106,10 @@ export module SessionService {
    * @param userID A user's ID.
    * @returns A list of all sessions associated with the user.
    */
-  export async function getUserSessions(userID: string): Promise<Session[]> {
+  public async getUserSessions(userID: string): Promise<Session[]> {
     const sql = `SELECT * FROM Session WHERE userID = ? ORDER BY createTime;`;
     const params = [userID];
-    const rows: Session[] = await mainDB.execute(sql, params);
+    const rows: Session[] = await this.dbm.execute(sql, params);
 
     return rows;
   }
@@ -114,10 +119,10 @@ export module SessionService {
    *
    * @param userID A user's ID.
    */
-  export async function deleteUserSessions(userID: string): Promise<void> {
+  public async deleteUserSessions(userID: string): Promise<void> {
     const sql = `DELETE FROM Session WHERE userID = ?;`;
     const params = [userID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
   }
 
   /**
@@ -126,12 +131,10 @@ export module SessionService {
    * @param sessionID A session's ID.
    * @returns The ID of the user associated with the session.
    */
-  export async function getUserIDBySessionID(
-    sessionID: string
-  ): Promise<string> {
+  public async getUserIDBySessionID(sessionID: string): Promise<string> {
     const sql = `SELECT userID from Session WHERE id = ?;`;
     const params = [sessionID];
-    const rows: Session[] = await mainDB.execute(sql, params);
+    const rows: Session[] = await this.dbm.execute(sql, params);
 
     return rows[0]?.userID;
   }
@@ -142,12 +145,12 @@ export module SessionService {
    * @param sessionID A session's ID.
    * @returns The user associated with the session.
    */
-  export async function getUserBySessionID(sessionID: string): Promise<User> {
-    const userID = await getUserIDBySessionID(sessionID);
+  public async getUserBySessionID(sessionID: string): Promise<User> {
+    const userID = await this.getUserIDBySessionID(sessionID);
 
     const sql = `SELECT * FROM User WHERE id = ?;`;
     const params = [userID];
-    const rows: User[] = await mainDB.execute(sql, params);
+    const rows: User[] = await this.dbm.execute(sql, params);
 
     return rows[0];
   }
@@ -157,16 +160,16 @@ export module SessionService {
    *
    * @param sessionID A session's ID.
    */
-  export async function updateSession(
+  public async updateSession(
     sessionID: string,
     prune: boolean = true
   ): Promise<void> {
     const sql = `UPDATE Session SET updateTime = ? WHERE id = ?;`;
     const params = [getTime(), sessionID];
-    await mainDB.execute(sql, params);
+    await this.dbm.execute(sql, params);
 
     if (prune) {
-      pruneSession(sessionID);
+      pruneSession(this.dbm, sessionID);
     }
   }
 }

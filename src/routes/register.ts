@@ -6,12 +6,12 @@
 import { Router } from "express";
 import {
   renderPage,
+  getDBM,
   getErrorMessage,
   setErrorMessage,
   getHostname,
 } from "./util";
 import wrapRoute from "../asyncCatch";
-import { UserService, UserStatusService, VerifyService } from "../services";
 import { sendFormattedEmail } from "../emailer";
 
 /**
@@ -23,8 +23,10 @@ export const registerRouter = Router();
 registerRouter.get(
   "/",
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const error = getErrorMessage(req, res);
-    const userStatuses = await UserStatusService.getStatuses();
+    const userStatuses = await dbm.userStatusService.getStatuses();
 
     await renderPage(req, res, "register", {
       error,
@@ -37,6 +39,8 @@ registerRouter.get(
 registerRouter.post(
   "/",
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const firstname: string = req.body.firstname;
     const lastname: string = req.body.lastname;
     const email: string = req.body.email;
@@ -73,14 +77,14 @@ registerRouter.post(
       return;
     }
 
-    const emailUnique = await UserService.uniqueEmail(email);
+    const emailUnique = await dbm.userService.uniqueEmail(email);
     if (!emailUnique) {
       setErrorMessage(res, "Email address is already in use");
       res.redirect("/register");
       return;
     }
 
-    const validUserStatus = await UserStatusService.validStatus(userStatus);
+    const validUserStatus = await dbm.userStatusService.validStatus(userStatus);
     if (!validUserStatus) {
       setErrorMessage(res, "Invalid user status");
       res.redirect("/register");
@@ -88,10 +92,10 @@ registerRouter.post(
     }
 
     // Verification
-    const verifyID = await VerifyService.createVerifyRecord(email);
+    const verifyID = await dbm.verifyService.createVerifyRecord(email);
 
     if (verifyID) {
-      const userID = await UserService.createUser(
+      const userID = await dbm.userService.createUser(
         firstname,
         lastname,
         email,
@@ -126,8 +130,10 @@ registerRouter.get(
 registerRouter.get(
   "/verify/:verifyID",
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const verifyID = req.params.verifyID;
-    const success = await VerifyService.verifyUser(verifyID);
+    const success = await dbm.verifyService.verifyUser(verifyID);
 
     await renderPage(req, res, "registerVerify", {
       valid: success,

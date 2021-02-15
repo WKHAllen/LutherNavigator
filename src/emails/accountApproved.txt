@@ -1,0 +1,8 @@
+Hello, your account has been approved!
+
+You may now log in using the link below.
+
+{host}/login
+
+Sincerely,
+The Luther Navigator Team

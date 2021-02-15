@@ -4,9 +4,8 @@
  */
 
 import { Router } from "express";
-import { renderPage } from "./util";
+import { renderPage, getDBM } from "./util";
 import wrapRoute from "../asyncCatch";
-import { MetaService } from "../services";
 
 /**
  * The index router.
@@ -17,7 +16,9 @@ export const indexRouter = Router();
 indexRouter.get(
   "/",
   wrapRoute(async (req, res) => {
-    const googleAnalyticsID = await MetaService.get("Google Analytics ID");
+    const dbm = getDBM(req);
+
+    const googleAnalyticsID = await dbm.metaService.get("Google Analytics ID");
 
     await renderPage(req, res, "index", {
       googleAnalyticsID,

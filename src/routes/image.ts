@@ -4,9 +4,8 @@
  */
 
 import { Router } from "express";
-import { renderError } from "./util";
+import { renderError, getDBM } from "./util";
 import wrapRoute from "../asyncCatch";
-import { UserService, PostService, ImageService } from "../services";
 import proxy from "../proxy";
 
 /**
@@ -18,9 +17,11 @@ export const imageRouter = Router();
 imageRouter.get(
   "/id/:imageID",
   wrapRoute(async (req, res, next) => {
+    const dbm = getDBM(req);
+
     const imageID = req.params.imageID;
 
-    const image = await ImageService.getImage(imageID);
+    const image = await dbm.imageService.getImage(imageID);
 
     if (image) {
       res.write(image.data, async (err) => {
@@ -39,10 +40,12 @@ imageRouter.get(
 imageRouter.get(
   "/user/:userID",
   wrapRoute(async (req, res, next) => {
-    const userExists = await UserService.userExists(req.params.userID);
+    const dbm = getDBM(req);
+
+    const userExists = await dbm.userService.userExists(req.params.userID);
 
     if (userExists) {
-      const image = await UserService.getUserImage(req.params.userID);
+      const image = await dbm.userService.getUserImage(req.params.userID);
 
       if (image) {
         res.write(image.data, async (err) => {
@@ -65,13 +68,15 @@ imageRouter.get(
 imageRouter.get(
   "/post/:postID/:id",
   wrapRoute(async (req, res, next) => {
+    const dbm = getDBM(req);
+
     const postID = req.params.postID;
     const id = parseInt(req.params.id);
 
-    const postExists = await PostService.postExists(postID);
+    const postExists = await dbm.postService.postExists(postID);
 
     if (postExists) {
-      const images = await PostService.getPostImages(postID);
+      const images = await dbm.postService.getPostImages(postID);
       const image = images[id]?.data;
 
       if (image) {
