@@ -5,64 +5,101 @@
 ![Coverage branches](./coverage/badge-branches.svg)
 ![Coverage statements](./coverage/badge-statements.svg)
 
-The Luther Navigator project seeks to provide students a way to share their experiences abroad.
+The Luther Navigator project seeks to provide students a way to share their
+experiences abroad.
 
-## Setup
+## Table of Contents
 
-Below are listed the prerequisites for running the app locally.
+- [Prerequisites](#prerequisites)
+- [Cloning the Project](#cloning-the-project)
+- [Local Deployment](#running-the-project)
+- [Testing](#testing)
+- [Database](#database)
+- [Backend](#backend)
+- [Frontend](#frontend)
+- [Deployment](#deployment)
+- [Documentation](#documentation)
+- [Style Guide](#style-guide)
 
-### Node and NPM
+### Prerequisites
 
-Node.js and NPM can be installed [here](https://nodejs.org/en/).
+- [Node.js 12.19.0 and NPM 6.13.4](https://nodejs.org/en/)
+- [Python 3.6+](https://www.python.org/)
+- [The Heroku Command Line Interface](https://devcenter.heroku.com/articles/heroku-cli).
+- [MySQL](https://www.mysql.com/)
+- [TypeScript 4.0.3](https://www.typescriptlang.org/)
+- HTML 5, CSS 3 (+ [Bootstrap](https://getbootstrap.com/)), JavaScript (ES6)
 
-Node version (`node -v`): 12.19.0
-NPM version (`npm -v`): 6.13.4
-
-### Heroku CLI
-
-The Heroku Command Line Interface can be installed [here](https://devcenter.heroku.com/articles/heroku-cli).
-
-## Cloning the Project
+### Cloning the Project
 
 ```console
 $ git clone https://github.com/WKHAllen/LutherNavigator.git
 ```
 
-## Running the Project
+### Local Deployment
 
-We have provided scripts to build and run the application. The built application can be accessed at [localhost:3000](http://localhost:3000/).
+The scripts to build and run the application are provided:
 
-The `run` command will execute `run.bat`, which will build and run the project locally. Or, on a different operating system, make the run script executable: `chmod +x ./run.sh`, and use `./run.sh` to run the project locally.
+- UNIX: `sh run.sh` or `chmod +x run.sh && ./run.sh`
+- Windows: `run.bat`
 
-## Testing the Project
+After the local deployment, the built application can be accessed at
+[localhost:3000](http://localhost:3000/).
 
-We're using [jest](https://www.npmjs.com/package/jest) to test the application. To test it locally, use `script test` on Windows, or `./script.sh test` on other operating systems.
+### Testing
 
-## Database
+Several testing packages are used:
 
-MySQL database can be interfaced with by running `./script.sh db` (`chmod +x ./script.sh` to make it executable).
+- [Jest](https://www.npmjs.com/package/jest) for backend testing
+- [Playwright](https://playwright.dev/) for frontend testing
 
-## Stack
+The tests can be run as follows:
 
-- Database: MySQL
-- Backend: TypeScript (4.0.3)
-- Frontend: HTML 5, CSS 3 (+ [Bootstrap](https://getbootstrap.com/)), JS (ES6)
+- UNIX: `sh script.sh test` or `chmod +x script.sh && ./script.sh test`
+- Windows: `script test`
 
-### Frontend
+Mobile device emulation tests can be run as follows:
 
-We are not using any frameworks on the frontend, as we don't expect to need them. The only thing special on the frontend is our use of HTML rendering using the NPM package [express-handlebars](https://www.npmjs.com/package/express-handlebars).
+- UNIX: `sh script.sh test --emulation-mode` or `chmod +x script.sh && ./script.sh test --emulation-mode`
+- Windows: `script test --emulation-mode`
+
+### Database
+
+It is also possible to interface with the MySQL database. In order to achieve
+this, run `sh script.sh db` or `chmod +x script.sh && ./script.sh db`.
 
 ### Backend
 
-Our backend is divided into routes and services. The routes handle the routing and rendering. Routes will, if necessary, make use of the services. The services make database queries. We do this using the NPM package [mysql](https://www.npmjs.com/package/mysql).
+Our backend is divided into routes and services. The routes handle the routing
+and rendering. Routes will, if necessary, make use of the services. The
+services make database queries. This is done using the NPM package
+[mysql](https://www.npmjs.com/package/mysql).
 
-## Deployment
+### Frontend
 
-The application is deployed to [Heroku](https://heroku.com/). It can be found at [luthernavigator.com](https://www.luthernavigator.com/).
+No frontend frameworks are used. Everything is kept simple with the only
+special thing being the NPM package
+[express-handlebars](https://www.npmjs.com/package/express-handlebars) for HTML
+rendering.
 
-## Style Guide
+### Deployment
 
-The codebase is developed in a style-consistent manner. Black and Prettier are used for formatting Python and CSS/HTML/TypeScript code respectively.
+The application is deployed to [Heroku](https://heroku.com/). It can be found
+at [luthernavigator.com](https://www.luthernavigator.com/).
+
+### Documentation
+
+Packages [TypeDoc](https://typedoc.org/) and
+[typedoc-neo-theme](https://www.npmjs.com/package/typedoc-neo-theme) are used
+for generating the project code documentation. It includes annotations for
+virtually all of the important functions, classes, declarations, etc.
+Documentation can be generated by executing `npm run document`. For viewing the
+documentation, open the file `docs/index.html`.
+
+### Style Guide
+
+The codebase is developed in a style-consistent manner. Black and Prettier are
+used for formatting Python and CSS/HTML/TypeScript code respectively.
 
 Commands:
 
@@ -77,5 +114,6 @@ Variable and Function naming conventions:
 Import Statements
 
 - Direct `import` statements first, followed by `from` imports
-- Order: Standard Library, Related Third Party, Local (same order for `from` imports)
+- Order: Standard Library, Related Third Party, Local (same order for `from`
+  imports)
 - At each level, separate imports with a newline and sort them alphabetically
