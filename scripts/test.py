@@ -20,14 +20,14 @@ def main() -> None:
     # time, the `emulation-mode` argument is made optional.
     if args and args[-1] == "--emulation-mode":
         os.system(
-            f"npx jest --coverage --coverageReporters='json-summary' --runInBand {' '.join(args[:-1])}"
+            f"npx jest --runInBand {' '.join(args[:-1])}"
         )
         os.system("npx jest-coverage-badges")
         os.system("npx ts-node test/ui/uitest.ts")
         os.system("npx ts-node test/ui/mobile_emulation.ts")
     else:
         os.system(
-            f"npx jest --coverage --coverageReporters='json-summary' --runInBand {' '.join(args)}"
+            f"npx jest --runInBand {' '.join(args)}"
         )
         os.system("npx jest-coverage-badges")
         os.system("npx ts-node test/ui/uitest.ts")
