@@ -127,6 +127,14 @@ export default async function initDB(
       PRIMARY KEY (id)
     );
   `;
+  const programTable = `
+    CREATE TABLE IF NOT EXISTS Program (
+      id   INT          NOT NULL,
+      name VARCHAR(255) NOT NULL,
+
+      PRIMARY KEY (id)
+    );
+  `;
   const ratingTable = `
     CREATE TABLE IF NOT EXISTS Rating (
       id            CHAR(4) NOT NULL,
@@ -172,7 +180,7 @@ export default async function initDB(
       content        VARCHAR(750)  NOT NULL,
       location       VARCHAR(255)  NOT NULL,
       locationTypeID INT           NOT NULL,
-      program        VARCHAR(255)  NOT NULL,
+      programID      INT           NOT NULL,
       ratingID       CHAR(4)       NOT NULL,
       threeWords     VARCHAR(63)   NOT NULL,
       approved       BOOL          NOT NULL DEFAULT FALSE,
@@ -186,6 +194,9 @@ export default async function initDB(
 
       FOREIGN KEY (locationTypeID)
         REFERENCES LocationType (id),
+
+      FOREIGN KEY (programID)
+        REFERENCES Program (id),
 
       FOREIGN KEY (ratingID)
         REFERENCES Rating (id)
@@ -249,6 +260,7 @@ export default async function initDB(
     imageTable,
     userStatusTable,
     locationTypeTable,
+    programTable,
     ratingTable,
     userTable,
     postTable,
