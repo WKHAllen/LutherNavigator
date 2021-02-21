@@ -113,7 +113,6 @@ dist
 .vscode/
 src/build/
 __pycache__/
-docs/
 *.DS_Store
 .env
 todo.txt

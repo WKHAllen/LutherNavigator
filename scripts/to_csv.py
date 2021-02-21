@@ -45,7 +45,7 @@ def save_table(outfile: str, table: str, fields: List[str] = None) -> None:
     the_db.close()
 
 
-def main():
+def main() -> None:
     args = sys.argv[2:]
     if len(args) < 2:
         print(
