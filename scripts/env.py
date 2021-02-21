@@ -1,5 +1,7 @@
 import os
 
+from typing import Dict
+
 
 def load_env(filename: str) -> None:
     with open(filename, "r") as f:
@@ -13,7 +15,7 @@ def load_env(filename: str) -> None:
                 os.environ[key] = value
 
 
-def get_env(filename: str) -> dict:
+def get_env(filename: str) -> Dict:
     env = {}
 
     with open(filename, "r") as f:
