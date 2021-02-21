@@ -119,3 +119,6 @@ todo.txt
 
 # Screenshots
 screenshots/
+
+# Coverage
+coverage/coverage-summary.json
