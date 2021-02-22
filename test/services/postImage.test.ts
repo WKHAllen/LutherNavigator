@@ -22,7 +22,7 @@ test("PostImage", async () => {
   const content = "Hello, post!";
   const location = "Mabe's Pizza";
   const locationTypeID = 6; // Restaurant
-  const program = "N/A";
+  const programID = 1;
   const threeWords = "Absolutely amazing pizza";
 
   const rating = {
@@ -38,7 +38,7 @@ test("PostImage", async () => {
     [],
     location,
     locationTypeID,
-    program,
+    programID,
     rating,
     threeWords
   );
