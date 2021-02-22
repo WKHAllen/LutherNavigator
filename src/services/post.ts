@@ -17,7 +17,7 @@ export interface Post {
   content: string;
   location: string;
   locationTypeID: number;
-  program: string;
+  programID: number;
   ratingID: string;
   threeWords: string;
   approved: boolean;
@@ -37,7 +37,7 @@ export class PostService extends BaseService {
    * @param imageData The binary data of the images associated with the post.
    * @param location The post's location.
    * @param locationTypeID The type ID of location.
-   * @param program The program the user is in.
+   * @param programID The ID of the program the user is in.
    * @param rating The user's rating of the location.
    * @param threeWords Three words to describe the location.
    * @returns The new post's ID.
@@ -48,7 +48,7 @@ export class PostService extends BaseService {
     imageData: Buffer[],
     location: string,
     locationTypeID: number,
-    program: string,
+    programID: number,
     rating: RatingParams,
     threeWords: string
   ): Promise<string> {
@@ -57,7 +57,7 @@ export class PostService extends BaseService {
 
     const sql = `
       INSERT INTO Post (
-        id, userID, content, location, locationTypeID, program, ratingID,
+        id, userID, content, location, locationTypeID, programID, ratingID,
         threeWords, createTime
       ) VALUES (
         ?, ?, ?, ?, ?, ?, ?,
@@ -70,7 +70,7 @@ export class PostService extends BaseService {
       content,
       location,
       locationTypeID,
-      program,
+      programID,
       ratingID,
       threeWords,
       getTime(),
@@ -295,14 +295,17 @@ export class PostService extends BaseService {
   public async getUnapproved(): Promise<Post[]> {
     const sql = `
       SELECT
-        Post.id AS postID, User.firstname AS firstname, User.lastname AS lastname,
-        content, location, LocationType.name AS locationType, program,
+        Post.id AS postID, User.firstname AS firstname,
+        User.lastname AS lastname, content, location,
+        LocationType.name AS locationType, Program.name AS program,
         threeWords, createTime
       FROM Post
       JOIN User
         ON Post.userID = User.id
       JOIN LocationType
         ON Post.locationTypeID = LocationType.id
+      JOIN Program
+        ON Post.programID = Program.id
       WHERE Post.approved = FALSE
       ORDER BY createTime;
     `;
