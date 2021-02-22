@@ -47,11 +47,6 @@ img {
   /* margin: 5px 0; */
 }
 
-/* .col-sm-4 {
-  flex: 0 0 32%;
-  max-width: 100%;
-} */
-
 #welcome-im {
   width: fit-content;
   height: auto;
@@ -85,7 +80,6 @@ img {
 	margin:  0 auto;
 	background-color: #d8e5ff;
 	border-radius: 999px;
-	/* border: #8d8d8d 1px solid; */
 	/* box-shadow: 0 10px 40px #0061a3, 0 0 0 20px #ffffff; */
 	transform: scale(0.6);
 }
@@ -207,12 +201,4 @@ input:focus::-webkit-input-placeholder {
   .homepage {
     max-width: 728px;
   }
-
-  .fav-place {
-    /* margin: 10px 0; */
-  }
-
-  /* .col-sm-4 {
-    max-width: 32%;
-  } */
 }
