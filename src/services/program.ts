@@ -72,4 +72,34 @@ export class ProgramService extends BaseService {
     const params = [programID];
     await this.dbm.execute(sql, params);
   }
+
+  /**
+   * Change a program's ID.
+   *
+   * @param currentID A program's ID.
+   * @param newID The program's new ID.
+   */
+  public async changeProgramID(
+    currentID: number,
+    newID: number
+  ): Promise<void> {
+    const sql = `UPDATE Program SET id = ? WHERE id = ?`;
+    const params = [newID, currentID];
+    await this.dbm.execute(sql, params);
+  }
+
+  /**
+   * Set a program's name.
+   *
+   * @param programID A program's ID.
+   * @param newName The program's new name.
+   */
+  public async setProgramName(
+    programID: number,
+    newName: string
+  ): Promise<void> {
+    const sql = `UPDATE Program SET name = ? WHERE id = ?;`;
+    const params = [newName, programID];
+    await this.dbm.execute(sql, params);
+  }
 }
