@@ -35,12 +35,14 @@ postRouter.get(
     const error = getErrorMessage(req, res);
     const form = getForm(req, res);
     const locationTypes = await dbm.locationTypeService.getLocations();
+    const programs = await dbm.programService.getPrograms();
 
     await renderPage(req, res, "createPost", {
       title: "New post",
       error,
       form,
       locationTypes,
+      programs,
     });
   })
 );
@@ -63,7 +65,7 @@ postRouter.post(
     const files = req.files as Express.Multer.File[];
     const location: string = req.body.location;
     const locationTypeID: number = parseInt(req.body.locationType) || 0;
-    const program: string = req.body.program;
+    const programID: number = parseInt(req.body.program);
     const threeWords = [
       req.body.wordOne,
       req.body.wordTwo,
@@ -95,8 +97,6 @@ postRouter.post(
       setErrorMessage(res, "Location name must be less than 256 characters");
     } else if (!validLocationTypeID) {
       setErrorMessage(res, "Invalid location type");
-    } else if (program.length <= 0 || program.length > 255) {
-      setErrorMessage(res, "Program name must be less than 256 characters");
     } else if (threeWords.length < 7 || threeWords.length > 63) {
       setErrorMessage(
         res,
@@ -115,7 +115,7 @@ postRouter.post(
         imageData,
         location,
         locationTypeID,
-        program,
+        programID,
         rating,
         threeWords
       );
@@ -160,6 +160,7 @@ postRouter.get(
     const userStatusName = await dbm.userStatusService.getStatusName(
       user.statusID
     );
+    const program = await dbm.programService.getProgramName(post.programID);
     const images = await dbm.postService.getPostImages(postID);
 
     await renderPage(req, res, "post", {
@@ -170,7 +171,7 @@ postRouter.get(
       firstname: user.firstname,
       lastname: user.lastname,
       status: userStatusName,
-      program: post.program,
+      program: program,
       createTime: post.createTime,
       threeWords: post.threeWords,
       content: post.content,

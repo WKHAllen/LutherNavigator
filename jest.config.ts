@@ -7,6 +7,9 @@ const config: Config.InitialOptions = {
   testMatch: ["**/test/services/*.test.ts"],
   globalSetup: "./test/services/setup.ts",
   testTimeout: 30000,
+  collectCoverage: true,
+  coverageReporters: ["json-summary"],
+  collectCoverageFrom: ["./src/services/*"]
 };
 
 export default config;

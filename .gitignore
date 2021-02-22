@@ -113,10 +113,12 @@ dist
 .vscode/
 src/build/
 __pycache__/
-docs/
 *.DS_Store
 .env
 todo.txt
 
 # Screenshots
 screenshots/
+
+# Coverage
+coverage/coverage-summary.json

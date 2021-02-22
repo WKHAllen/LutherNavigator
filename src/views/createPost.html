@@ -23,16 +23,46 @@
         <!-- Program -->
         <div class="col-12 col-sm-4 mb-3 form-group">
           <label for="program">Program *</label>
-          <input type="text" class="form-control clear-input" id="program"
-          name="program" maxlength="255" {{#if form}} value="{{form.program}}"
-          {{/if}} required />
+          <select
+            class="form-control clear-select"
+            id="program"
+            name="program"
+            required
+          >
+            <option value="">Select...</option>
+            {{#each programs}}
+            <option value="{{this.id}}">{{this.name}}</option>
+            {{/each}}
+          </select>
+          {{#if form}}
+          <script type="text/javascript">
+            document.getElementById("program").value = "{{form.program}}";
+          </script>
+          {{/if}}
         </div>
         <!-- Location name -->
         <div class="col-6 col-sm-4 mb-3 form-group">
           <label for="location">Location *</label>
-          <input type="text" class="form-control clear-input" id="location"
-          name="location" maxlength="255" {{#if form}}
-          value="{{form.location}}" {{/if}} required />
+          {{#if form}}
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="location"
+            name="location"
+            maxlength="255"
+            value="{{form.location}}"
+            required
+          />
+          {{else}}
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="location"
+            name="location"
+            maxlength="255"
+            required
+          />
+          {{/if}}
         </div>
         <!-- Location type -->
         <div class="col-6 col-sm-4 mb-3 form-group">
@@ -84,19 +114,70 @@
       </div>
       <div class="row align-items-center">
         <div class="col-4 mb-3 form-group">
-          <input type="text" class="form-control clear-input" id="wordOne"
-          name="wordOne" maxlength="19" {{#if form}} value="{{form.wordOne}}"
-          {{/if}} required />
+          {{#if form}}
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="wordOne"
+            name="wordOne"
+            maxlength="19"
+            value="{{form.wordOne}}"
+            required
+          />
+          {{else}}
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="wordOne"
+            name="wordOne"
+            maxlength="19"
+            required
+          />
+          {{/if}}
         </div>
         <div class="col-4 mb-3 form-group">
-          <input type="text" class="form-control clear-input" id="wordTwo"
-          name="wordTwo" maxlength="19" {{#if form}} value="{{form.wordTwo}}"
-          {{/if}} required />
+          {{#if form}}
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="wordTwo"
+            name="wordTwo"
+            maxlength="19"
+            value="{{form.wordTwo}}"
+            required
+          />
+          {{else}}
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="wordTwo"
+            name="wordTwo"
+            maxlength="19"
+            required
+          />
+          {{/if}}
         </div>
         <div class="col-4 mb-3 form-group">
-          <input type="text" class="form-control clear-input" id="wordThree"
-          name="wordThree" maxlength="19" {{#if form}}
-          value="{{form.wordThree}}" {{/if}} required />
+          {{#if form}}
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="wordThree"
+            name="wordThree"
+            maxlength="19"
+            value="{{form.wordThree}}"
+            required
+          />
+          {{else}}
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="wordThree"
+            name="wordThree"
+            maxlength="19"
+            required
+          />
+          {{/if}}
         </div>
       </div>
 

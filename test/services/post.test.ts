@@ -24,7 +24,8 @@ test("Post", async () => {
   const content = "Hello, post!";
   const location = "Mabe's Pizza";
   const locationTypeID = 6; // Restaurant
-  const program = "N/A";
+  const programID = 1;
+  const programName = await dbm.programService.getProgramName(programID);
   const threeWords = "Absolutely amazing pizza";
 
   const len = Math.floor(Math.random() * 63) + 1;
@@ -45,7 +46,7 @@ test("Post", async () => {
     [buf],
     location,
     locationTypeID,
-    program,
+    programID,
     rating,
     threeWords
   );
@@ -64,7 +65,7 @@ test("Post", async () => {
   expect(post.content).toBe(content);
   expect(post.location).toBe(location);
   expect(post.locationTypeID).toBe(locationTypeID);
-  expect(post.program).toBe(program);
+  expect(post.programID).toBe(programID);
   expect(post.threeWords).toBe(threeWords);
   expect(post.approved).toBeFalsy();
   expect(post.createTime - getTime()).toBeLessThanOrEqual(3);
@@ -79,7 +80,7 @@ test("Post", async () => {
   expect(unapproved[0].content).toBe(content);
   expect(unapproved[0].location).toBe(location);
   expect(unapproved[0]["locationType"]).toBe("Restaurant");
-  expect(unapproved[0].program).toBe(program);
+  expect(unapproved[0]["program"]).toBe(programName);
   expect(unapproved[0].threeWords).toBe(threeWords);
   expect(unapproved[0].createTime - getTime()).toBeLessThanOrEqual(3);
 
@@ -133,7 +134,7 @@ test("Post", async () => {
     [buf],
     location,
     locationTypeID,
-    program,
+    programID,
     rating,
     threeWords
   );
@@ -159,7 +160,7 @@ test("Post", async () => {
     [buf],
     location,
     locationTypeID,
-    program,
+    programID,
     rating,
     threeWords
   );
