@@ -17,7 +17,7 @@ export interface Post {
   content: string;
   location: string;
   locationTypeID: number;
-  program: string;
+  programID: number;
   ratingID: string;
   threeWords: string;
   approved: boolean;
