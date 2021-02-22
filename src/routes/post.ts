@@ -35,12 +35,14 @@ postRouter.get(
     const error = getErrorMessage(req, res);
     const form = getForm(req, res);
     const locationTypes = await dbm.locationTypeService.getLocations();
+    const programs = await dbm.programService.getPrograms();
 
     await renderPage(req, res, "createPost", {
       title: "New post",
       error,
       form,
       locationTypes,
+      programs,
     });
   })
 );

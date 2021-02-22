@@ -73,12 +73,31 @@ export class ProgramService extends BaseService {
     await this.dbm.execute(sql, params);
   }
 
+  /**
+   * Get a program's name.
+   *
+   * @param programID A program's ID.
+   * @returns The program's name.
+   */
   public async getProgramName(programID: number): Promise<string> {
     const sql = `SELECT name FROM Program WHERE id = ?;`;
     const params = [programID];
     const rows: Program[] = await this.dbm.execute(sql, params);
 
     return rows[0].name;
+  }
+
+  /**
+   * Get all programs.
+   *
+   * @returns All programs.
+   */
+  public async getPrograms(): Promise<Program[]> {
+    const sql = `SELECT * FROM Program;`;
+    const params = [];
+    const rows: Program[] = await this.dbm.execute(sql, params);
+
+    return rows;
   }
 
   /**
