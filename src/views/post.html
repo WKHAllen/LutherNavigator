@@ -2,6 +2,7 @@
   rel="stylesheet"
   href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
 />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" type="text/css" href="/css/main.css" />
 <link rel="stylesheet" type="text/css" href="/css/post.css" />
 
@@ -35,28 +36,46 @@
         alt="olive pizza"
       /> -->
     </div>
-    <div class="row review">
-      <div class="col-12 col-sm-8">
-        <h3 class="tagline">{{ threeWords }}</h3>
-        <h4>{{ firstname }} {{ lastname }} | {{ status }}</h4>
-        <h4>
-          {{ program }} | <span class="timestamp">{{ createTime }}</span>
-        </h4>
-        <div class="post">
-          <p>{{ content }}</p>
-        </div>
+    <div class="review col">
+      <h3 class="tagline">{{ threeWords }}</h3>
+      <h4>{{ firstname }} {{ lastname }} | {{ status }}</h4>
+      <h4>
+        {{ program }} | <span class="timestamp">{{ createTime }}</span>
+      </h4>
+      <div class="post">
+        <p>{{ content }}</p>
       </div>
-      <div class="col-9 col-sm-3">
-        <h3>Stars</h3>
-        <p>Cleanliness for number of stars</p>
+    </div>
+    <div class="row review">
+      <div class="col-8 col-sm-4 col-md-4">
+        <h3>Rating</h3>
+        <p>Cleanliness</p>
         <p>Customer Service</p>
         <p>Overall</p>
       </div>
-      <div class="col-3 col-sm-1">
+      <div class="col-4 col-sm-4 col-md-2">
         <h3>*</h3>
-        <p>****</p>
-        <p>***</p>
-        <p>***</p>
+        <div>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star"></span>
+        </div>
+        <div>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star"></span>
+        </div>
+        <div>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star"></span>
+        </div>
       </div>
     </div>
   </div>
