@@ -39,9 +39,9 @@ export class QueryService extends BaseService {
   public async query(search: string): Promise<Post[]> {
     const sql = `
       SELECT * FROM Post
-        WHERE LOWER(Post.content) LIKE LOWER(%?%)
+        WHERE LOWER(Post.content)  LIKE LOWER(%?%)
            OR LOWER(Post.location) LIKE LOWER(%?%)
-           OR LOWER(Program.name) LIKE LOWER(%?%)
+           OR LOWER(Program.name)  LIKE LOWER(%?%)
         JOIN Program ON Post.programID = Program.id;
     `;
     const params = [search, search, search];
@@ -63,6 +63,13 @@ export class QueryService extends BaseService {
     sortBy: QuerySortOptions,
     sortAscending: boolean = true
   ): Promise<Post[]> {
+    const whereOptions = {
+      programID: "Post.programID",
+      locationType: "Post.locationTypeID",
+      statusID: "User.statusID",
+      rating: "Rating.general",
+    };
+
     const sortOptions = {
       program: "Program.name",
       locationType: "LocationType.name",
@@ -72,21 +79,51 @@ export class QueryService extends BaseService {
 
     const sortOrder = sortAscending ? "ASC" : "DESC";
 
-    const sql = `
-      SELECT * FROM Post
-        WHERE (
-              LOWER(Post.content) LIKE LOWER(%?%)
-           OR LOWER(Post.location) LIKE LOWER(%?%)
-           OR LOWER(Program.name) LIKE LOWER(%?%)
-        ) AND Post.programID IN (...)
-          AND Post.locationTypeID IN (...)
-          AND User.statusID IN (...)
-          AND Rating.general IN (...)
-        JOIN User ON Post.userID = User.id
-        JOIN Rating ON Post.ratingID = Rating.id
-        ORDER BY ${sortOptions[sortBy]} ${sortOrder};
-    `;
-    const params = [];
+    // SELECT * FROM Post
+    //   WHERE (
+    //         LOWER(Post.content)  LIKE LOWER(%?%)
+    //      OR LOWER(Post.location) LIKE LOWER(%?%)
+    //      OR LOWER(Program.name)  LIKE LOWER(%?%)
+    //   ) AND Post.programID      IN (...)
+    //     AND Post.locationTypeID IN (...)
+    //     AND User.statusID       IN (...)
+    //     AND Rating.general      IN (...)
+    //   JOIN User   ON Post.userID   = User.id
+    //   JOIN Rating ON Post.ratingID = Rating.id
+    //   ORDER BY ${sortOptions[sortBy]} ${sortOrder};
+
+    const sqlStart = `SELECT * FROM Post`;
+    const sqlEnd = `ORDER BY ${sortOptions[sortBy]} ${sortOrder};`;
+
+    let sql: string;
+    let params: any[];
+
+    if (Object.keys(parameters).length === 0) {
+      sql = `${sqlStart} ${sqlEnd}`;
+    } else {
+      let whereClause: string[] = [];
+
+      for (const parameter in parameters) {
+        if (parameter === "search") {
+          whereClause.push(`(
+               LOWER(Post.content)  LIKE LOWER(%?%)
+            OR LOWER(Post.location) LIKE LOWER(%?%)
+            OR LOWER(Program.name)  LIKE LOWER(%?%)
+            )`);
+          params.push(
+            parameters[parameter],
+            parameters[parameter],
+            parameters[parameter]
+          );
+        } else {
+          whereClause.push(`${whereOptions[parameter]} IN ?`);
+          params.push(parameters[parameter]);
+        }
+      }
+
+      sql = `${sqlStart} WHERE ${whereClause.join(" AND ")} ${sqlEnd}`;
+    }
+
     const rows: Post[] = await this.dbm.execute(sql, params);
 
     return rows;
