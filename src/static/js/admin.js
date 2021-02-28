@@ -1,6 +1,7 @@
 const statsTimeout = 60 * 1000; // One minute
 const registrationTimeout = 60 * 1000; // One minute
 const postsTimeout = 60 * 1000; // One minute
+const programsTimeout = 60 * 1000; // One minute
 
 // Get the JSON response from a URL
 async function fetchJSON(url, options) {
@@ -391,6 +392,97 @@ async function refreshPosts() {
   await populatePosts();
 }
 
+// Create a new program
+function createProgram() {}
+
+// Set a program
+function setProgram() {}
+
+// Delete a program
+function deleteProgram() {}
+
+// Create a new program element
+function createProgram(program) {
+  const progID = newElement("input")
+    .addClass("form-control")
+    .attr({
+      type: "text",
+      id: `prog-id-${program.id}`,
+      name: "value",
+      value: program.id,
+    });
+  const progIDDiv = newElement("div")
+    .addClass("col-3 col-sm-2 col-md-1")
+    .append(progID);
+  const progName = newElement("input")
+    .addClass("form-control")
+    .attr({
+      type: "text",
+      id: `prog-name-${program.id}`,
+      name: "value",
+      value: program.name,
+    });
+  const progNameDiv = newElement("div").addClass("col").append(progName);
+  const progSaveButton = newElement("button")
+    .addClass("btn btn-primary mr-1")
+    .attr({
+      type: "submit",
+    })
+    .text("Save");
+  const progDeleteButton = newElement("button")
+    .addClass("btn btn-danger")
+    .attr({
+      type: "button",
+    })
+    .text("Delete")
+    .click(() => {
+      deleteProgram(program.id);
+    });
+  const progButtonDiv = newElement("div")
+    .addClass("col-auto flex-end")
+    .append(progSaveButton, progDeleteButton);
+  const row = newElement("div")
+    .addClass("row mt-3")
+    .append(progIDDiv, progNameDiv, progButtonDiv);
+  const form = newElement("form")
+    .append(row)
+    .submit((event) => {
+      event.preventDefault();
+      setProgram(variable.name, $(event.target.value).val());
+    });
+  return form;
+}
+
+// Populate data on the programs page
+async function populatePrograms() {
+  const programsURL = "/api/adminPrograms";
+  let programs = null;
+
+  try {
+    programs = await fetchJSON(programsURL);
+  } catch (err) {
+    showError("Failed to update programs");
+  }
+
+  if (programs) {
+    hideError();
+    clearElement("programs");
+
+    for (const program of programs) {
+      const newItem = createProgram(program);
+      appendTo("programs", newItem);
+    }
+  }
+}
+
+// Refresh all programs
+async function refreshPrograms() {
+  updateNotifications();
+  clearElement("programs");
+  appendTo("programs", "Fetching programs...");
+  await populatePrograms();
+}
+
 // On stats page load
 function statsLoad() {
   updateNotifications();
@@ -426,6 +518,15 @@ function postsLoad() {
   setInterval(() => {
     populatePosts();
   }, postsTimeout);
+}
+
+// On programs page load
+function programsLoad() {
+  populatePrograms();
+
+  setInterval(() => {
+    populatePrograms();
+  }, programsTimeout);
 }
 
 // Update admin notifications
