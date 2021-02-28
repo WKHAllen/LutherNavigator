@@ -210,3 +210,29 @@ apiRouter.get(
     res.json(programs);
   })
 );
+
+// Create a new program
+apiRouter.get(
+  "/createProgram",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const programID = parseInt(req.query.programID as string);
+    const programName = req.query.programName as string;
+
+    if (isNaN(programID) || programID < -2147483648 || programID > 2147483647) {
+      res.send("Program ID must be a number");
+    } else {
+      const exists = await dbm.programService.programExists(programID);
+
+      if (exists) {
+        res.send("A program with the specified ID already exists");
+      } else {
+        await dbm.programService.createProgram(programID, programName);
+
+        res.end();
+      }
+    }
+  })
+);
