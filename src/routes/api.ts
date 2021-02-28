@@ -247,3 +247,28 @@ apiRouter.get(
     }
   })
 );
+
+// Delete a program
+apiRouter.get(
+  "/deleteProgram",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const programID = parseInt(req.query.programID as string);
+
+    const linkedPosts = await dbm.programService.numLinkedPosts(programID);
+
+    if (linkedPosts === 0) {
+      await dbm.programService.deleteProgram(programID);
+
+      res.end();
+    } else {
+      res
+        .send(
+          "This program cannot be deleted since it is associated with at least one post"
+        )
+        .end();
+    }
+  })
+);

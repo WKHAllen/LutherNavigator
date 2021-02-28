@@ -117,4 +117,18 @@ export class ProgramService extends BaseService {
 
     return rows;
   }
+
+  /**
+   * Get the number of posts associated with a program.
+   *
+   * @param programID A program's ID.
+   * @returns The number of linked posts.
+   */
+  public async numLinkedPosts(programID: number): Promise<number> {
+    const sql = `SELECT COUNT(*) AS posts FROM Post WHERE programID = ?;`;
+    const params = [programID];
+    const rows = await this.dbm.execute(sql, params);
+
+    return rows[0].posts;
+  }
 }

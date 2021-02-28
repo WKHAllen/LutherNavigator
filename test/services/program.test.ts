@@ -35,6 +35,10 @@ test("Program", async () => {
   expect(progName).toBe(programName + "!");
   await dbm.programService.setProgramName(programID, programName);
 
+  // Check the number of associated posts
+  const linked = await dbm.programService.numLinkedPosts(programID);
+  expect(linked).toBe(0);
+
   // Delete program
   await dbm.programService.deleteProgram(programID);
 
