@@ -393,11 +393,11 @@ async function refreshPosts() {
 }
 
 // Create a new program
-function createProgram(name) {
+function createProgram(programName) {
   $.ajax({
     url: "/api/createProgram",
     data: {
-      programName: name,
+      programName,
     },
     success: () => {
       hideError();
@@ -410,10 +410,46 @@ function createProgram(name) {
 }
 
 // Set a program
-function setProgram() {}
+function setProgram(programID, programName) {
+  $.ajax({
+    url: "/api/setProgram",
+    data: {
+      programID,
+      programName,
+    },
+    success: (err) => {
+      if (err) {
+        showError(err);
+      } else {
+        hideError();
+      }
+    },
+    error: () => {
+      showError("Failed to set program");
+    },
+  });
+}
 
 // Delete a program
-function deleteProgram() {}
+function deleteProgram(programID) {
+  $.ajax({
+    url: "/api/deleteProgram",
+    data: {
+      programID,
+    },
+    success: (err) => {
+      if (err) {
+        showError(err);
+      } else {
+        hideError();
+        populatePrograms();
+      }
+    },
+    error: () => {
+      showError("Failed to delete program");
+    },
+  });
+}
 
 // Create a new program element
 function createProgramRow(program) {
