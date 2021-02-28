@@ -393,7 +393,21 @@ async function refreshPosts() {
 }
 
 // Create a new program
-function createProgram() {}
+function createProgram(name) {
+  $.ajax({
+    url: "/api/createProgram",
+    data: {
+      programName: name,
+    },
+    success: () => {
+      hideError();
+      populatePrograms();
+    },
+    error: () => {
+      showError("Failed to create program");
+    },
+  });
+}
 
 // Set a program
 function setProgram() {}
@@ -402,23 +416,12 @@ function setProgram() {}
 function deleteProgram() {}
 
 // Create a new program element
-function createProgram(program) {
-  const progID = newElement("input")
-    .addClass("form-control")
-    .attr({
-      type: "text",
-      id: `prog-id-${program.id}`,
-      name: "value",
-      value: program.id,
-    });
-  const progIDDiv = newElement("div")
-    .addClass("col-4 col-sm-3 col-md-2")
-    .append(progID);
+function createProgramRow(program) {
   const progName = newElement("input")
     .addClass("form-control")
     .attr({
       type: "text",
-      id: `prog-name-${program.id}`,
+      id: `prog-${program.id}`,
       name: "value",
       value: program.name,
     });
@@ -443,12 +446,12 @@ function createProgram(program) {
     .append(progSaveButton, progDeleteButton);
   const row = newElement("div")
     .addClass("row mt-3")
-    .append(progIDDiv, progNameDiv, progButtonDiv);
+    .append(progNameDiv, progButtonDiv);
   const form = newElement("form")
     .append(row)
     .submit((event) => {
       event.preventDefault();
-      setProgram(variable.name, $(event.target.value).val());
+      setProgram(program.id, $(event.target.value).val());
     });
   return form;
 }
@@ -469,9 +472,23 @@ async function populatePrograms() {
     clearElement("programs");
 
     for (const program of programs) {
-      const newItem = createProgram(program);
+      const newItem = createProgramRow(program);
       appendTo("programs", newItem);
     }
+
+    const newProgramButton = newElement("button")
+      .addClass("btn btn-primary")
+      .attr({
+        type: "button",
+      })
+      .text("New Program")
+      .click(() => {
+        createProgram("");
+      });
+    const newProgramButtonDiv = newElement("div")
+      .addClass("row mt-3")
+      .append(newProgramButton);
+    appendTo("programs", newProgramButtonDiv);
   }
 }
 

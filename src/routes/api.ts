@@ -222,7 +222,7 @@ apiRouter.get(
 
     const programID = await dbm.programService.createProgram(programName);
 
-    res.send(programID);
+    res.send(String(programID)).end();
   })
 );
 
@@ -243,7 +243,7 @@ apiRouter.get(
 
       res.end();
     } else {
-      res.send("A program with the specified ID does not exist");
+      res.send("A program with the specified ID does not exist").end();
     }
   })
 );
