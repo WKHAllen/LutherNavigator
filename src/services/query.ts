@@ -76,10 +76,10 @@ export class QueryService extends BaseService {
     sortAscending: boolean = true
   ): Promise<Post[]> {
     const whereOptions = {
-      programID: "Post.programID",
-      locationType: "Post.locationTypeID",
-      statusID: "User.statusID",
-      rating: "Rating.general",
+      programIDs: "Post.programID",
+      locationTypeIDs: "Post.locationTypeID",
+      statusIDs: "User.statusID",
+      ratings: "Rating.general",
     };
 
     const sortOptions = {
@@ -96,16 +96,20 @@ export class QueryService extends BaseService {
     //   Rating.general AS rating,
     //   PostImage.imageID AS imageID
     // FROM Post
-    //   JOIN User      ON Post.userID   = User.id
-    //   JOIN Rating    ON Post.ratingID = Rating.id
-    //   JOIN PostImage ON Post.id       = PostImage.postID
+    //   JOIN User         ON Post.userID         = User.id
+    //   JOIN LocationType ON Post.locationTypeID = LocationType.id
+    //   JOIN UserStatus   ON User.statusID       = UserStatus.id
+    //   JOIN Program      ON Post.programID      = Program.id
+    //   JOIN Rating       ON Post.ratingID       = Rating.id
+    //   JOIN PostImage    ON Post.id             = PostImage.postID
     // WHERE
-    //    Post.approved = TRUE
-    //    AND (
-    //         LOWER(Post.content)  LIKE LOWER(%?%)
-    //      OR LOWER(Post.location) LIKE LOWER(%?%)
-    //      OR LOWER(Program.name)  LIKE LOWER(%?%)
-    //   ) AND Post.programID    IN (...)
+    //   Post.approved = TRUE
+    //   AND (
+    //        LOWER(Post.content)  LIKE LOWER(%?%)
+    //     OR LOWER(Post.location) LIKE LOWER(%?%)
+    //     OR LOWER(Program.name)  LIKE LOWER(%?%)
+    //   )
+    //   AND Post.programID      IN (...)
     //   AND Post.locationTypeID IN (...)
     //   AND User.statusID       IN (...)
     //   AND Rating.general      IN (...)
@@ -117,13 +121,16 @@ export class QueryService extends BaseService {
         Rating.general AS rating,
         PostImage.imageID AS imageID
       FROM Post
-        JOIN User      ON Post.userID   = User.id
-        JOIN Rating    ON Post.ratingID = Rating.id
-        JOIN PostImage ON Post.id       = PostImage.postID
+        JOIN User         ON Post.userID         = User.id
+        JOIN LocationType ON Post.locationTypeID = LocationType.id
+        JOIN UserStatus   ON User.statusID       = UserStatus.id
+        JOIN Program      ON Post.programID      = Program.id
+        JOIN Rating       ON Post.ratingID       = Rating.id
+        JOIN PostImage    ON Post.id             = PostImage.postID
     `;
     const sqlEnd = `ORDER BY ${sortOptions[sortBy]} ${sortOrder};`;
 
-    let params: any[];
+    let params = [];
     let whereClause = ["Post.approved = TRUE"];
 
     for (const parameter in parameters) {

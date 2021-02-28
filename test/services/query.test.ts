@@ -71,6 +71,96 @@ test("Query", async () => {
   expect(result?.id).toBe(postID);
   expect(result["rating"]).toBe(generalRating);
 
+  // Advanced query by search string
+  results = await dbm.queryService.advancedQuery(
+    { search: "Content" },
+    "program"
+  );
+  expect(results.length).toBeGreaterThan(0);
+  result = getByID(results, postID);
+  expect(result?.id).toBe(postID);
+  expect(result["rating"]).toBe(generalRating);
+
+  // Advanced query by program
+  results = await dbm.queryService.advancedQuery(
+    { programIDs: [programID] },
+    "program"
+  );
+  expect(results.length).toBeGreaterThan(0);
+  result = getByID(results, postID);
+  expect(result?.id).toBe(postID);
+  expect(result["rating"]).toBe(generalRating);
+
+  // Advanced query by location type
+  results = await dbm.queryService.advancedQuery(
+    { locationTypeIDs: [locationTypeID] },
+    "program"
+  );
+  expect(results.length).toBeGreaterThan(0);
+  result = getByID(results, postID);
+  expect(result?.id).toBe(postID);
+  expect(result["rating"]).toBe(generalRating);
+
+  // Advanced query by status
+  results = await dbm.queryService.advancedQuery(
+    { statusIDs: [statusID] },
+    "program"
+  );
+  expect(results.length).toBeGreaterThan(0);
+  result = getByID(results, postID);
+  expect(result?.id).toBe(postID);
+  expect(result["rating"]).toBe(generalRating);
+
+  // Advanced query by rating
+  results = await dbm.queryService.advancedQuery(
+    { ratings: [generalRating] },
+    "program"
+  );
+  expect(results.length).toBeGreaterThan(0);
+  result = getByID(results, postID);
+  expect(result?.id).toBe(postID);
+  expect(result["rating"]).toBe(generalRating);
+
+  // Advanced query sort by program
+  results = await dbm.queryService.advancedQuery({}, "program");
+  expect(results.length).toBeGreaterThan(0);
+  result = getByID(results, postID);
+  expect(result?.id).toBe(postID);
+  expect(result["rating"]).toBe(generalRating);
+
+  // Advanced query sort by location type
+  results = await dbm.queryService.advancedQuery({}, "locationType");
+  expect(results.length).toBeGreaterThan(0);
+  result = getByID(results, postID);
+  expect(result?.id).toBe(postID);
+  expect(result["rating"]).toBe(generalRating);
+
+  // Advanced query sort by user status
+  results = await dbm.queryService.advancedQuery({}, "userStatus");
+  expect(results.length).toBeGreaterThan(0);
+  result = getByID(results, postID);
+  expect(result?.id).toBe(postID);
+  expect(result["rating"]).toBe(generalRating);
+
+  // Advanced query sort by rating
+  results = await dbm.queryService.advancedQuery({}, "rating");
+  expect(results.length).toBeGreaterThan(0);
+  result = getByID(results, postID);
+  expect(result?.id).toBe(postID);
+  expect(result["rating"]).toBe(generalRating);
+
+  // Advanced query sort by rating descending
+  results = await dbm.queryService.advancedQuery({}, "rating", false);
+  expect(results.length).toBeGreaterThan(0);
+  result = getByID(results, postID);
+  expect(result?.id).toBe(postID);
+  expect(result["rating"]).toBe(generalRating);
+  let lastRating = 5;
+  for (const res of results) {
+    expect(res["rating"]).toBeLessThanOrEqual(lastRating);
+    lastRating = res["rating"];
+  }
+
   await dbm.postService.deletePost(postID);
   await dbm.userService.deleteUser(userID);
 
