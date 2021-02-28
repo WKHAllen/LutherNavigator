@@ -129,7 +129,7 @@ export default async function initDB(
   `;
   const programTable = `
     CREATE TABLE IF NOT EXISTS Program (
-      id   INT          NOT NULL,
+      id   INT UNSIGNED NOT NULL AUTO_INCREMENT,
       name VARCHAR(255) NOT NULL,
 
       PRIMARY KEY (id)
@@ -175,16 +175,16 @@ export default async function initDB(
   `;
   const postTable = `
     CREATE TABLE IF NOT EXISTS Post (
-      id             CHAR(4)       NOT NULL,
-      userID         CHAR(4)       NOT NULL,
-      content        VARCHAR(750)  NOT NULL,
-      location       VARCHAR(255)  NOT NULL,
-      locationTypeID INT           NOT NULL,
-      programID      INT           NOT NULL,
-      ratingID       CHAR(4)       NOT NULL,
-      threeWords     VARCHAR(63)   NOT NULL,
-      approved       BOOL          NOT NULL DEFAULT FALSE,
-      createTime     INT UNSIGNED  NOT NULL,
+      id             CHAR(4)      NOT NULL,
+      userID         CHAR(4)      NOT NULL,
+      content        VARCHAR(750) NOT NULL,
+      location       VARCHAR(255) NOT NULL,
+      locationTypeID INT          NOT NULL,
+      programID      INT UNSIGNED NOT NULL,
+      ratingID       CHAR(4)      NOT NULL,
+      threeWords     VARCHAR(63)  NOT NULL,
+      approved       BOOL         NOT NULL DEFAULT FALSE,
+      createTime     INT UNSIGNED NOT NULL,
       editTime       INT UNSIGNED,
 
       PRIMARY KEY (id),

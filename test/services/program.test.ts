@@ -4,11 +4,10 @@ import { getDBM, closeDBM } from "./util";
 test("Program", async () => {
   const dbm = await getDBM();
 
-  const programID = -1000;
   const programName = "Test Program";
 
   // Create a program
-  await dbm.programService.createProgram(programID, programName);
+  const programID = await dbm.programService.createProgram(programName);
 
   // Check program exists
   let exists = await dbm.programService.programExists(programID);
@@ -29,13 +28,6 @@ test("Program", async () => {
   // Get name
   let progName = await dbm.programService.getProgramName(programID);
   expect(progName).toBe(programName);
-
-  // Change program ID
-  await dbm.programService.changeProgramID(programID, programID + 1);
-  program = await dbm.programService.getProgram(programID + 1);
-  expect(program.id).toBe(programID + 1);
-  expect(program.name).toBe(programName);
-  await dbm.programService.changeProgramID(programID + 1, programID);
 
   // Set program name
   await dbm.programService.setProgramName(programID, programName + "!");

@@ -218,21 +218,32 @@ apiRouter.get(
   wrapRoute(async (req, res) => {
     const dbm = getDBM(req);
 
+    const programName = req.query.programName as string;
+
+    const programID = await dbm.programService.createProgram(programName);
+
+    res.send(programID);
+  })
+);
+
+// Set a program
+apiRouter.get(
+  "/setProgram",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const programID = parseInt(req.query.programID as string);
     const programName = req.query.programName as string;
 
-    if (isNaN(programID) || programID < -2147483648 || programID > 2147483647) {
-      res.send("Program ID must be a number");
+    const exists = await dbm.programService.programExists(programID);
+
+    if (exists) {
+      await dbm.programService.setProgramName(programID, programName);
+
+      res.end();
     } else {
-      const exists = await dbm.programService.programExists(programID);
-
-      if (exists) {
-        res.send("A program with the specified ID already exists");
-      } else {
-        await dbm.programService.createProgram(programID, programName);
-
-        res.end();
-      }
+      res.send("A program with the specified ID does not exist");
     }
   })
 );
