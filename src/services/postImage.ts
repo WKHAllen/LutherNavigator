@@ -126,8 +126,10 @@ export class PostImageService extends BaseService {
     params = [postID];
     await this.dbm.execute(sql, params);
 
-    sql = `DELETE FROM Image WHERE id IN (?);`;
-    params = [imageIDs];
-    await this.dbm.execute(sql, params);
+    if (imageIDs.length > 0) {
+      sql = `DELETE FROM Image WHERE id IN (?);`;
+      params = [imageIDs];
+      await this.dbm.execute(sql, params);
+    }
   }
 }
