@@ -20,19 +20,22 @@ export class ProgramService extends BaseService {
   /**
    * Create a new program.
    *
-   * @param programID The new program's ID.
    * @param name The new program's name.
+   * @returns The new program's ID.
    */
-  public async createProgram(programID: number, name: string): Promise<void> {
-    const sql = `
+  public async createProgram(name: string): Promise<number> {
+    const sql1 = `
       INSERT INTO Program (
-        id, name
+        name
       ) VALUES (
-        ?, ?
+        ?
       );
     `;
-    const params = [programID, name];
-    await this.dbm.execute(sql, params);
+    const sql2 = `SELECT LAST_INSERT_ID() AS id;`;
+    const params1 = [name];
+    const rows = await this.dbm.db.executeMany([sql1, sql2], [params1, []]);
+
+    return rows[1][0]?.id;
   }
 
   /**
@@ -88,6 +91,21 @@ export class ProgramService extends BaseService {
   }
 
   /**
+   * Set a program's name.
+   *
+   * @param programID A program's ID.
+   * @param newName The program's new name.
+   */
+  public async setProgramName(
+    programID: number,
+    newName: string
+  ): Promise<void> {
+    const sql = `UPDATE Program SET name = ? WHERE id = ?;`;
+    const params = [newName, programID];
+    await this.dbm.execute(sql, params);
+  }
+
+  /**
    * Get all programs.
    *
    * @returns All programs.
@@ -101,32 +119,16 @@ export class ProgramService extends BaseService {
   }
 
   /**
-   * Change a program's ID.
-   *
-   * @param currentID A program's ID.
-   * @param newID The program's new ID.
-   */
-  public async changeProgramID(
-    currentID: number,
-    newID: number
-  ): Promise<void> {
-    const sql = `UPDATE Program SET id = ? WHERE id = ?`;
-    const params = [newID, currentID];
-    await this.dbm.execute(sql, params);
-  }
-
-  /**
-   * Set a program's name.
+   * Get the number of posts associated with a program.
    *
    * @param programID A program's ID.
-   * @param newName The program's new name.
+   * @returns The number of linked posts.
    */
-  public async setProgramName(
-    programID: number,
-    newName: string
-  ): Promise<void> {
-    const sql = `UPDATE Program SET name = ? WHERE id = ?;`;
-    const params = [newName, programID];
-    await this.dbm.execute(sql, params);
+  public async numLinkedPosts(programID: number): Promise<number> {
+    const sql = `SELECT COUNT(*) AS posts FROM Post WHERE programID = ?;`;
+    const params = [programID];
+    const rows = await this.dbm.execute(sql, params);
+
+    return rows[0].posts;
   }
 }

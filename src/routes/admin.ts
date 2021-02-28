@@ -20,6 +20,7 @@ const adminPages = {
   variables: "Variables",
   registration: "Registration",
   posts: "Posts",
+  programs: "Programs",
 };
 
 // Admin home page
