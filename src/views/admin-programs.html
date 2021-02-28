@@ -1,10 +1,14 @@
 {{> admin }}
 
-<div class="flex-between mb-4">
+<div class="flex-between mb-2">
   <h2>Programs</h2>
   <button type="button" class="btn btn-primary" onclick="refreshPrograms();">
     Refresh
   </button>
 </div>
-<p></p>
+<p>
+  All supported programs on the site can be modified from here. Altering a
+  program's ID or deleting a program altogether is not advised, as doing so
+  could cause some posts to display incorrectly.
+</p>
 <div id="programs">Fetching programs...</div>
