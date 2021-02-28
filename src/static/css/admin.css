@@ -31,3 +31,8 @@ h1 {
   background-color: #cfdfef;
   border-radius: 2em;
 }
+
+#program-table-head {
+  font-weight: bold;
+  font-style: italic;
+}

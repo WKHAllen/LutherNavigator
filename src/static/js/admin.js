@@ -412,7 +412,7 @@ function createProgram(program) {
       value: program.id,
     });
   const progIDDiv = newElement("div")
-    .addClass("col-3 col-sm-2 col-md-1")
+    .addClass("col-4 col-sm-3 col-md-2")
     .append(progID);
   const progName = newElement("input")
     .addClass("form-control")

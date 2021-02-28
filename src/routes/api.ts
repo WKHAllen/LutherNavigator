@@ -197,3 +197,16 @@ apiRouter.get(
     res.end();
   })
 );
+
+// Get list of programs
+apiRouter.get(
+  "/adminPrograms",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const programs = await dbm.programService.getPrograms();
+
+    res.json(programs);
+  })
+);
