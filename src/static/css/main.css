@@ -69,6 +69,7 @@ a:hover {
 #content {
   display: block;
   margin: auto;
+  padding: 16px;
 }
 
 main {
@@ -201,7 +202,6 @@ table {
 @media screen and (min-width: 425px) {
   #content {
     max-width: 728px;
-    padding: 16px 0px;
   }
 
   .mainbody {
@@ -227,5 +227,9 @@ table {
   .mainbody {
     width: 865px;
     display: inline-table;
+  }
+
+  #content {
+    padding: 16px 0px;
   }
 }
