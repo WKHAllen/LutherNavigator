@@ -75,7 +75,6 @@ main {
   /* sticky footer */
   flex: 1 0 auto;
   max-width: 2000px;
-  /* max-height: 1334px; */
   /* stationary background */
   display: block;
   position: relative;
@@ -202,6 +201,7 @@ table {
 @media screen and (min-width: 425px) {
   #content {
     max-width: 728px;
+    padding: 16px 0px;
   }
 
   .mainbody {

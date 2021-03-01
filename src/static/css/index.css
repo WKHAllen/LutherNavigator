@@ -57,10 +57,10 @@ img {
 }
 
 /* Home page / index */
-.homepage {
+/* .homepage { */
   /* margin: auto; */
   /* max-width: 385px; */
-}
+/* } */
 
 /* Search Bar */
 
@@ -201,8 +201,8 @@ input:focus::-webkit-input-placeholder {
 	background-color: #0061a3;
 }
 
-@media screen and (min-width: 768px) {
+/*@media screen and (min-width: 768px) {
   .homepage {
-    /* max-width: 728px; */
+     max-width: 728px;
   }
-}
+} */
