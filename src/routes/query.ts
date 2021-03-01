@@ -12,7 +12,7 @@ import wrapRoute from "../asyncCatch";
  */
 export const queryRouter = Router();
 
-// Index page
+// Query page
 queryRouter.get(
   "/",
   wrapRoute(async (req, res) => {
