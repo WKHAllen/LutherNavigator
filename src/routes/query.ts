@@ -1,5 +1,5 @@
 /**
- * Restaurant routes.
+ * Query routes.
  * @packageDocumentation
  */
 
@@ -8,14 +8,14 @@ import { renderPage } from "./util";
 import wrapRoute from "../asyncCatch";
 
 /**
- * The restaurant router.
+ * The query router.
  */
-export const restaurantRouter = Router();
+export const queryRouter = Router();
 
 // Index page
-restaurantRouter.get(
+queryRouter.get(
   "/",
   wrapRoute(async (req, res) => {
-    await renderPage(req, res, "restaurant");
+    await renderPage(req, res, "query");
   })
 );
