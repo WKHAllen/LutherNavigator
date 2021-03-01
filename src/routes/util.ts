@@ -5,7 +5,7 @@
 
 import { Request, Response, NextFunction } from "express";
 import * as multer from "multer";
-import { MetaService, UserService, SessionService } from "../services";
+import DatabaseManager from "../services";
 import { metaConfig } from "../config";
 
 /**
@@ -50,14 +50,16 @@ export async function auth(
   res: Response,
   next: NextFunction
 ): Promise<void> {
+  const dbm = getDBM(req);
+
   const sessionID: string = getSessionID(req);
   const validSession = sessionID
-    ? await SessionService.sessionExists(sessionID)
+    ? await dbm.sessionService.sessionExists(sessionID)
     : false;
 
   if (validSession) {
-    await setSessionID(res, sessionID);
-    await SessionService.updateSession(sessionID);
+    await setSessionID(req, res, sessionID);
+    await dbm.sessionService.updateSession(sessionID);
     next();
   } else {
     await renderPage(
@@ -85,13 +87,15 @@ export async function adminAuth(
   res: Response,
   next: NextFunction
 ): Promise<void> {
+  const dbm = getDBM(req);
+
   const sessionID: string = getSessionID(req);
-  const userID = await SessionService.getUserIDBySessionID(sessionID);
-  const admin = userID ? await UserService.isAdmin(userID) : false;
+  const userID = await dbm.sessionService.getUserIDBySessionID(sessionID);
+  const admin = userID ? await dbm.userService.isAdmin(userID) : false;
 
   if (admin) {
-    await setSessionID(res, sessionID);
-    await SessionService.updateSession(sessionID);
+    await setSessionID(req, res, sessionID);
+    await dbm.sessionService.updateSession(sessionID);
     next();
   } else {
     await renderPage(
@@ -123,6 +127,8 @@ export async function renderPage(
   options: any = {},
   status: number = 200
 ): Promise<void> {
+  const dbm = getDBM(req);
+
   options.url = req.originalUrl;
 
   if (options.loginAfter === undefined) {
@@ -135,7 +141,7 @@ export async function renderPage(
     options.after = req.query.after;
   }
 
-  const version = await MetaService.get("Version");
+  const version = await dbm.metaService.get("Version");
   options.version = version;
 
   const sessionID = getSessionID(req);
@@ -143,7 +149,7 @@ export async function renderPage(
   if (!sessionID) {
     options.loggedIn = false;
   } else {
-    const user = await SessionService.getUserBySessionID(sessionID);
+    const user = await dbm.sessionService.getUserBySessionID(sessionID);
 
     if (!user) {
       options.loggedIn = false;
@@ -190,6 +196,15 @@ export async function renderError(
 }
 
 /**
+ * Get the database manager.
+ *
+ * @param req Request object.
+ */
+export function getDBM(req: Request): DatabaseManager {
+  return req.app.get("dbm") as DatabaseManager;
+}
+
+/**
  * Get the hostname of a request.
  *
  * @param req Request object.
@@ -211,15 +226,19 @@ export function getSessionID(req: Request): string {
 /**
  * Set the session ID cookie.
  *
+ * @param req Request object.
  * @param res Response object.
  * @param sessionID A session ID.
  */
 export async function setSessionID(
+  req: Request,
   res: Response,
   sessionID: string
 ): Promise<void> {
+  const dbm = getDBM(req);
+
   const sessionAge =
-    (parseInt(await MetaService.get("Session age")) ||
+    (parseInt(await dbm.metaService.get("Session age")) ||
       metaConfig["Session age"]) * 1000;
 
   res.cookie("sessionID", sessionID, {
@@ -302,8 +321,10 @@ export function setForm(res: Response, value: any): void {
  * @returns The user's ID.
  */
 export async function getUserID(req: Request): Promise<string> {
+  const dbm = getDBM(req);
+
   const sessionID = getSessionID(req);
-  const userID = await SessionService.getUserIDBySessionID(sessionID);
+  const userID = await dbm.sessionService.getUserIDBySessionID(sessionID);
 
   return userID;
 }

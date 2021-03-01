@@ -4,9 +4,8 @@
  */
 
 import { Router } from "express";
-import { renderPage, setSessionID } from "./util";
+import { renderPage, getDBM, setSessionID } from "./util";
 import wrapRoute from "../asyncCatch";
-import { UserService, SessionService } from "../services";
 
 /**
  * The login router.
@@ -25,15 +24,17 @@ loginRouter.get(
 loginRouter.post(
   "/",
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const email = req.body.email;
     const password = req.body.password;
 
-    const validLogin = await UserService.login(email, password);
+    const validLogin = await dbm.userService.login(email, password);
 
     if (validLogin) {
-      const user = await UserService.getUserByEmail(email);
-      const sessionID = await SessionService.createSession(user.id);
-      await setSessionID(res, sessionID);
+      const user = await dbm.userService.getUserByEmail(email);
+      const sessionID = await dbm.sessionService.createSession(user.id);
+      await setSessionID(req, res, sessionID);
 
       const after = req.query.after as string;
 

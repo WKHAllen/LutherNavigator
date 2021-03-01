@@ -4,15 +4,10 @@
  */
 
 import { Router } from "express";
-import { adminAuth } from "./util";
+import { adminAuth, getDBM, getHostname } from "./util";
 import wrapRoute from "../asyncCatch";
-import {
-  AdminService,
-  MetaService,
-  UserService,
-  PostService,
-} from "../services";
 import { metaConfig } from "../config";
+import { sendFormattedEmail } from "../emailer";
 
 /**
  * The API router.
@@ -24,9 +19,11 @@ apiRouter.get(
   "/adminStats",
   adminAuth,
   wrapRoute(async (req, res) => {
-    const numUsers = await AdminService.getRecords("User");
-    const numPosts = await AdminService.getRecords("Post");
-    const numLoggedIn = await AdminService.getRecords("Session");
+    const dbm = getDBM(req);
+
+    const numUsers = await dbm.adminService.getRecords("User");
+    const numPosts = await dbm.adminService.getRecords("Post");
+    const numLoggedIn = await dbm.adminService.getRecords("Session");
 
     res.json({
       Users: numUsers,
@@ -41,7 +38,9 @@ apiRouter.get(
   "/adminVariables",
   adminAuth,
   wrapRoute(async (req, res) => {
-    const variables = await MetaService.getAll();
+    const dbm = getDBM(req);
+
+    const variables = await dbm.metaService.getAll();
 
     res.json(variables);
   })
@@ -52,12 +51,14 @@ apiRouter.get(
   "/setVariable",
   adminAuth,
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const name = req.query.name as string;
     const value = req.query.value as string;
-    const exists = await MetaService.exists(name);
+    const exists = await dbm.metaService.exists(name);
 
     if (exists) {
-      await MetaService.set(name, value);
+      await dbm.metaService.set(name, value);
     }
 
     res.end();
@@ -69,10 +70,12 @@ apiRouter.get(
   "/resetVariable",
   adminAuth,
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const name = req.query.name as string;
 
     if (name in metaConfig) {
-      await MetaService.set(name, metaConfig[name]);
+      await dbm.metaService.set(name, metaConfig[name]);
     }
 
     res.send(String(metaConfig[name])).end();
@@ -84,7 +87,9 @@ apiRouter.get(
   "/unapprovedUsers",
   adminAuth,
   wrapRoute(async (req, res) => {
-    const unapproved = await UserService.getUnapproved();
+    const dbm = getDBM(req);
+
+    const unapproved = await dbm.userService.getUnapproved();
 
     res.json(unapproved);
   })
@@ -95,16 +100,37 @@ apiRouter.get(
   "/approveRegistration",
   adminAuth,
   wrapRoute(async (req, res) => {
-    const userID = req.query.userID as string;
-    const approved = req.query.approved as string;
+    const dbm = getDBM(req);
 
-    if (approved === undefined || approved === "true") {
-      await UserService.setApproved(userID);
+    const userID = req.query.userID as string;
+    const approved =
+      req.query.approved === undefined || req.query.approved === "true";
+
+    const user = await dbm.userService.getUser(userID);
+
+    if (approved) {
+      await dbm.userService.setApproved(userID);
+      await sendFormattedEmail(
+        user.email,
+        "Luther Navigator - Account Approved",
+        "accountApproved",
+        {
+          host: getHostname(req),
+        }
+      );
     } else {
-      const isApproved = await UserService.isApproved(userID);
+      const isApproved = await dbm.userService.isApproved(userID);
 
       if (!isApproved) {
-        await UserService.deleteUser(userID);
+        await dbm.userService.deleteUser(userID);
+        await sendFormattedEmail(
+          user.email,
+          "Luther Navigator - Account Not Approved",
+          "accountNotApproved",
+          {
+            host: getHostname(req),
+          }
+        );
       }
     }
 
@@ -117,7 +143,9 @@ apiRouter.get(
   "/unapprovedPosts",
   adminAuth,
   wrapRoute(async (req, res) => {
-    const unapproved = await PostService.getUnapproved();
+    const dbm = getDBM(req);
+
+    const unapproved = await dbm.postService.getUnapproved();
 
     res.json(unapproved);
   })
@@ -128,19 +156,127 @@ apiRouter.get(
   "/approvePost",
   adminAuth,
   wrapRoute(async (req, res) => {
-    const postID = req.query.postID as string;
-    const approved = req.query.approved as string;
+    const dbm = getDBM(req);
 
-    if (approved === undefined || approved === "true") {
-      await PostService.setApproved(postID);
+    const postID = req.query.postID as string;
+    const approved =
+      req.query.approved === undefined || req.query.approved === "true";
+
+    const post = await dbm.postService.getPost(postID);
+    const user = await dbm.postService.getPostUser(postID);
+
+    if (approved) {
+      await dbm.postService.setApproved(postID);
+      await sendFormattedEmail(
+        user.email,
+        "Luther Navigator - Post Approved",
+        "postApproved",
+        {
+          host: getHostname(req),
+          postID,
+          location: post.location,
+        }
+      );
     } else {
-      const isApproved = await PostService.isApproved(postID);
+      const isApproved = await dbm.postService.isApproved(postID);
 
       if (!isApproved) {
-        await PostService.deletePost(postID);
+        await dbm.postService.deletePost(postID);
+        await sendFormattedEmail(
+          user.email,
+          "Luther Navigator - Post Not Approved",
+          "postNotApproved",
+          {
+            host: getHostname(req),
+            location: post.location,
+          }
+        );
       }
     }
 
     res.end();
+  })
+);
+
+// Get list of programs
+apiRouter.get(
+  "/adminPrograms",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const programs = await dbm.programService.getPrograms();
+
+    res.json(programs);
+  })
+);
+
+// Create a new program
+apiRouter.get(
+  "/createProgram",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const programName = req.query.programName as string;
+
+    const programID = await dbm.programService.createProgram(programName);
+
+    res.send(String(programID)).end();
+  })
+);
+
+// Set a program
+apiRouter.get(
+  "/setProgram",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const programID = parseInt(req.query.programID as string);
+    const programName = req.query.programName as string;
+
+    if (isNaN(programID)) {
+      res.send("Program ID must be a number").end();
+    } else {
+      const exists = await dbm.programService.programExists(programID);
+
+      if (exists) {
+        await dbm.programService.setProgramName(programID, programName);
+
+        res.end();
+      } else {
+        res.send("A program with the specified ID does not exist").end();
+      }
+    }
+  })
+);
+
+// Delete a program
+apiRouter.get(
+  "/deleteProgram",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const programID = parseInt(req.query.programID as string);
+
+    if (isNaN(programID)) {
+      res.send("Program ID must be a number").end();
+    } else {
+      const linkedPosts = await dbm.programService.numLinkedPosts(programID);
+
+      if (linkedPosts === 0) {
+        await dbm.programService.deleteProgram(programID);
+
+        res.end();
+      } else {
+        res
+          .send(
+            "This program cannot be deleted as it is associated with one or more posts"
+          )
+          .end();
+      }
+    }
   })
 );

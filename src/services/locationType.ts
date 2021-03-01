@@ -3,7 +3,7 @@
  * @packageDocumentation
  */
 
-import mainDB from "./util";
+import { BaseService } from "./util";
 
 /**
  * Location type architecture.
@@ -16,15 +16,15 @@ export interface LocationType {
 /**
  * Location type services.
  */
-export module LocationTypeService {
+export class LocationTypeService extends BaseService {
   /**
    * Get all locations.
    *
    * @returns All location types.
    */
-  export async function getLocations(): Promise<LocationType[]> {
+  public async getLocations(): Promise<LocationType[]> {
     const sql = `SELECT id, name FROM LocationType ORDER BY id;`;
-    const rows: LocationType[] = await mainDB.execute(sql);
+    const rows: LocationType[] = await this.dbm.execute(sql);
 
     return rows;
   }
@@ -35,10 +35,10 @@ export module LocationTypeService {
    * @param locationID A location's ID.
    * @returns The location's name.
    */
-  export async function getLocationName(locationID: number): Promise<string> {
+  public async getLocationName(locationID: number): Promise<string> {
     const sql = `SELECT name FROM LocationType WHERE id = ?;`;
     const params = [locationID];
-    const rows: LocationType[] = await mainDB.execute(sql, params);
+    const rows: LocationType[] = await this.dbm.execute(sql, params);
 
     return rows[0]?.name;
   }
@@ -49,10 +49,10 @@ export module LocationTypeService {
    * @param locationID A location's ID.
    * @returns Whether or not the location is valid.
    */
-  export async function validLocation(locationID: number): Promise<boolean> {
+  public async validLocation(locationID: number): Promise<boolean> {
     const sql = `SELECT id FROM LocationType WHERE id = ?;`;
     const params = [locationID];
-    const rows: LocationType[] = await mainDB.execute(sql, params);
+    const rows: LocationType[] = await this.dbm.execute(sql, params);
 
     return rows.length > 0;
   }

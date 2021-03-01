@@ -6,7 +6,6 @@
 import { Router } from "express";
 import { adminAuth, renderPage } from "./util";
 import wrapRoute from "../asyncCatch";
-import {} from "../services";
 
 /**
  * The admin router.
@@ -21,6 +20,7 @@ const adminPages = {
   variables: "Variables",
   registration: "Registration",
   posts: "Posts",
+  programs: "Programs",
 };
 
 // Admin home page

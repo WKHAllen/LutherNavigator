@@ -3,12 +3,12 @@
  * @packageDocumentation
  */
 
-import mainDB, {
+import DatabaseManager from "./services";
+import {
   pruneSessions,
   pruneVerifyRecords,
   prunePasswordResetRecords,
 } from "./services/util";
-import { MetaService } from "./services";
 import { metaConfig } from "./config";
 
 /**
@@ -25,6 +25,7 @@ async function wait(ms: number): Promise<void> {
 /**
  * Populate a static table.
  *
+ * @param dbm The database manager.
  * @param table Table name.
  * @param column Column name.
  * @param values Values to be inserted into the table.
@@ -32,13 +33,14 @@ async function wait(ms: number): Promise<void> {
  * @param otherID ID of the "Other" option, if it is set to true.
  */
 export async function populateTable(
+  dbm: DatabaseManager,
   table: string,
   column: string,
   values: any[],
   other: boolean = false,
   otherID: number = 1000
 ): Promise<void> {
-  const rows = await mainDB.execute(`SELECT ${column} from ${table}`);
+  const rows = await dbm.execute(`SELECT ${column} FROM ${table};`);
 
   if (rows.length === 0) {
     let queryValues = values.map(
@@ -51,25 +53,54 @@ export async function populateTable(
 
     const queryValuesStr = queryValues.join(", ");
     const query = `INSERT INTO ${table} (id, ${column}) VALUES ${queryValuesStr};`;
-    await mainDB.execute(query);
+    await dbm.execute(query);
   }
 }
 
-export async function initMeta(): Promise<void> {
-  const metaRows = await MetaService.getAll();
+/**
+ * Initialize values in the meta table.
+ *
+ * @param dbm The database manager.
+ */
+export async function initMeta(dbm: DatabaseManager): Promise<void> {
+  const metaRows = await dbm.metaService.getAll();
   const allMeta = metaRows.map((row) => row.name);
 
   for (const item of Object.keys(metaConfig)) {
     if (!allMeta.includes(item)) {
-      await MetaService.set(item, String(metaConfig[item]));
+      await dbm.metaService.set(item, String(metaConfig[item]));
     }
   }
 }
 
 /**
- * Initialize the database.
+ * Switch to using a single database connection.
+ *
+ * @param dbm The database manager.
  */
-export default async function initDB(prune: boolean = true): Promise<void> {
+export async function useConnection(dbm: DatabaseManager): Promise<void> {
+  const conn = await dbm.db.getConnection();
+  dbm.db.setConnection(conn);
+}
+
+/**
+ * Switch to using the database connection pool.
+ *
+ * @param dbm The database manager.
+ */
+export async function clearConnection(dbm: DatabaseManager): Promise<void> {
+  dbm.db.setConnection(null);
+}
+
+/**
+ * Initialize the database.
+ *
+ * @param dbm The database manager.
+ */
+export default async function initDB(
+  dbm: DatabaseManager,
+  prune: boolean = true
+): Promise<void> {
   // Create tables
   const imageTable = `
     CREATE TABLE IF NOT EXISTS Image (
@@ -92,6 +123,14 @@ export default async function initDB(prune: boolean = true): Promise<void> {
     CREATE TABLE IF NOT EXISTS LocationType (
       id   INT         NOT NULL,
       name VARCHAR(63) NOT NULL,
+
+      PRIMARY KEY (id)
+    );
+  `;
+  const programTable = `
+    CREATE TABLE IF NOT EXISTS Program (
+      id   INT UNSIGNED NOT NULL AUTO_INCREMENT,
+      name VARCHAR(255) NOT NULL,
 
       PRIMARY KEY (id)
     );
@@ -136,16 +175,16 @@ export default async function initDB(prune: boolean = true): Promise<void> {
   `;
   const postTable = `
     CREATE TABLE IF NOT EXISTS Post (
-      id             CHAR(4)       NOT NULL,
-      userID         CHAR(4)       NOT NULL,
-      content        VARCHAR(750)  NOT NULL,
-      location       VARCHAR(255)  NOT NULL,
-      locationTypeID INT           NOT NULL,
-      program        VARCHAR(255)  NOT NULL,
-      ratingID       CHAR(4)       NOT NULL,
-      threeWords     VARCHAR(63)   NOT NULL,
-      approved       BOOL          NOT NULL DEFAULT FALSE,
-      createTime     INT UNSIGNED  NOT NULL,
+      id             CHAR(4)      NOT NULL,
+      userID         CHAR(4)      NOT NULL,
+      content        VARCHAR(750) NOT NULL,
+      location       VARCHAR(255) NOT NULL,
+      locationTypeID INT          NOT NULL,
+      programID      INT UNSIGNED NOT NULL,
+      ratingID       CHAR(4)      NOT NULL,
+      threeWords     VARCHAR(63)  NOT NULL,
+      approved       BOOL         NOT NULL DEFAULT FALSE,
+      createTime     INT UNSIGNED NOT NULL,
       editTime       INT UNSIGNED,
 
       PRIMARY KEY (id),
@@ -155,6 +194,9 @@ export default async function initDB(prune: boolean = true): Promise<void> {
 
       FOREIGN KEY (locationTypeID)
         REFERENCES LocationType (id),
+
+      FOREIGN KEY (programID)
+        REFERENCES Program (id),
 
       FOREIGN KEY (ratingID)
         REFERENCES Rating (id)
@@ -214,10 +256,11 @@ export default async function initDB(prune: boolean = true): Promise<void> {
       PRIMARY KEY (name)
     );
   `; // MySQL fails to parse 'key' as a column name, so we use 'name' instead
-  await mainDB.executeMany([
+  await dbm.db.executeMany([
     imageTable,
     userStatusTable,
     locationTypeTable,
+    programTable,
     ratingTable,
     userTable,
     postTable,
@@ -245,18 +288,20 @@ export default async function initDB(prune: boolean = true): Promise<void> {
   //     ON Post FOR EACH ROW
   //   DELETE FROM Image WHERE id = OLD.imageID;
   // `;
-  // await mainDB.executeMany([userDeleteTrigger, postDeleteTrigger]);
+  // await dbm.executeMany([userDeleteTrigger, postDeleteTrigger]);
 
   await wait(1000);
 
   // Populate static tables
   await populateTable(
+    dbm,
     "UserStatus",
     "name",
     ["Student", "Alum", "Faculty/Staff", "Parent"],
     true
   );
   await populateTable(
+    dbm,
     "LocationType",
     "name",
     [
@@ -276,12 +321,12 @@ export default async function initDB(prune: boolean = true): Promise<void> {
   );
 
   // Populate meta table
-  await initMeta();
+  await initMeta(dbm);
 
   // Prune records from the database
   if (prune) {
-    await pruneSessions();
-    await pruneVerifyRecords();
-    await prunePasswordResetRecords();
+    await pruneSessions(dbm);
+    await pruneVerifyRecords(dbm);
+    await prunePasswordResetRecords(dbm);
   }
 }

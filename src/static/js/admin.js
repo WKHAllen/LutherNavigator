@@ -1,6 +1,7 @@
 const statsTimeout = 60 * 1000; // One minute
 const registrationTimeout = 60 * 1000; // One minute
 const postsTimeout = 60 * 1000; // One minute
+const programsTimeout = 60 * 1000; // One minute
 
 // Get the JSON response from a URL
 async function fetchJSON(url, options) {
@@ -56,6 +57,15 @@ function replaceSpaces(name) {
   return name;
 }
 
+// Set the notification number for an admin page
+function setNotificationNumber(page, value) {
+  if (value === 0) {
+    $(`#admin-${page}-notification`).addClass("hidden").text(value);
+  } else {
+    $(`#admin-${page}-notification`).removeClass("hidden").text(value);
+  }
+}
+
 // Populate data on the stats page
 async function populateStats() {
   const statsURL = "/api/adminStats";
@@ -109,6 +119,7 @@ function resetVariable(name) {
       showError("Failed to reset variable");
     },
   });
+  updateNotifications();
 }
 
 // Create a new variable element
@@ -180,6 +191,7 @@ async function populateVariables() {
 
 // Refresh all variables
 async function refreshVariables() {
+  updateNotifications();
   clearElement("variables");
   appendTo("variables", "Fetching variables...");
   await populateVariables();
@@ -201,6 +213,7 @@ function approveUser(userID, approved, thisElement) {
       showError("Failed to approve user account");
     },
   });
+  updateNotifications();
 }
 
 // Create a row in the unapproved users table
@@ -271,6 +284,7 @@ async function populateRegistration() {
 
 // Refresh unapproved users
 async function refreshRegistration() {
+  updateNotifications();
   clearElement("unapproved-registration");
   showElement("registration-status");
   await populateRegistration();
@@ -292,6 +306,7 @@ function approvePost(postID, approved, thisElement) {
       showError("Failed to approve post");
     },
   });
+  updateNotifications();
 }
 
 // Create a row in the unapproved posts table
@@ -371,30 +386,180 @@ async function populatePosts() {
 
 // Refresh unapproved posts
 async function refreshPosts() {
+  updateNotifications();
   clearElement("unapproved-posts");
   showElement("posts-status");
   await populatePosts();
 }
 
+// Create a new program
+function createProgram(programName) {
+  $.ajax({
+    url: "/api/createProgram",
+    data: {
+      programName,
+    },
+    success: () => {
+      hideError();
+      populatePrograms();
+    },
+    error: () => {
+      showError("Failed to create program");
+    },
+  });
+}
+
+// Set a program
+function setProgram(programID, programName) {
+  $.ajax({
+    url: "/api/setProgram",
+    data: {
+      programID,
+      programName,
+    },
+    success: (err) => {
+      if (err) {
+        showError(err);
+      } else {
+        hideError();
+      }
+    },
+    error: () => {
+      showError("Failed to set program");
+    },
+  });
+}
+
+// Delete a program
+function deleteProgram(programID) {
+  $.ajax({
+    url: "/api/deleteProgram",
+    data: {
+      programID,
+    },
+    success: (err) => {
+      if (err) {
+        showError(err);
+      } else {
+        hideError();
+        populatePrograms();
+      }
+    },
+    error: () => {
+      showError("Failed to delete program");
+    },
+  });
+}
+
+// Create a new program element
+function createProgramRow(program) {
+  const progName = newElement("input")
+    .addClass("form-control")
+    .attr({
+      type: "text",
+      id: `prog-${program.id}`,
+      name: "value",
+      value: program.name,
+    });
+  const progNameDiv = newElement("div").addClass("col").append(progName);
+  const progSaveButton = newElement("button")
+    .addClass("btn btn-primary mr-1")
+    .attr({
+      type: "submit",
+    })
+    .text("Save");
+  const progDeleteButton = newElement("button")
+    .addClass("btn btn-danger")
+    .attr({
+      type: "button",
+    })
+    .text("Delete")
+    .click(() => {
+      deleteProgram(program.id);
+    });
+  const progButtonDiv = newElement("div")
+    .addClass("col-auto flex-end")
+    .append(progSaveButton, progDeleteButton);
+  const row = newElement("div")
+    .addClass("row mt-3")
+    .append(progNameDiv, progButtonDiv);
+  const form = newElement("form")
+    .append(row)
+    .submit((event) => {
+      event.preventDefault();
+      setProgram(program.id, $(event.target.value).val());
+    });
+  return form;
+}
+
+// Populate data on the programs page
+async function populatePrograms() {
+  const programsURL = "/api/adminPrograms";
+  let programs = null;
+
+  try {
+    programs = await fetchJSON(programsURL);
+  } catch (err) {
+    showError("Failed to update programs");
+  }
+
+  if (programs) {
+    hideError();
+    clearElement("programs");
+
+    for (const program of programs) {
+      const newItem = createProgramRow(program);
+      appendTo("programs", newItem);
+    }
+
+    const newProgramButton = newElement("button")
+      .addClass("btn btn-primary")
+      .attr({
+        type: "button",
+      })
+      .text("New Program")
+      .click(() => {
+        createProgram("");
+      });
+    const newProgramButtonDiv = newElement("div")
+      .addClass("row mt-3")
+      .append(newProgramButton);
+    appendTo("programs", newProgramButtonDiv);
+  }
+}
+
+// Refresh all programs
+async function refreshPrograms() {
+  updateNotifications();
+  clearElement("programs");
+  appendTo("programs", "Fetching programs...");
+  await populatePrograms();
+}
+
 // On stats page load
 function statsLoad() {
+  updateNotifications();
   populateStats();
 
   setInterval(() => {
+    updateNotifications();
     populateStats();
   }, statsTimeout);
 }
 
 // On variables page load
 function variablesLoad() {
+  updateNotifications();
   populateVariables();
 }
 
 // On registration approval page load
 function registrationLoad() {
+  updateNotifications();
   populateRegistration();
 
   setInterval(() => {
+    updateNotifications();
     populateRegistration();
   }, registrationTimeout);
 }
@@ -406,4 +571,36 @@ function postsLoad() {
   setInterval(() => {
     populatePosts();
   }, postsTimeout);
+}
+
+// On programs page load
+function programsLoad() {
+  populatePrograms();
+
+  setInterval(() => {
+    populatePrograms();
+  }, programsTimeout);
+}
+
+// Update admin notifications
+async function updateNotifications() {
+  const registrationURL = "/api/unapprovedUsers";
+  const postsURL = "/api/unapprovedPosts";
+  let unapprovedUsers = null;
+  let unapprovedPosts = null;
+
+  try {
+    unapprovedUsers = await fetchJSON(registrationURL);
+    unapprovedPosts = await fetchJSON(postsURL);
+  } catch (err) {
+    return;
+  }
+
+  setNotificationNumber("registration", unapprovedUsers.length);
+  setNotificationNumber("posts", unapprovedPosts.length);
+}
+
+// On all admin page load
+async function main() {
+  await updateNotifications();
 }

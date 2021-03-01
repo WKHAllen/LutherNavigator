@@ -3,13 +3,12 @@
  * @packageDocumentation
  */
 
-import * as db from "../db";
+import DatabaseManager from "../services";
 import * as crypto from "crypto";
 import * as bcrypt from "bcrypt";
 import { Session } from "./session";
-import { Verify, VerifyService } from "./verify";
-import { PasswordReset, PasswordResetService } from "./passwordReset";
-import { MetaService } from "./meta";
+import { Verify } from "./verify";
+import { PasswordReset } from "./passwordReset";
 import { metaConfig } from "../config";
 
 /**
@@ -38,10 +37,15 @@ export const verifyIDLength = 16;
 export const passwordResetIDLength = 16;
 
 /**
- * Database object.
+ * Base service class.
  */
-const mainDB = new db.DB(dbURL);
-export default mainDB;
+export abstract class BaseService {
+  readonly dbm: DatabaseManager;
+
+  constructor(dbm: DatabaseManager) {
+    this.dbm = dbm;
+  }
+}
 
 /**
  * Get the current timestamp.
@@ -76,22 +80,24 @@ export async function newID(len: number = idLength): Promise<string> {
 /**
  * Generate a new unique ID for a table.
  *
+ * @param dbm The database manager.
  * @param table The table name.
  * @param len The length of the ID.
  * @returns The new unique ID.
  */
 export async function newUniqueID(
+  dbm: DatabaseManager,
   table: string,
   len: number = idLength
 ): Promise<string> {
   let base64ID = await newID(len);
 
   const sql = `SELECT id FROM ${table} WHERE id = ?;`;
-  let rows = await mainDB.execute(sql, [base64ID]);
+  let rows = await dbm.execute(sql, [base64ID]);
 
   while (rows.length > 0) {
     base64ID = await newID(len);
-    rows = await mainDB.execute(sql, [base64ID]);
+    rows = await dbm.execute(sql, [base64ID]);
   }
 
   return base64ID;
@@ -122,17 +128,19 @@ export async function hashPasswordAsync(
 /**
  * Hash a password.
  *
+ * @param dbm The database manager.
  * @param password The password.
  * @param rounds The number of salt rounds for bcrypt to use.
  * @returns The hashed password.
  */
 export async function hashPassword(
+  dbm: DatabaseManager,
   password: string,
   rounds: number = null
 ): Promise<string> {
   if (!rounds) {
     rounds =
-      parseInt(await MetaService.get("Salt rounds")) ||
+      parseInt(await dbm.metaService.get("Salt rounds")) ||
       metaConfig["Salt rounds"];
   }
 
@@ -164,15 +172,17 @@ export async function checkPassword(
 /**
  * Delete a session when the time comes.
  *
+ * @param dbm The database manager.
  * @param sessionID A session's ID.
  * @param timeRemaining The amount of time to wait before removing the session.
  */
 export async function pruneSession(
+  dbm: DatabaseManager,
   sessionID: string,
   timeRemaining: number = null
 ): Promise<void> {
   const sessionAge =
-    (parseInt(await MetaService.get("Session age")) ||
+    (parseInt(await dbm.metaService.get("Session age")) ||
       metaConfig["Session age"]) * 1000;
   if (timeRemaining === null) {
     timeRemaining = sessionAge;
@@ -181,7 +191,7 @@ export async function pruneSession(
   setTimeout(async () => {
     let sql = `SELECT updateTime FROM Session WHERE id = ?;`;
     let params = [sessionID];
-    const rows: Session[] = await mainDB.execute(sql, params);
+    const rows: Session[] = await dbm.execute(sql, params);
 
     const updateTime = rows[0]?.updateTime;
     const deleteTime = updateTime + sessionAge / 1000;
@@ -189,105 +199,117 @@ export async function pruneSession(
     if (deleteTime && getTime() - deleteTime >= 0) {
       sql = `DELETE FROM Session WHERE id = ?;`;
       params = [sessionID];
-      await mainDB.execute(sql, params);
+      await dbm.execute(sql, params);
     }
   }, timeRemaining);
 }
 
 /**
  * Delete all active sessions when the time comes.
+ *
+ * @param dbm The database manager.
  */
-export async function pruneSessions(): Promise<void> {
+export async function pruneSessions(dbm: DatabaseManager): Promise<void> {
   const sql = `SELECT id, updateTime FROM Session;`;
   const params = [];
-  const rows: Session[] = await mainDB.execute(sql, params);
+  const rows: Session[] = await dbm.execute(sql, params);
 
   const sessionAge =
-    (parseInt(await MetaService.get("Session age")) ||
+    (parseInt(await dbm.metaService.get("Session age")) ||
       metaConfig["Session age"]) * 1000;
 
   rows.forEach((row) => {
     const timeRemaining = row.updateTime + sessionAge / 1000 - getTime();
-    pruneSession(row.id, timeRemaining * 1000);
+    pruneSession(dbm, row.id, timeRemaining * 1000);
   });
 }
 
 /**
  * Delete a verification record when the time comes.
  *
+ * @param dbm The database manager.
  * @param verifyID A verification ID.
  * @param timeRemaining The amount of time to wait before removing the record.
  */
 export async function pruneVerifyRecord(
+  dbm: DatabaseManager,
   verifyID: string,
   timeRemaining: number = null
 ): Promise<void> {
   const verifyAge =
-    (parseInt(await MetaService.get("Verify age")) ||
+    (parseInt(await dbm.metaService.get("Verify age")) ||
       metaConfig["Verify age"]) * 1000;
   if (timeRemaining === null) {
     timeRemaining = verifyAge;
   }
 
   setTimeout(async () => {
-    await VerifyService.deleteUnverifiedUser(verifyID);
+    await dbm.verifyService.deleteUnverifiedUser(verifyID);
   }, timeRemaining);
 }
 
 /**
  * Delete all active verification records when the time comes.
+ *
+ * @param dbm The database manager.
  */
-export async function pruneVerifyRecords(): Promise<void> {
+export async function pruneVerifyRecords(dbm: DatabaseManager): Promise<void> {
   const sql = `SELECT id, createTime FROM Verify;`;
   const params = [];
-  const rows: Verify[] = await mainDB.execute(sql, params);
+  const rows: Verify[] = await dbm.execute(sql, params);
 
   const verifyAge =
-    (parseInt(await MetaService.get("Verify age")) ||
+    (parseInt(await dbm.metaService.get("Verify age")) ||
       metaConfig["Verify age"]) * 1000;
 
   rows.forEach((row) => {
     const timeRemaining = row.createTime + verifyAge / 1000 - getTime();
-    pruneVerifyRecord(row.id, timeRemaining * 1000);
+    pruneVerifyRecord(dbm, row.id, timeRemaining * 1000);
   });
 }
 
 /**
  * Delete a password reset record when the time comes.
  *
+ * @param dbm The database manager.
  * @param resetID A password reset ID.
  * @param timeRemaining The amount of time to wait before removing the record.
  */
 export async function prunePasswordResetRecord(
+  dbm: DatabaseManager,
   resetID: string,
   timeRemaining: number = null
 ): Promise<void> {
   const passwordResetAge =
-    (parseInt(await MetaService.get("Password reset age")) ||
+    (parseInt(await dbm.metaService.get("Password reset age")) ||
       metaConfig["Password reset age"]) * 1000;
   if (timeRemaining === null) {
     timeRemaining = passwordResetAge;
   }
 
   setTimeout(async () => {
-    await PasswordResetService.deleteResetRecord(resetID);
+    await dbm.passwordResetService.deleteResetRecord(resetID);
   }, timeRemaining);
 }
 
 /**
  * Delete all active password reset records when the time comes.
+ *
+ * @param dbm The database manager.
  */
-export async function prunePasswordResetRecords(): Promise<void> {
+export async function prunePasswordResetRecords(
+  dbm: DatabaseManager
+): Promise<void> {
   const sql = `SELECT id, createTime FROM PasswordReset;`;
   const params = [];
-  const rows: PasswordReset[] = await mainDB.execute(sql, params);
+  const rows: PasswordReset[] = await dbm.execute(sql, params);
 
   const passwordResetAge =
-    (parseInt(await MetaService.get("Password reset age")) ||
+    (parseInt(await dbm.metaService.get("Password reset age")) ||
       metaConfig["Password reset age"]) * 1000;
 
   rows.forEach((row) => {
     const timeRemaining = row.createTime + passwordResetAge / 1000 - getTime();
-    prunePasswordResetRecord(row.id, timeRemaining * 1000);
+    prunePasswordResetRecord(dbm, row.id, timeRemaining * 1000);
   });
 }

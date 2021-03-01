@@ -6,12 +6,12 @@
 import { Router } from "express";
 import {
   renderPage,
+  getDBM,
   getHostname,
   getErrorMessage,
   setErrorMessage,
 } from "./util";
 import wrapRoute from "../asyncCatch";
-import { PasswordResetService } from "../services";
 import { sendFormattedEmail } from "../emailer";
 
 /**
@@ -35,8 +35,10 @@ passwordResetRouter.get(
 passwordResetRouter.post(
   "/",
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const email = req.body.email;
-    const resetID = await PasswordResetService.requestPasswordReset(email);
+    const resetID = await dbm.passwordResetService.requestPasswordReset(email);
 
     if (resetID) {
       sendFormattedEmail(
@@ -66,8 +68,10 @@ passwordResetRouter.get(
 passwordResetRouter.get(
   "/reset/:resetID",
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const resetID = req.params.resetID;
-    const exists = await PasswordResetService.resetRecordExists(resetID);
+    const exists = await dbm.passwordResetService.resetRecordExists(resetID);
     const error = getErrorMessage(req, res);
 
     await renderPage(req, res, "passwordReset", {
@@ -81,6 +85,8 @@ passwordResetRouter.get(
 passwordResetRouter.post(
   "/reset/:resetID",
   wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
     const resetID = req.params.resetID;
     const newPassword: string = req.body.newPassword;
     const confirmNewPassword: string = req.body.confirmNewPassword;
@@ -92,7 +98,7 @@ passwordResetRouter.post(
       setErrorMessage(res, "New password must be at least 8 characters");
       res.redirect(`/password-reset/reset/${resetID}`);
     } else {
-      const success = await PasswordResetService.resetPassword(
+      const success = await dbm.passwordResetService.resetPassword(
         resetID,
         newPassword
       );

@@ -19,3 +19,20 @@ h1 {
 .nowrap {
   white-space: nowrap;
 }
+
+.admin-notification {
+  display: inline-block;
+  min-width: 20px;
+  padding: 0 6px;
+  font-size: 12px;
+  vertical-align: middle;
+  line-height: 18px;
+  text-align: center;
+  background-color: #cfdfef;
+  border-radius: 2em;
+}
+
+#program-table-head {
+  font-weight: bold;
+  font-style: italic;
+}

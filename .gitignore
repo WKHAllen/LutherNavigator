@@ -20,7 +20,7 @@ pids
 lib-cov
 
 # Coverage directory used by tools like istanbul
-coverage
+# coverage
 *.lcov
 
 # nyc test coverage
@@ -113,7 +113,12 @@ dist
 .vscode/
 src/build/
 __pycache__/
-docs/
 *.DS_Store
 .env
 todo.txt
+
+# Screenshots
+screenshots/
+
+# Coverage
+coverage/coverage-summary.json
