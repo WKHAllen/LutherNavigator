@@ -20,29 +20,9 @@
       </div>
 
       <div class="row align-items-center mt-4">
-        <!-- Program -->
-        <div class="col-12 col-sm-4 mb-3 form-group">
-          <label for="program">Program *</label>
-          <select
-            class="form-control clear-select"
-            id="program"
-            name="program"
-            required
-          >
-            <option value="">Select...</option>
-            {{#each programs}}
-            <option value="{{this.id}}">{{this.name}}</option>
-            {{/each}}
-          </select>
-          {{#if form}}
-          <script type="text/javascript">
-            document.getElementById("program").value = "{{form.program}}";
-          </script>
-          {{/if}}
-        </div>
         <!-- Location name -->
         <div class="col-6 col-sm-4 mb-3 form-group">
-          <label for="location">Location *</label>
+          <label for="location">Location Name *</label>
           {{#if form}}
           <input
             type="text"
@@ -66,7 +46,7 @@
         </div>
         <!-- Location type -->
         <div class="col-6 col-sm-4 mb-3 form-group">
-          <label for="locationType">Location type *</label>
+          <label for="locationType">Location Type *</label>
           <select
             class="form-control clear-select"
             id="locationType"
@@ -82,6 +62,26 @@
           <script type="text/javascript">
             document.getElementById("locationType").value =
               "{{form.locationType}}";
+          </script>
+          {{/if}}
+        </div>
+        <!-- Program -->
+        <div class="col-12 col-sm-4 mb-3 form-group">
+          <label for="program">Program *</label>
+          <select
+            class="form-control clear-select"
+            id="program"
+            name="program"
+            required
+          >
+            <option value="">Select...</option>
+            {{#each programs}}
+            <option value="{{this.id}}">{{this.name}}</option>
+            {{/each}}
+          </select>
+          {{#if form}}
+          <script type="text/javascript">
+            document.getElementById("program").value = "{{form.program}}";
           </script>
           {{/if}}
         </div>
@@ -110,7 +110,7 @@
 
       <!-- Three words -->
       <div class="col">
-        <label>Three word description *</label>
+        <label>Three Word Description *</label>
       </div>
       <div class="row align-items-center">
         <div class="col-4 mb-3 form-group">
