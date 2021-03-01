@@ -1,42 +1,105 @@
 <link rel="stylesheet" type="text/css" href="/css/query.css" />
-<h1>Filter By</h1>
+<h1 class="text-center">Advanced Search</h1>
 <hr />
+
 <form>
+  <div class="search-cover" id="cover">
+    <div class="search-bar-div">
+      <input
+        type="text"
+        class="search-bar-input"
+        id="search"
+        name="search"
+        placeholder="Search"
+      />
+    </div>
+  </div>
   <div class="filter-menu clearfix row">
     <div class="col-6 col-md-3">
       <h5>Categories</h5>
+      {{#each locationTypes}}
       <label class="checkbox-option">
-        <input type="checkbox" value="" />
-        <span class="checkbox-words">Cafe & Bakery</span>
+        <input type="checkbox" id="loc-{{this.id}}" name="loc-{{this.id}}" />
+        <span class="checkbox-words">{{this.name}}</span>
       </label>
-      <label class="checkbox-option">
-        <input type="checkbox" />
-        <span class="checkbox-words">Bar & Pub</span>
-      </label>
+      {{/each}}
     </div>
     <div class="col-6 col-md-3">
       <h5>Programs</h5>
+      {{#each programs}}
       <label class="checkbox-option">
-        <input type="checkbox" />
-        <span class="checkbox-words">Nottingham</span>
+        <input type="checkbox" id="prog-{{this.id}}" name="prog-{{this.id}}" />
+        <span class="checkbox-words">{{this.name}}</span>
       </label>
+      {{/each}}
     </div>
     <div class="col-6 col-md-3">
-      <h5>Status</h5>
+      <h5>Posted by</h5>
+      {{#each userStatuses}}
       <label class="checkbox-option">
-        <input type="checkbox" />
-        <span class="checkbox-words">Student</span>
+        <input type="checkbox" id="user-{{this.id}}" name="user-{{this.id}}" />
+        <span class="checkbox-words">{{this.name}}</span>
       </label>
+      {{/each}}
     </div>
     <div class="col-6 col-md-3">
       <h5>Rating</h5>
       <label class="checkbox-option">
-        <input type="checkbox" />
-        <span class="checkbox-words">5 Stars</span>
+        <input type="checkbox" value="" />
+        <span class="checkbox-words">
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+        </span>
+      </label>
+      <label class="checkbox-option">
+        <input type="checkbox" value="" />
+        <span class="checkbox-words">
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star"></span>
+        </span>
+      </label>
+      <label class="checkbox-option">
+        <input type="checkbox" value="" />
+        <span class="checkbox-words">
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star"></span>
+          <span class="fa fa-star"></span>
+        </span>
+      </label>
+      <label class="checkbox-option">
+        <input type="checkbox" value="" />
+        <span class="checkbox-words">
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star"></span>
+          <span class="fa fa-star"></span>
+          <span class="fa fa-star"></span>
+        </span>
+      </label>
+      <label class="checkbox-option">
+        <input type="checkbox" value="" />
+        <span class="checkbox-words">
+          <span class="fa fa-star checked"></span>
+          <span class="fa fa-star"></span>
+          <span class="fa fa-star"></span>
+          <span class="fa fa-star"></span>
+          <span class="fa fa-star"></span>
+        </span>
       </label>
     </div>
   </div>
+  <button type="submit" class="btn btn-primary btn-block">Search</button>
 </form>
+
+<hr />
 
 <div class="query-page">
   <div class="row">
