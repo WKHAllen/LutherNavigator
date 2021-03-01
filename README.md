@@ -20,6 +20,7 @@ experiences abroad.
 - [Deployment](#deployment)
 - [Documentation](#documentation)
 - [Style Guide](#style-guide)
+- [License](#license)
 
 ### Prerequisites
 
