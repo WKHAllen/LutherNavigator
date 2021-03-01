@@ -17,7 +17,8 @@
 }
 
 .home-card {
-  background-color: #e5edfd;
+	padding: 20px;
+  /* background-color: #e5edfd; */
   /* box-shadow: 0 10px 40px #0061a3, 0 0 0 20px #ffffff; */
   
 }
@@ -48,14 +49,17 @@ img {
 }
 
 #welcome-im {
-  width: fit-content;
-  height: auto;
+	margin:0 !important;
+}
+
+img {
+  max-width: 800px;
 }
 
 /* Home page / index */
 .homepage {
-  margin: auto;
-  max-width: 385px;
+  /* margin: auto; */
+  /* max-width: 385px; */
 }
 
 /* Search Bar */
@@ -78,7 +82,7 @@ img {
 	max-width: 480px;
 	padding: 10px;
 	margin:  0 auto;
-	background-color: #d8e5ff;
+	background-color: #d8e5ff; /*48ADF0*/
 	border-radius: 999px;
 	/* box-shadow: 0 10px 40px #0061a3, 0 0 0 20px #ffffff; */
 	transform: scale(0.6);
@@ -199,6 +203,6 @@ input:focus::-webkit-input-placeholder {
 
 @media screen and (min-width: 768px) {
   .homepage {
-    max-width: 728px;
+    /* max-width: 728px; */
   }
 }

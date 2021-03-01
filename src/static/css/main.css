@@ -1,6 +1,5 @@
 body {
-  font-family: "Comfortaa", sans-serif;
-  /* font-family: "Maven Pro", sans-serif; */
+  font-family: "Comfortaa", "Roboto", sans-serif;
   margin: 0px;
   /* sticky footer */
   display: flex;
@@ -70,15 +69,13 @@ a:hover {
 #content {
   display: block;
   margin: auto;
-  max-width: 385px;
-  /* margin: 20px 20px; */
 }
 
 main {
   /* sticky footer */
   flex: 1 0 auto;
   max-width: 2000px;
-  max-height: 1334px;
+  /* max-height: 1334px; */
   /* stationary background */
   display: block;
   position: relative;
@@ -86,13 +83,7 @@ main {
 
 main.bg-img::after {
   content: "";
-  /* stationary background */
-  /* background-image: url("/img/vienna.jpg"); */
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover;
-  background-position: top;
-  opacity: 0.45;
+  background-color: #A3C4DA; /*CEDFEA 6bbaef*/
   top: 0;
   left: 0;
   bottom: 0;
@@ -108,7 +99,6 @@ header {
 /* NAVBAR is header*/
 .navbar-light .navbar-brand {
   color: white;
-  /* font-size: 1.5rem; */
   padding: 0.5rem;
 }
 
@@ -142,7 +132,6 @@ header {
   backdrop-filter: opacity(0.7) blur(8px);
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.25rem;
-  /* padding: 16px; */
   padding: 1em;
 }
 
@@ -214,7 +203,7 @@ table {
   #content {
     max-width: 728px;
   }
-  
+
   .mainbody {
     width: 725px;
   }
