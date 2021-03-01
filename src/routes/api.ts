@@ -197,3 +197,86 @@ apiRouter.get(
     res.end();
   })
 );
+
+// Get list of programs
+apiRouter.get(
+  "/adminPrograms",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const programs = await dbm.programService.getPrograms();
+
+    res.json(programs);
+  })
+);
+
+// Create a new program
+apiRouter.get(
+  "/createProgram",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const programName = req.query.programName as string;
+
+    const programID = await dbm.programService.createProgram(programName);
+
+    res.send(String(programID)).end();
+  })
+);
+
+// Set a program
+apiRouter.get(
+  "/setProgram",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const programID = parseInt(req.query.programID as string);
+    const programName = req.query.programName as string;
+
+    if (isNaN(programID)) {
+      res.send("Program ID must be a number").end();
+    } else {
+      const exists = await dbm.programService.programExists(programID);
+
+      if (exists) {
+        await dbm.programService.setProgramName(programID, programName);
+
+        res.end();
+      } else {
+        res.send("A program with the specified ID does not exist").end();
+      }
+    }
+  })
+);
+
+// Delete a program
+apiRouter.get(
+  "/deleteProgram",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const programID = parseInt(req.query.programID as string);
+
+    if (isNaN(programID)) {
+      res.send("Program ID must be a number").end();
+    } else {
+      const linkedPosts = await dbm.programService.numLinkedPosts(programID);
+
+      if (linkedPosts === 0) {
+        await dbm.programService.deleteProgram(programID);
+
+        res.end();
+      } else {
+        res
+          .send(
+            "This program cannot be deleted as it is associated with one or more posts"
+          )
+          .end();
+      }
+    }
+  })
+);

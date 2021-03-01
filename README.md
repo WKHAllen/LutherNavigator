@@ -20,6 +20,7 @@ experiences abroad.
 - [Deployment](#deployment)
 - [Documentation](#documentation)
 - [Style Guide](#style-guide)
+- [License](#license)
 
 ### Prerequisites
 
@@ -117,3 +118,7 @@ Import Statements
 - Order: Standard Library, Related Third Party, Local (same order for `from`
   imports)
 - At each level, separate imports with a newline and sort them alphabetically
+
+## License
+
+[MIT License](LICENSE)

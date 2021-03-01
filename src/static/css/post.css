@@ -1,17 +1,5 @@
-.clearfix::after {
-  content: "";
-  clear: both;
-  display: table;
-}
-
-body {
-  margin: 0px;
-}
-
 h1 {
   font-size: 36pt;
-  padding: 16px 0px 0px 0px !important;
-  padding-bottom: 0;
 }
 
 .info {
@@ -26,17 +14,22 @@ h4 {
   font-size: medium;
 }
 
-h4,
-p {
-  margin: 10px 0px;
-}
-
 .im {
   text-align: center;
 }
 
 img {
-  width: 300px;
+  max-width: 300px;
+  width: inherit;
   height: 200px;
   margin-bottom: 5px;
+}
+
+.fa {
+  font-size: 10px;
+  /* display: block; */
+}
+
+.checked {
+  color: #e88900;
 }

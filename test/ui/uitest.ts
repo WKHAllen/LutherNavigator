@@ -9,36 +9,36 @@
 import { chromium, firefox, webkit } from "playwright";
 
 const PAGEMAP = {
-    "https://www.luthernavigator.com": "landing.png",
-    "https://www.luthernavigator.com/about": "about.png",
-    "https://www.luthernavigator.com/login": "login.png",
-    "https://www.luthernavigator.com/post": "post.png",
-    "https://www.luthernavigator.com/restaurant": "restaurant.png",
+  "https://www.luthernavigator.com": "landing.png",
+  "https://www.luthernavigator.com/about": "about.png",
+  "https://www.luthernavigator.com/login": "login.png",
+  "https://www.luthernavigator.com/post": "post.png",
+  "https://www.luthernavigator.com/restaurant": "restaurant.png",
 };
 
 (async () => {
-    for (const browserType of [chromium, firefox, webkit]) {
-        // Launch a browser
-        const browser = await browserType.launch();
+  for (const browserType of [chromium, firefox, webkit]) {
+    // Launch a browser
+    const browser = await browserType.launch();
 
-        // Create a context
-        const context = await browser.newContext();
+    // Create a context
+    const context = await browser.newContext();
 
-        // Create a page
-        const page = await context.newPage();
+    // Create a page
+    const page = await context.newPage();
 
-        // Carry out actions for all urls
-        for (let url in PAGEMAP) {
-            // Go to a page
-            await page.goto(url);
+    // Carry out actions for all urls
+    for (let url in PAGEMAP) {
+      // Go to a page
+      await page.goto(url);
 
-            // Take a screenshot
-            await page.screenshot({
-                path: `screenshots/${browserType.name()}/${PAGEMAP[url]}`,
-            });
-        }
-
-        // Close a browser
-        await browser.close();
+      // Take a screenshot
+      await page.screenshot({
+        path: `screenshots/${browserType.name()}/${PAGEMAP[url]}`,
+      });
     }
+
+    // Close a browser
+    await browser.close();
+  }
 })();

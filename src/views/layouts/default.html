@@ -57,10 +57,7 @@
       href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <!-- <link
-      href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    /> -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
     <!-- Font awesome -->
     <link
@@ -77,16 +74,6 @@
   <body>
     <header>
       <nav class="navbar sticky-top navbar-expand-lg navbar-light row">
-        <!-- <a class="navbar-brand col-sm-4" href="/">
-            <img src="/img/compass_w.png" width="50" height="50" class="d-inline-block align-top nav-logo" alt="Luther Navigator Logo">
-            Luther Navigator
-          </a>
-          <button class="navbar-toggler col-sm" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-            <img src="/img/toggle_menu.png" width="50" height="50" class="toggle-menu-img" alt="Three dots">
-          </button>
-          <div class="col-sm-8"></div>
-          <a class="nav-link col-sm-4" href="#">Post</a>
-          <a class="nav-link col-sm-4" href="#">Sign In</a> -->
         <a class="navbar-brand" href="/">
           <img
             src="/img/compass_w.png"
@@ -116,10 +103,6 @@
           <ul class="navbar-nav mr-auto">
             <li class="nav-item"></li>
           </ul>
-          <!-- <form class="form-inline my-2 my-lg-0">
-              <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form> -->
           {{#if loggedIn}}
           <a class="nav-link" href="/post">Post</a>
           <a class="nav-link" href="/logout?after={{url}}">Logout</a>
@@ -145,8 +128,8 @@
     <footer>
       <div class="row">
         <a href="/about" class="col-sm-4">About Luther Navigator</a>
-        <a href="/" class="col-sm-4">Terms of Use</a>
-        <a href="/" class="col-sm-4">Privacy Statement</a>
+        <a href="/terms" class="col-sm-4">Terms of Use</a>
+        <a href="/privacy" class="col-sm-4">Privacy Statement</a>
       </div>
     </footer>
   </body>

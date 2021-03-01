@@ -1,0 +1,40 @@
+h5 {
+  margin-top: 10px;
+}
+
+.filter-menu {
+  border: 1px solid #495057;
+  padding: 0px 10px;
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 10pt;
+}
+
+.sample-3 {
+  display: block;
+  color: #212529;
+  text-align: center;
+  padding: 2px;
+}
+
+.sample-3:hover {
+  color: #0061a3;
+  text-decoration: none;
+}
+
+.fav-place {
+  display: inline-block;
+  /* margin: 2px; */
+}
+
+img {
+  width: inherit;
+}
+
+.query-page {
+  display: block;
+  padding: 15px 0px;
+}
