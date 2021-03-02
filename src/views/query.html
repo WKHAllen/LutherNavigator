@@ -1,4 +1,5 @@
 <link rel="stylesheet" type="text/css" href="/css/query.css" />
+<script type="text/javascript" src="/js/query.js"></script>
 <h1 class="text-center">Search Posts</h1>
 <hr />
 
@@ -28,7 +29,7 @@
       <h5>Programs</h5>
       {{#each programs}}
       <label class="checkbox-option">
-        <input type="checkbox" id="prog-{{this.id}}" name="proc-{{this.id}}" />
+        <input type="checkbox" id="prog-{{this.id}}" name="prog-{{this.id}}" />
         <span class="checkbox-words">{{this.name}}</span>
       </label>
       {{/each}}
