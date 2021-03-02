@@ -45,14 +45,16 @@ queryRouter.get(
         const argNumStart = arg.indexOf("-");
         const argNum = parseInt(arg.slice(argNumStart + 1));
 
-        if (arg.startsWith("prog")) {
-          queryParams.programIDs.push(argNum);
-        } else if (arg.startsWith("loc")) {
-          queryParams.locationTypeIDs.push(argNum);
-        } else if (arg.startsWith("user")) {
-          queryParams.statusIDs.push(argNum);
-        } else if (arg.startsWith("star")) {
-          queryParams.ratings.push(argNum);
+        if (!isNaN(argNum)) {
+          if (arg.startsWith("prog")) {
+            queryParams.programIDs.push(argNum);
+          } else if (arg.startsWith("loc")) {
+            queryParams.locationTypeIDs.push(argNum);
+          } else if (arg.startsWith("user")) {
+            queryParams.statusIDs.push(argNum);
+          } else if (arg.startsWith("star")) {
+            queryParams.ratings.push(argNum);
+          }
         }
       }
 
