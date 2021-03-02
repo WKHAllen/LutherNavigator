@@ -1,4 +1,5 @@
 <link rel="stylesheet" type="text/css" href="/css/index.css" />
+<script type="text/javascript" src="/js/index.js"></script>
 <!-- <div class="menus row">
   <a class="btn menu-button col-md-4 col-sm-12" href="/"> Accommodations </a>
   <a class="btn menu-button col-md-4 col-sm-12" href="/query">
@@ -10,11 +11,12 @@
 </div> -->
 <div class="homepage">
   <div class="search-cover" id="cover">
-    <form method="get" action="" class="search-bar-form">
+    <form class="search-bar-form" onsubmit="basicSearch(event);">
       <div class="td">
         <input
-          class="search-bar-input"
           type="text"
+          class="search-bar-input"
+          id="basic-search"
           placeholder="Search"
           required
         />
