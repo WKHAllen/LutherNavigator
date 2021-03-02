@@ -8,7 +8,7 @@ function populateForm() {
     });
 
   for (const item in query) {
-    if (item === "search") {
+    if (item === "search" || item === "sortBy" || item === "sortOrder") {
       $(`#${item}`).val(query[item]);
     } else {
       $(`#${item}`).prop("checked", true);
