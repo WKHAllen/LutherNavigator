@@ -59,15 +59,17 @@ queryRouter.get(
       }
 
       let sortBy = req.query.sortBy as QuerySortOptions;
-      const sortOrder = Boolean(parseInt(req.query.sortOrder as string));
+      let sortOrder = Boolean(parseInt(req.query.sortOrder as string));
 
       if (
         sortBy !== "program" &&
         sortBy !== "locationType" &&
         sortBy !== "userStatus" &&
-        sortBy !== "rating"
+        sortBy !== "rating" &&
+        sortBy !== "timestamp"
       ) {
-        sortBy = "rating";
+        sortBy = "timestamp";
+        sortOrder = false;
       }
 
       const results =

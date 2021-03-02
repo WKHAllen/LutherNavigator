@@ -24,7 +24,8 @@ export type QuerySortOptions =
   | "program"
   | "locationType"
   | "userStatus"
-  | "rating";
+  | "rating"
+  | "timestamp";
 
 /**
  * Query services.
@@ -53,7 +54,8 @@ export class QueryService extends BaseService {
              LOWER(Post.content)  LIKE LOWER(?)
           OR LOWER(Post.location) LIKE LOWER(?)
           OR LOWER(Program.name)  LIKE LOWER(?)
-        );
+        )
+      ORDER BY Post.createTime DESC;
     `;
     const params = [searchLike, searchLike, searchLike];
     const rows: Post[] = await this.dbm.execute(sql, params);
@@ -86,6 +88,7 @@ export class QueryService extends BaseService {
       locationType: "LocationType.name",
       userStatus: "UserStatus.name",
       rating: "Rating.general",
+      timestamp: "Post.createTime",
     };
 
     const sortOrder = sortAscending ? "ASC" : "DESC";
