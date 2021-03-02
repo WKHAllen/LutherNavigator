@@ -97,6 +97,38 @@
       </label>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-6 col-sm-3 mb-3 form-group">
+      <label for="sortBy">Sort by</label>
+      <select
+        class="form-control clear-select"
+        id="sortBy"
+        name="sortBy"
+        required
+      >
+        <option value="locationType">Category</option>
+        <option value="program">Program</option>
+        <option value="userStatus">User type</option>
+        <option value="rating">Rating</option>
+      </select>
+    </div>
+    <div class="col-6 col-sm-3 mb-3 form-group">
+      <label for="sortOrder">Sort order</label>
+      <select
+        class="form-control clear-select"
+        id="sortOrder"
+        name="sortOrder"
+        required
+      >
+        <option value="1">Ascending</option>
+        <option value="0">Descending</option>
+      </select>
+    </div>
+    <div class="col-6 col-sm-3 mb-3"></div>
+    <div class="col-6 col-sm-3 mb-3"></div>
+  </div>
+
   <button type="submit" class="btn btn-primary btn-block">Search</button>
 </form>
 

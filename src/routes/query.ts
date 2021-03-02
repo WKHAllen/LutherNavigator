@@ -6,7 +6,7 @@
 import { Router } from "express";
 import { renderPage, getDBM } from "./util";
 import wrapRoute from "../asyncCatch";
-import { QueryParams } from "../services/query";
+import { QueryParams, QuerySortOptions } from "../services/query";
 
 /**
  * The query router.
@@ -37,15 +37,15 @@ queryRouter.get(
         ratings: [],
       };
 
+      if (req.query.search !== undefined) {
+        queryParams.search = req.query.search as string;
+      }
+
       for (const arg in req.query) {
         const argNumStart = arg.indexOf("-");
         const argNum = parseInt(arg.slice(argNumStart + 1));
 
-        if (arg === "search") {
-          if (req.query.search !== undefined) {
-            queryParams.search = req.query.search as string;
-          }
-        } else if (arg.startsWith("prog")) {
+        if (arg.startsWith("prog")) {
           queryParams.programIDs.push(argNum);
         } else if (arg.startsWith("loc")) {
           queryParams.locationTypeIDs.push(argNum);
@@ -56,10 +56,26 @@ queryRouter.get(
         }
       }
 
+      let sortBy = req.query.sortBy as QuerySortOptions;
+      const sortOrder = Boolean(parseInt(req.query.sortOrder as string));
+
+      if (
+        sortBy !== "program" &&
+        sortBy !== "locationType" &&
+        sortBy !== "userStatus" &&
+        sortBy !== "rating"
+      ) {
+        sortBy = "rating";
+      }
+
       const results =
         Object.keys(req.query).length === 1 && req.query.search !== undefined
           ? await dbm.queryService.query(queryParams.search)
-          : await dbm.queryService.advancedQuery(queryParams, "rating");
+          : await dbm.queryService.advancedQuery(
+              queryParams,
+              sortBy,
+              sortOrder
+            );
 
       await renderPage(req, res, "query", {
         locationTypes,
