@@ -4,7 +4,7 @@
  */
 
 import { Router } from "express";
-import { renderPage } from "./util";
+import { renderPage, getDBM } from "./util";
 import wrapRoute from "../asyncCatch";
 
 /**
@@ -12,10 +12,20 @@ import wrapRoute from "../asyncCatch";
  */
 export const queryRouter = Router();
 
-// Index page
+// Query page
 queryRouter.get(
   "/",
   wrapRoute(async (req, res) => {
-    await renderPage(req, res, "query");
+    const dbm = getDBM(req);
+
+    const locationTypes = await dbm.locationTypeService.getLocations();
+    const programs = await dbm.programService.getPrograms();
+    const userStatuses = await dbm.userStatusService.getStatuses();
+
+    await renderPage(req, res, "query", {
+      locationTypes,
+      programs,
+      userStatuses,
+    });
   })
 );
