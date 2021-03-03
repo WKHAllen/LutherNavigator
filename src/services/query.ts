@@ -24,7 +24,8 @@ export type QuerySortOptions =
   | "program"
   | "locationType"
   | "userStatus"
-  | "rating";
+  | "rating"
+  | "timestamp";
 
 /**
  * Query services.
@@ -42,19 +43,19 @@ export class QueryService extends BaseService {
     const sql = `
       SELECT
         Post.id AS id,
-        Rating.general AS rating,
-        PostImage.imageID AS imageID
+        Post.location AS location,
+        Rating.general AS rating
       FROM Post
         JOIN Program   ON Post.programID = Program.id
         JOIN Rating    ON Post.ratingID  = Rating.id
-        JOIN PostImage ON Post.id        = PostImage.postID
       WHERE
         Post.approved = TRUE
         AND (
              LOWER(Post.content)  LIKE LOWER(?)
           OR LOWER(Post.location) LIKE LOWER(?)
           OR LOWER(Program.name)  LIKE LOWER(?)
-        );
+        )
+      ORDER BY Post.createTime DESC;
     `;
     const params = [searchLike, searchLike, searchLike];
     const rows: Post[] = await this.dbm.execute(sql, params);
@@ -87,21 +88,21 @@ export class QueryService extends BaseService {
       locationType: "LocationType.name",
       userStatus: "UserStatus.name",
       rating: "Rating.general",
+      timestamp: "Post.createTime",
     };
 
     const sortOrder = sortAscending ? "ASC" : "DESC";
 
     // SELECT
     //   Post.id AS id,
-    //   Rating.general AS rating,
-    //   PostImage.imageID AS imageID
+    //   Post.location AS location,
+    //   Rating.general AS rating
     // FROM Post
     //   JOIN User         ON Post.userID         = User.id
     //   JOIN LocationType ON Post.locationTypeID = LocationType.id
     //   JOIN UserStatus   ON User.statusID       = UserStatus.id
     //   JOIN Program      ON Post.programID      = Program.id
     //   JOIN Rating       ON Post.ratingID       = Rating.id
-    //   JOIN PostImage    ON Post.id             = PostImage.postID
     // WHERE
     //   Post.approved = TRUE
     //   AND (
@@ -118,15 +119,14 @@ export class QueryService extends BaseService {
     const sqlStart = `
       SELECT
         Post.id AS id,
-        Rating.general AS rating,
-        PostImage.imageID AS imageID
+        Post.location AS location,
+        Rating.general AS rating
       FROM Post
         JOIN User         ON Post.userID         = User.id
         JOIN LocationType ON Post.locationTypeID = LocationType.id
         JOIN UserStatus   ON User.statusID       = UserStatus.id
         JOIN Program      ON Post.programID      = Program.id
         JOIN Rating       ON Post.ratingID       = Rating.id
-        JOIN PostImage    ON Post.id             = PostImage.postID
     `;
     const sqlEnd = `ORDER BY ${sortOptions[sortBy]} ${sortOrder};`;
 
