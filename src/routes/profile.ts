@@ -33,6 +33,14 @@ profileRouter.get(
     const userID = await getUserID(req);
     const user = await dbm.userService.getUser(userID);
     const posts = await dbm.postService.getUserPosts(userID);
+    const userStatus = await dbm.userStatusService.getStatusName(user.statusID);
+    let userStatuses = await dbm.userStatusService.getStatuses();
+
+    for (let i = 0; i < userStatuses.length; i++) {
+      if (userStatuses[i].id === user.statusID) {
+        userStatuses.splice(i, 1);
+      }
+    }
 
     await renderPage(req, res, "profile", {
       title: "Your profile",
@@ -41,6 +49,8 @@ profileRouter.get(
       firstname: user.firstname,
       lastname: user.lastname,
       email: user.email,
+      userStatus,
+      userStatuses,
       joinTime: user.joinTime,
       numPosts: `${posts.length} ${posts.length === 1 ? "post" : "posts"}`,
       hasPosts: posts.length > 0,
@@ -98,6 +108,33 @@ profileRouter.post(
         setErrorMessage(res, "Incorrect password");
       } else {
         await dbm.userService.setUserPassword(user.id, newPassword);
+      }
+    }
+
+    res.redirect("/profile");
+  })
+);
+
+// Request user status change event
+profileRouter.post(
+  "/changeUserStatus",
+  auth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const newUserStatus = parseInt(req.body.newUserStatus);
+
+    if (isNaN(newUserStatus)) {
+      setErrorMessage(res, "Invalid status");
+    } else {
+      const validUserStatus = await dbm.userStatusService.validStatus(
+        newUserStatus
+      );
+
+      if (!validUserStatus) {
+        setErrorMessage(res, "Invalid status");
+      } else {
+        // TODO: request user status change
       }
     }
 
