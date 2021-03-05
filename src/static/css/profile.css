@@ -1,11 +1,13 @@
 .image-circle {
-  border-radius: 12px;
+  border-radius: 9999px;
 }
 
 #user-image {
+  height: 200px;
+  width: 200px;
+  object-fit: cover;
   display: block;
   margin: 0 auto;
-  object-fit: contain;
 }
 
 .profile-summary * {
