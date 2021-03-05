@@ -157,8 +157,8 @@ postRouter.get(
       }
     }
 
-    const userStatusName = await dbm.userStatusService.getStatusName(
-      user.statusID
+    const postUserStatusName = await dbm.userStatusService.getStatusName(
+      postUser.statusID
     );
     const program = await dbm.programService.getProgramName(post.programID);
     const images = await dbm.postService.getPostImages(postID);
@@ -168,9 +168,9 @@ postRouter.get(
       error,
       postID,
       location: post.location,
-      firstname: user.firstname,
-      lastname: user.lastname,
-      status: userStatusName,
+      firstname: postUser.firstname,
+      lastname: postUser.lastname,
+      status: postUserStatusName,
       program: program,
       createTime: post.createTime,
       threeWords: post.threeWords,

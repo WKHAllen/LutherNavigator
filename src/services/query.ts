@@ -46,8 +46,8 @@ export class QueryService extends BaseService {
         Post.location AS location,
         Rating.general AS rating
       FROM Post
-        JOIN Program   ON Post.programID = Program.id
-        JOIN Rating    ON Post.ratingID  = Rating.id
+        JOIN Program ON Post.programID = Program.id
+        JOIN Rating  ON Post.ratingID  = Rating.id
       WHERE
         Post.approved = TRUE
         AND (
