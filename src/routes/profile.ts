@@ -122,6 +122,7 @@ profileRouter.post(
   wrapRoute(async (req, res) => {
     const dbm = getDBM(req);
 
+    const userID = await getUserID(req);
     const newUserStatus = parseInt(req.body.newUserStatus);
 
     if (isNaN(newUserStatus)) {
@@ -134,7 +135,10 @@ profileRouter.post(
       if (!validUserStatus) {
         setErrorMessage(res, "Invalid status");
       } else {
-        // TODO: request user status change
+        await dbm.userStatusChangeService.createStatusChangeRequest(
+          userID,
+          newUserStatus
+        );
       }
     }
 
