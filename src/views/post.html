@@ -12,7 +12,28 @@
 <div class="div-center">
   <div class="">
     <div class="col">
-      <h1>{{ location }}</h1>
+      <div class="flex-between">
+        <h1>{{ location }}</h1>
+        {{#if userPost}}
+        <div class="dropdown">
+          <button
+            class="btn btn-secondary"
+            type="button"
+            id="post-dropdown"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <i class="fas fa-ellipsis-h" aria-hidden="true"></i>
+          </button>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="post-dropdown">
+            <form method="POST">
+              <button class="dropdown-item" type="submit" formaction="/post/{{postID}}/delete">Delete post</a>
+            </form>
+          </div>
+        </div>
+        {{/if}}
+      </div>
       <h4 class="info">the_address | the_phone_number | the_website</h4>
 
       {{#if error}}
