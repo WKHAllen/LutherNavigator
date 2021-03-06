@@ -2,6 +2,7 @@ const statsTimeout = 60 * 1000; // One minute
 const registrationTimeout = 60 * 1000; // One minute
 const postsTimeout = 60 * 1000; // One minute
 const programsTimeout = 60 * 1000; // One minute
+const statusesTimeout = 60 * 1000; // One minute
 
 // Get the JSON response from a URL
 async function fetchJSON(url, options) {
@@ -536,6 +537,101 @@ async function refreshPrograms() {
   await populatePrograms();
 }
 
+// Approve or deny a user status change request
+function approveStatus(requestID, approved, thisElement) {
+  $.ajax({
+    url: "/api/approveStatusChangeRequest",
+    data: {
+      requestID,
+      approved,
+    },
+    success: () => {
+      hideError();
+      thisElement.closest("tr").remove();
+    },
+    error: () => {
+      showError("Failed to approve status change request");
+    },
+  });
+  updateNotifications();
+}
+
+// Create a row in the user status change request table
+function createStatusRow(user) {
+  const userID = newElement("td").text(user.userID);
+  const firstname = newElement("td").text(user.firstname);
+  const lastname = newElement("td").text(user.lastname);
+  const email = newElement("td").text(user.email);
+  const joinTime = newElement("td").text(
+    new Date(parseInt(user.joinTime) * 1000).toLocaleString()
+  );
+  const currentStatus = newElement("td").text(user.status);
+  const requestedStatus = newElement("td").text(user.newStatus);
+  const approveButton = newElement("button")
+    .addClass("btn btn-light")
+    .attr({
+      type: "button",
+    })
+    .html('<i class="fas fa-check"></i>')
+    .click(function () {
+      approveStatus(user.requestID, true, $(this));
+    });
+  const disapproveButton = newElement("button")
+    .addClass("btn btn-light")
+    .attr({
+      type: "button",
+    })
+    .html('<i class="fas fa-times"></i>')
+    .click(function () {
+      approveStatus(user.requestID, false, $(this));
+    });
+  const approve = newElement("td")
+    .addClass("nowrap")
+    .append(approveButton, disapproveButton);
+  const row = newElement("tr").append(
+    userID,
+    firstname,
+    lastname,
+    email,
+    joinTime,
+    currentStatus,
+    requestedStatus,
+    approve
+  );
+  return row;
+}
+
+// Populate data on the user status change requests page
+async function populateStatuses() {
+  const statusesURL = "/api/statusChangeRequests";
+  let statuses = null;
+
+  try {
+    statuses = await fetchJSON(statusesURL);
+  } catch (err) {
+    showError("Failed to update status change requests");
+  }
+
+  if (statuses) {
+    hideError();
+    hideElement("status-status");
+    clearElement("requested-statuses");
+
+    for (const user of statuses) {
+      const newItem = createStatusRow(user);
+      appendTo("requested-statuses", newItem);
+    }
+  }
+}
+
+// Refresh all user status change requests
+async function refreshStatuses() {
+  updateNotifications();
+  clearElement("requested-statuses");
+  showElement("status-status");
+  await populateStatuses();
+}
+
 // On stats page load
 function statsLoad() {
   updateNotifications();
@@ -582,22 +678,35 @@ function programsLoad() {
   }, programsTimeout);
 }
 
+// On user status request change page load
+function statusLoad() {
+  populateStatuses();
+
+  setInterval(() => {
+    populateStatuses();
+  }, statusesTimeout);
+}
+
 // Update admin notifications
 async function updateNotifications() {
   const registrationURL = "/api/unapprovedUsers";
   const postsURL = "/api/unapprovedPosts";
+  const statusesURL = "/api/statusChangeRequests";
   let unapprovedUsers = null;
   let unapprovedPosts = null;
+  let statusChangeRequests = null;
 
   try {
     unapprovedUsers = await fetchJSON(registrationURL);
     unapprovedPosts = await fetchJSON(postsURL);
+    statusChangeRequests = await fetchJSON(statusesURL);
   } catch (err) {
     return;
   }
 
   setNotificationNumber("registration", unapprovedUsers.length);
   setNotificationNumber("posts", unapprovedPosts.length);
+  setNotificationNumber("status", statusChangeRequests.length);
 }
 
 // On all admin page load
