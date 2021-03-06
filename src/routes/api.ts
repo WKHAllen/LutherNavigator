@@ -285,7 +285,13 @@ apiRouter.get(
 apiRouter.get(
   "/statusChangeRequests",
   adminAuth,
-  wrapRoute(async (req, res) => {})
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const requests = await dbm.userStatusChangeService.getUserRequests();
+
+    res.json(requests);
+  })
 );
 
 // Approve/deny a status change request

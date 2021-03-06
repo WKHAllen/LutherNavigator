@@ -562,9 +562,6 @@ function createStatusRow(user) {
   const firstname = newElement("td").text(user.firstname);
   const lastname = newElement("td").text(user.lastname);
   const email = newElement("td").text(user.email);
-  const joinTime = newElement("td").text(
-    new Date(parseInt(user.joinTime) * 1000).toLocaleString()
-  );
   const currentStatus = newElement("td").text(user.status);
   const requestedStatus = newElement("td").text(user.newStatus);
   const approveButton = newElement("button")
@@ -593,7 +590,6 @@ function createStatusRow(user) {
     firstname,
     lastname,
     email,
-    joinTime,
     currentStatus,
     requestedStatus,
     approve

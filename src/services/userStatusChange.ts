@@ -4,6 +4,7 @@
  */
 
 import { BaseService, getTime, newUniqueID } from "./util";
+import { User } from "./user";
 
 /**
  * User status change architecture.
@@ -95,6 +96,23 @@ export class UserStatusChangeService extends BaseService {
     const sql = `SELECT * FROM UserStatusChange;`;
     const params = [];
     const rows: UserStatusChange[] = await this.dbm.execute(sql, params);
+
+    return rows;
+  }
+
+  public async getUserRequests(): Promise<User[]> {
+    const sql = `
+      SELECT
+        User.id AS userID, firstname, lastname, email,
+        us1.name AS status, us2.name AS newStatus,
+        UserStatusChange.id AS requestID
+      FROM UserStatusChange
+      JOIN User              ON UserStatusChange.userID = User.id
+      JOIN UserStatus AS us1 ON User.statusID = us1.id
+      JOIN UserStatus AS us2 ON UserStatusChange.newStatusID = us2.id
+      ORDER BY UserStatusChange.createTime;
+    `;
+    const rows: User[] = await this.dbm.execute(sql);
 
     return rows;
   }
