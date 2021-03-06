@@ -36,3 +36,8 @@ h1 {
   font-weight: bold;
   font-style: italic;
 }
+
+#content {
+  max-width: 9999px;
+  padding: 16px 20px;
+}
