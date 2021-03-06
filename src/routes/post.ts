@@ -176,6 +176,25 @@ postRouter.get(
       threeWords: post.threeWords,
       content: post.content,
       images,
+      userPost: postUser.id === userID,
     });
+  })
+);
+
+// Post deletion event
+postRouter.post(
+  "/:postID/delete",
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const postID = req.params.postID;
+    const userID = await getUserID(req);
+    const post = await dbm.postService.getPost(postID);
+
+    if (post.userID === userID) {
+      dbm.postService.deletePost(postID);
+    }
+
+    res.redirect("/");
   })
 );
