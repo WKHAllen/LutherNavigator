@@ -143,6 +143,7 @@ postRouter.get(
     const post = await dbm.postService.getPost(postID);
     if (!post) {
       next(); // 404
+      return;
     }
 
     const postUser = await dbm.postService.getPostUser(postID);
