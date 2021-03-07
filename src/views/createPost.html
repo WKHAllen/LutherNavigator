@@ -220,7 +220,12 @@
             </button>
           </div>
           <div class="hidden">
-            <input type="text" id="{{this.name}}Rating" value="0" />
+            <input
+              type="text"
+              id="{{this.name}}Rating"
+              name="{{this.name}}Rating"
+              value="0"
+            />
           </div>
         </div>
         {{/each}}
@@ -233,3 +238,10 @@
     </form>
   </div>
 </div>
+
+{{#if form}} {{#each form.ratings}}
+<script type="text/javascript">
+  $(`#{{this.name}}Rating`).val("{{this.value}}");
+  showStars("{{this.name}}", "{{this.value}}", true);
+</script>
+{{/each}} {{/if}}
