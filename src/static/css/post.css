@@ -7,7 +7,7 @@ h1 {
 }
 
 .review {
-  margin: 40px 0px 10px 0px;
+  margin: 10px 0px;
 }
 
 h4 {
@@ -16,6 +16,7 @@ h4 {
 
 .im {
   text-align: center;
+  padding: 0px 10px;
 }
 
 .im div {
@@ -37,4 +38,8 @@ h4 {
 
 .checked {
   color: #e88900;
+}
+
+#ratings > div {
+  margin-bottom: 4px;
 }

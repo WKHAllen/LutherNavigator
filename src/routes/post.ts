@@ -15,6 +15,7 @@ import {
   setErrorMessage,
   getForm,
   setForm,
+  camelToTitle,
 } from "./util";
 import wrapRoute from "../asyncCatch";
 import { RatingParams } from "../services/rating";
@@ -163,6 +164,14 @@ postRouter.get(
     );
     const program = await dbm.programService.getProgramName(post.programID);
     const images = await dbm.postService.getPostImages(postID);
+    const postRating = await dbm.postService.getPostRating(postID);
+    let ratings = [];
+
+    for (const rating in postRating) {
+      if (rating !== "id" && postRating[rating] !== null) {
+        ratings.push({ name: camelToTitle(rating), value: postRating[rating] });
+      }
+    }
 
     await renderPage(req, res, "post", {
       title: post.location,
@@ -177,6 +186,7 @@ postRouter.get(
       threeWords: post.threeWords,
       content: post.content,
       images,
+      ratings,
       userPost: postUser.id === userID,
     });
   })
