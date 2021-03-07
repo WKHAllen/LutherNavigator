@@ -5,3 +5,16 @@
 #ratings > div {
   margin-bottom: 4px;
 }
+
+.fa.fa-star {
+  font-size: 16px;
+  /* display: block; */
+}
+
+.checked {
+  color: #e88900;
+}
+
+.hover-checked {
+  color: #6f6f6f;
+}
