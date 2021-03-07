@@ -87,10 +87,6 @@
         </div>
       </div>
 
-      <!-- Rating -->
-      <!-- TODO: add rating -->
-      <div class="row align-items-center"></div>
-
       <!-- Post content -->
       <div class="row align-items-center">
         <div class="col-12 mb-3 form-group">
@@ -200,8 +196,24 @@
         </div>
       </div>
 
+      <!-- Rating -->
+      <div class="row align-items-center" id="ratings">
+        {{#each ratingTypes}}
+        <div class="col-6 col-sm-4">
+          {{ this.displayName }} {{#if this.required}} * {{/if}}
+        </div>
+        <div class="col-6 col-sm-8">
+          <span class="fa fa-star"></span>
+          <span class="fa fa-star"></span>
+          <span class="fa fa-star"></span>
+          <span class="fa fa-star"></span>
+          <span class="fa fa-star"></span>
+        </div>
+        {{/each}}
+      </div>
+
       <!-- Post button -->
-      <div class="col">
+      <div class="col mt-3">
         <button type="submit" class="btn clear-button mb-3">Post</button>
       </div>
     </form>

@@ -37,6 +37,14 @@ postRouter.get(
     const form = getForm(req, res);
     const locationTypes = await dbm.locationTypeService.getLocations();
     const programs = await dbm.programService.getPrograms();
+    const ratingTypes = [
+      "general",
+      "cost",
+      "quality",
+      "safety",
+      "cleanliness",
+      "guestServices",
+    ];
 
     await renderPage(req, res, "createPost", {
       title: "New post",
@@ -44,6 +52,14 @@ postRouter.get(
       form,
       locationTypes,
       programs,
+      ratingTypes: ratingTypes.map((ratingType) => ({
+        name: ratingType,
+        displayName:
+          ratingType === "general"
+            ? "General rating"
+            : camelToTitle(ratingType),
+        required: ratingType === "general",
+      })),
     });
   })
 );
