@@ -26,6 +26,18 @@ import { metaConfig } from "../config";
  */
 export const postRouter = Router();
 
+/**
+ * Things users can rate locations on.
+ */
+const ratingTypes = [
+  "general",
+  "cost",
+  "quality",
+  "safety",
+  "cleanliness",
+  "guestServices",
+];
+
 // Create post page
 postRouter.get(
   "/",
@@ -37,14 +49,6 @@ postRouter.get(
     const form = getForm(req, res);
     const locationTypes = await dbm.locationTypeService.getLocations();
     const programs = await dbm.programService.getPrograms();
-    const ratingTypes = [
-      "general",
-      "cost",
-      "quality",
-      "safety",
-      "cleanliness",
-      "guestServices",
-    ];
 
     await renderPage(req, res, "createPost", {
       title: "New post",
@@ -88,6 +92,9 @@ postRouter.post(
       req.body.wordTwo,
       req.body.wordThree,
     ].join(", ");
+    const ratings = ratingTypes.map(
+      (ratingType) => parseInt(req.body[`${ratingType}Rating`]) || 0
+    );
 
     const validLocationTypeID = dbm.locationTypeService.validLocation(
       locationTypeID
@@ -97,6 +104,7 @@ postRouter.post(
       mimetypes.includes(file.mimetype)
     );
     const imageSizesGood = files.map((file) => file.size < maxImageSize);
+    const ratingsGood = ratings.map((rating) => rating >= 0 && rating <= 5);
 
     // Validation
     if (content.length <= 0 || content.length > 750) {
@@ -119,12 +127,19 @@ postRouter.post(
         res,
         "Three word description must total to less than 64 characters"
       );
+    } else if (ratingsGood.includes(false)) {
+      setErrorMessage(res, "Invalid rating");
+    } else if (parseInt(req.body.generalRating) === 0) {
+      setErrorMessage(res, "General rating is required");
     } else {
       // Create post
-      // TODO: validate rating
-      const rating: RatingParams = {
-        general: 5,
-      };
+      const rating = ratingTypes.reduce((obj, current) => {
+        const value = parseInt(req.body[`${current}Rating`]) || 0;
+        if (value !== 0) {
+          obj[current] = value;
+        }
+        return obj;
+      }, {}) as RatingParams;
 
       const postID = await dbm.postService.createPost(
         userID,
