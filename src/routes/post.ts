@@ -156,7 +156,14 @@ postRouter.post(
       return;
     }
 
-    setForm(res, req.body);
+    const rating = ratingTypes.map((ratingType) => ({
+      name: ratingType,
+      value: parseInt(req.body[`${ratingType}Rating`]) || 0,
+    }));
+
+    let form = req.body;
+    form.ratings = rating;
+    setForm(res, form);
     res.redirect("/post");
   })
 );
