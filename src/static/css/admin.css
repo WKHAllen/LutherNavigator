@@ -6,6 +6,7 @@
 
 #admin-tabs .nav-link {
   color: #007bff;
+  font-size: 1rem;
 }
 
 #admin-tabs .nav-link.active {

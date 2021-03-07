@@ -21,6 +21,7 @@ const adminPages = {
   registration: "Registration",
   posts: "Posts",
   programs: "Programs",
+  status: "User status",
 };
 
 // Admin home page

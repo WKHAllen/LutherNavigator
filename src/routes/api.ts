@@ -280,3 +280,45 @@ apiRouter.get(
     }
   })
 );
+
+// Get user status change requests
+apiRouter.get(
+  "/statusChangeRequests",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const requests = await dbm.userStatusChangeService.getUserRequests();
+
+    res.json(requests);
+  })
+);
+
+// Approve/deny a status change request
+apiRouter.get(
+  "/approveStatusChangeRequest",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const requestID = req.query.requestID as string;
+    const approved =
+      req.query.approved === undefined || req.query.approved === "true";
+
+    const request = await dbm.userStatusChangeService.getStatusChangeRequest(
+      requestID
+    );
+
+    if (request) {
+      if (approved) {
+        await dbm.userStatusChangeService.approveStatusChangeRequest(requestID);
+        // TODO: send email (approved)
+      } else {
+        await dbm.userStatusChangeService.denyStatusChangeRequest(requestID);
+        // TODO: send email (denied)
+      }
+    }
+
+    res.end();
+  })
+);
