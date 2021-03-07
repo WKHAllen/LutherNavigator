@@ -33,17 +33,29 @@ export class UserStatusChangeService extends BaseService {
   ): Promise<string> {
     const requestID = await newUniqueID(this.dbm, "UserStatusChange");
 
-    const sql = `
-      INSERT INTO UserStatusChange (
-        id, userID, newStatusID, createTime
-      ) VALUES (
-        ?, ?, ?, ?
-      );
-    `;
-    const params = [requestID, userID, newStatusID, getTime()];
-    await this.dbm.execute(sql, params);
+    let sql = `SELECT id FROM UserStatusChange WHERE userID = ?;`;
+    let params: any[] = [userID];
+    const rows: UserStatusChange[] = await this.dbm.execute(sql, params);
 
-    return requestID;
+    if (rows.length === 0) {
+      sql = `
+        INSERT INTO UserStatusChange (
+          id, userID, newStatusID, createTime
+        ) VALUES (
+          ?, ?, ?, ?
+        );
+      `;
+      params = [requestID, userID, newStatusID, getTime()];
+      await this.dbm.execute(sql, params);
+
+      return requestID;
+    } else {
+      sql = `UPDATE UserStatusChange SET newStatusID = ? WHERE userID = ?;`;
+      params = [newStatusID, userID];
+      await this.dbm.execute(sql, params);
+
+      return rows[0].id;
+    }
   }
 
   /**

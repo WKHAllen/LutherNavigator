@@ -1,4 +1,4 @@
-import { getDBM, closeDBM, getByID } from "./util";
+import { getDBM, closeDBM, getByID, getByProp } from "./util";
 import { getTime } from "../../src/services/util";
 
 // Test user status service
@@ -11,6 +11,7 @@ test("UserStatusChange", async () => {
   const password = "password123";
   const statusID = 1; // Student
   const newStatusID = 2; // Alum
+  const newStatusID2 = 3; // Faculty/Staff
 
   const userID = await dbm.userService.createUser(
     firstname,
@@ -43,6 +44,18 @@ test("UserStatusChange", async () => {
   expect(request.newStatusID).toBe(newStatusID);
   expect(request.createTime - getTime()).toBeLessThanOrEqual(3);
 
+  // Change status change request
+  let requestID2 = await dbm.userStatusChangeService.createStatusChangeRequest(
+    userID,
+    newStatusID2
+  );
+  expect(requestID2.length).toBe(4);
+  expect(requestID2).toBe(requestID);
+  request = await dbm.userStatusChangeService.getStatusChangeRequest(
+    requestID2
+  );
+  expect(request.newStatusID).toBe(newStatusID2);
+
   // Delete the request
   await dbm.userStatusChangeService.deleteStatusChangeRequest(requestID);
   exists = await dbm.userStatusChangeService.statusChangeRequestExists(
@@ -64,6 +77,18 @@ test("UserStatusChange", async () => {
   expect(request.userID).toBe(userID);
   expect(request.newStatusID).toBe(newStatusID);
   expect(request.createTime - getTime()).toBeLessThanOrEqual(3);
+
+  // Get user requests
+  const userRequests = await dbm.userStatusChangeService.getUserRequests();
+  expect(userRequests.length).toBeGreaterThanOrEqual(1);
+  const userRequest = getByProp(userRequests, "requestID", requestID);
+  expect(userRequest["userID"]).toBe(userID);
+  expect(userRequest.firstname).toBe(firstname);
+  expect(userRequest.lastname).toBe(lastname);
+  expect(userRequest.email).toBe(email);
+  expect(userRequest["status"]).toBe("Student");
+  expect(userRequest["newStatus"]).toBe("Alum");
+  expect(userRequest["requestID"]).toBe(requestID);
 
   // Approve request
   let user = await dbm.userService.getUser(userID);
