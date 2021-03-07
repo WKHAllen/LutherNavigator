@@ -11,6 +11,7 @@ test("UserStatusChange", async () => {
   const password = "password123";
   const statusID = 1; // Student
   const newStatusID = 2; // Alum
+  const newStatusID2 = 3; // Faculty/Staff
 
   const userID = await dbm.userService.createUser(
     firstname,
@@ -42,6 +43,18 @@ test("UserStatusChange", async () => {
   expect(request.userID).toBe(userID);
   expect(request.newStatusID).toBe(newStatusID);
   expect(request.createTime - getTime()).toBeLessThanOrEqual(3);
+
+  // Change status change request
+  let requestID2 = await dbm.userStatusChangeService.createStatusChangeRequest(
+    userID,
+    newStatusID2
+  );
+  expect(requestID2.length).toBe(4);
+  expect(requestID2).toBe(requestID);
+  request = await dbm.userStatusChangeService.getStatusChangeRequest(
+    requestID2
+  );
+  expect(request.newStatusID).toBe(newStatusID2);
 
   // Delete the request
   await dbm.userStatusChangeService.deleteStatusChangeRequest(requestID);
