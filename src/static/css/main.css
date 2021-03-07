@@ -69,6 +69,7 @@ a:hover {
 #content {
   display: block;
   margin: auto;
+  padding: 16px 0px;
 }
 
 main {
@@ -82,7 +83,7 @@ main {
 
 main.bg-img::after {
   content: "";
-  background-color: #A3C4DA; /*CEDFEA 6bbaef*/
+  background-color: #a3c4da; /*CEDFEA 6bbaef*/
   top: 0;
   left: 0;
   bottom: 0;

@@ -68,7 +68,7 @@
         />
       </div> -->
     </div>
-    <div class="review col">
+    <div class="review col mt-4">
       <h3 class="tagline">{{ threeWords }}</h3>
       <h4>{{ firstname }} {{ lastname }} | {{ status }}</h4>
       <h4>{{ program }} | <span class="timestamp">{{ createTime }}</span></h4>
@@ -76,37 +76,38 @@
         <p>{{ content }}</p>
       </div>
     </div>
-    <div class="row review">
-      <div class="col-8 col-sm-4 col-md-4">
-        <h3>Rating</h3>
-        <p>Cleanliness</p>
-        <p>Customer Service</p>
-        <p>Overall</p>
-      </div>
-      <div class="col-4 col-sm-4 col-md-2">
-        <h3>*</h3>
-        <div>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star"></span>
+    <h3 class="col mt-4">Rating</h3>
+    <div class="row review" id="ratings">
+      {{#each ratings}}
+        <div class="col-6 col-sm-4">{{ this.name }}</div>
+        <div class="col-6 col-sm-8">
+          {{#greaterThanEqual this.value 1}}
+            <span class="fa fa-star checked"></span>
+          {{else}}
+            <span class="fa fa-star"></span>
+          {{/greaterThanEqual}}
+          {{#greaterThanEqual this.value 2}}
+            <span class="fa fa-star checked"></span>
+          {{else}}
+            <span class="fa fa-star"></span>
+          {{/greaterThanEqual}}
+          {{#greaterThanEqual this.value 3}}
+            <span class="fa fa-star checked"></span>
+          {{else}}
+            <span class="fa fa-star"></span>
+          {{/greaterThanEqual}}
+          {{#greaterThanEqual this.value 4}}
+            <span class="fa fa-star checked"></span>
+          {{else}}
+            <span class="fa fa-star"></span>
+          {{/greaterThanEqual}}
+          {{#greaterThanEqual this.value 5}}
+            <span class="fa fa-star checked"></span>
+          {{else}}
+            <span class="fa fa-star"></span>
+          {{/greaterThanEqual}}
         </div>
-        <div>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star"></span>
-        </div>
-        <div>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star"></span>
-        </div>
-      </div>
+      {{/each}}
     </div>
   </div>
 </div>

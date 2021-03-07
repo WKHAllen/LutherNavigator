@@ -15,6 +15,7 @@ import {
   setErrorMessage,
   getForm,
   setForm,
+  camelToTitle,
 } from "./util";
 import wrapRoute from "../asyncCatch";
 import { RatingParams } from "../services/rating";
@@ -36,6 +37,14 @@ postRouter.get(
     const form = getForm(req, res);
     const locationTypes = await dbm.locationTypeService.getLocations();
     const programs = await dbm.programService.getPrograms();
+    const ratingTypes = [
+      "general",
+      "cost",
+      "quality",
+      "safety",
+      "cleanliness",
+      "guestServices",
+    ];
 
     await renderPage(req, res, "createPost", {
       title: "New post",
@@ -43,6 +52,14 @@ postRouter.get(
       form,
       locationTypes,
       programs,
+      ratingTypes: ratingTypes.map((ratingType) => ({
+        name: ratingType,
+        displayName:
+          ratingType === "general"
+            ? "General rating"
+            : camelToTitle(ratingType),
+        required: ratingType === "general",
+      })),
     });
   })
 );
@@ -163,6 +180,14 @@ postRouter.get(
     );
     const program = await dbm.programService.getProgramName(post.programID);
     const images = await dbm.postService.getPostImages(postID);
+    const postRating = await dbm.postService.getPostRating(postID);
+    let ratings = [];
+
+    for (const rating in postRating) {
+      if (rating !== "id" && postRating[rating] !== null) {
+        ratings.push({ name: camelToTitle(rating), value: postRating[rating] });
+      }
+    }
 
     await renderPage(req, res, "post", {
       title: post.location,
@@ -177,6 +202,7 @@ postRouter.get(
       threeWords: post.threeWords,
       content: post.content,
       images,
+      ratings,
       userPost: postUser.id === userID,
     });
   })

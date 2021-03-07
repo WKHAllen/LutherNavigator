@@ -328,3 +328,18 @@ export async function getUserID(req: Request): Promise<string> {
 
   return userID;
 }
+
+/**
+ * Convert a string from camel case to title case.
+ *
+ * @param str A camel case string.
+ * @returns The string in title case.
+ */
+export function camelToTitle(str: string): string {
+  return (
+    str.charAt(0).toUpperCase() +
+    str.substr(1).replace(/[A-Z]/g, (text: string) => {
+      return " " + text.toLowerCase();
+    })
+  );
+}

@@ -87,10 +87,6 @@
         </div>
       </div>
 
-      <!-- Rating -->
-      <!-- TODO: add rating -->
-      <div class="row align-items-center"></div>
-
       <!-- Post content -->
       <div class="row align-items-center">
         <div class="col-12 mb-3 form-group">
@@ -200,8 +196,38 @@
         </div>
       </div>
 
+      <!-- Rating -->
+      <div class="align-items-center">
+        {{#each ratingTypes}}
+        <div class="row" id="ratings">
+          <div class="col-4">
+            {{ this.displayName }} {{#if this.required}} * {{/if}}
+          </div>
+          <div class="col rating" id="rating-{{ this.name }}">
+            <span class="fa fa-star" id="rating-{{ this.name }}-1"></span
+            ><span class="fa fa-star" id="rating-{{ this.name }}-2"></span
+            ><span class="fa fa-star" id="rating-{{ this.name }}-3"></span
+            ><span class="fa fa-star" id="rating-{{ this.name }}-4"></span
+            ><span class="fa fa-star" id="rating-{{ this.name }}-5"></span>
+          </div>
+          <div class="col-auto">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="clearRating('{{ this.name }}');"
+            >
+              Clear
+            </button>
+          </div>
+          <div class="hidden">
+            <input type="text" id="{{this.name}}Rating" value="0" />
+          </div>
+        </div>
+        {{/each}}
+      </div>
+
       <!-- Post button -->
-      <div class="col">
+      <div class="col mt-3">
         <button type="submit" class="btn clear-button mb-3">Post</button>
       </div>
     </form>
