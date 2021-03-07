@@ -310,12 +310,28 @@ apiRouter.get(
     );
 
     if (request) {
+      const user = await dbm.userService.getUser(request.userID);
+
       if (approved) {
         await dbm.userStatusChangeService.approveStatusChangeRequest(requestID);
-        // TODO: send email (approved)
+        await sendFormattedEmail(
+          user.email,
+          "Luther Navigator - Status Change Approved",
+          "statusChangeApproved",
+          {
+            host: getHostname(req),
+          }
+        );
       } else {
         await dbm.userStatusChangeService.denyStatusChangeRequest(requestID);
-        // TODO: send email (denied)
+        await sendFormattedEmail(
+          user.email,
+          "Luther Navigator - Status Change Not Approved",
+          "statusChangeNotApproved",
+          {
+            host: getHostname(req),
+          }
+        );
       }
     }
 
