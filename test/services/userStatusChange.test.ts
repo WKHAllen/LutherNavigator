@@ -1,4 +1,4 @@
-import { getDBM, closeDBM, getByID } from "./util";
+import { getDBM, closeDBM, getByID, getByProp } from "./util";
 import { getTime } from "../../src/services/util";
 
 // Test user status service
@@ -64,6 +64,18 @@ test("UserStatusChange", async () => {
   expect(request.userID).toBe(userID);
   expect(request.newStatusID).toBe(newStatusID);
   expect(request.createTime - getTime()).toBeLessThanOrEqual(3);
+
+  // Get user requests
+  const userRequests = await dbm.userStatusChangeService.getUserRequests();
+  expect(userRequests.length).toBeGreaterThanOrEqual(1);
+  const userRequest = getByProp(userRequests, "requestID", requestID);
+  expect(userRequest["userID"]).toBe(userID);
+  expect(userRequest.firstname).toBe(firstname);
+  expect(userRequest.lastname).toBe(lastname);
+  expect(userRequest.email).toBe(email);
+  expect(userRequest["status"]).toBe("Student");
+  expect(userRequest["newStatus"]).toBe("Alum");
+  expect(userRequest["requestID"]).toBe(requestID);
 
   // Approve request
   let user = await dbm.userService.getUser(userID);
