@@ -15,6 +15,7 @@ import {
   setErrorMessage,
   getForm,
   setForm,
+  camelToTitle,
 } from "./util";
 import wrapRoute from "../asyncCatch";
 import { RatingParams } from "../services/rating";
@@ -24,6 +25,18 @@ import { metaConfig } from "../config";
  * The post router.
  */
 export const postRouter = Router();
+
+/**
+ * Things users can rate locations on.
+ */
+const ratingTypes = [
+  "general",
+  "cost",
+  "quality",
+  "safety",
+  "cleanliness",
+  "guestServices",
+];
 
 // Create post page
 postRouter.get(
@@ -43,6 +56,14 @@ postRouter.get(
       form,
       locationTypes,
       programs,
+      ratingTypes: ratingTypes.map((ratingType) => ({
+        name: ratingType,
+        displayName:
+          ratingType === "general"
+            ? "General rating"
+            : camelToTitle(ratingType),
+        required: ratingType === "general",
+      })),
     });
   })
 );
@@ -71,6 +92,9 @@ postRouter.post(
       req.body.wordTwo,
       req.body.wordThree,
     ].join(", ");
+    const ratings = ratingTypes.map(
+      (ratingType) => parseInt(req.body[`${ratingType}Rating`]) || 0
+    );
 
     const validLocationTypeID = dbm.locationTypeService.validLocation(
       locationTypeID
@@ -80,6 +104,7 @@ postRouter.post(
       mimetypes.includes(file.mimetype)
     );
     const imageSizesGood = files.map((file) => file.size < maxImageSize);
+    const ratingsGood = ratings.map((rating) => rating >= 0 && rating <= 5);
 
     // Validation
     if (content.length <= 0 || content.length > 750) {
@@ -102,12 +127,19 @@ postRouter.post(
         res,
         "Three word description must total to less than 64 characters"
       );
+    } else if (ratingsGood.includes(false)) {
+      setErrorMessage(res, "Invalid rating");
+    } else if (parseInt(req.body.generalRating) === 0) {
+      setErrorMessage(res, "General rating is required");
     } else {
       // Create post
-      // TODO: validate rating
-      const rating: RatingParams = {
-        general: 5,
-      };
+      const rating = ratingTypes.reduce((obj, current) => {
+        const value = parseInt(req.body[`${current}Rating`]) || 0;
+        if (value !== 0) {
+          obj[current] = value;
+        }
+        return obj;
+      }, {}) as RatingParams;
 
       const postID = await dbm.postService.createPost(
         userID,
@@ -124,7 +156,14 @@ postRouter.post(
       return;
     }
 
-    setForm(res, req.body);
+    const rating = ratingTypes.map((ratingType) => ({
+      name: ratingType,
+      value: parseInt(req.body[`${ratingType}Rating`]) || 0,
+    }));
+
+    let form = req.body;
+    form.ratings = rating;
+    setForm(res, form);
     res.redirect("/post");
   })
 );
@@ -143,6 +182,7 @@ postRouter.get(
     const post = await dbm.postService.getPost(postID);
     if (!post) {
       next(); // 404
+      return;
     }
 
     const postUser = await dbm.postService.getPostUser(postID);
@@ -157,25 +197,53 @@ postRouter.get(
       }
     }
 
-    const userStatusName = await dbm.userStatusService.getStatusName(
-      user.statusID
+    const postUserStatusName = await dbm.userStatusService.getStatusName(
+      postUser.statusID
     );
     const program = await dbm.programService.getProgramName(post.programID);
     const images = await dbm.postService.getPostImages(postID);
+    const postRating = await dbm.postService.getPostRating(postID);
+    let ratings = [];
+
+    for (const rating in postRating) {
+      if (rating !== "id" && postRating[rating] !== null) {
+        ratings.push({ name: camelToTitle(rating), value: postRating[rating] });
+      }
+    }
 
     await renderPage(req, res, "post", {
       title: post.location,
       error,
       postID,
       location: post.location,
-      firstname: user.firstname,
-      lastname: user.lastname,
-      status: userStatusName,
+      firstname: postUser.firstname,
+      lastname: postUser.lastname,
+      status: postUserStatusName,
       program: program,
       createTime: post.createTime,
       threeWords: post.threeWords,
       content: post.content,
       images,
+      ratings,
+      userPost: postUser.id === userID,
     });
+  })
+);
+
+// Post deletion event
+postRouter.post(
+  "/:postID/delete",
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const postID = req.params.postID;
+    const userID = await getUserID(req);
+    const post = await dbm.postService.getPost(postID);
+
+    if (post.userID === userID) {
+      dbm.postService.deletePost(postID);
+    }
+
+    res.redirect("/");
   })
 );

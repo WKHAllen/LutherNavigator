@@ -3,7 +3,6 @@ h5 {
 }
 
 .filter-menu {
-  border: 1px solid #495057;
   padding: 0px 10px;
   margin-bottom: 20px;
 }
@@ -37,4 +36,47 @@ img {
 .query-page {
   display: block;
   padding: 15px 0px;
+}
+
+.checked {
+  color: #e88900;
+}
+
+.fa.fa-star {
+  font-size: 10px;
+}
+
+.search-bar-input {
+  color: #0061a3;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background-color: transparent;
+}
+
+#cover {
+  max-width: 600px;
+  padding: 10px;
+  margin: 0 auto;
+  background-color: #d8e5ff; /*48ADF0*/
+  border-radius: 999px;
+  /* box-shadow: 0 10px 40px #0061a3, 0 0 0 20px #ffffff; */
+  transform: scale(0.6);
+}
+
+.search-bar-div {
+  height: 48px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.search-bar-input[type="text"] {
+  width: 100%;
+  height: 48px;
+  font-size: 22pt;
+  outline: none;
+}
+
+.search-bar-input[type="text"]::placeholder {
+  color: #0061a3;
 }
