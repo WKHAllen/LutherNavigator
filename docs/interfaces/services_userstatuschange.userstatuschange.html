@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Verify | luthernavigator</title>
+	<title>UserStatusChange | luthernavigator</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,10 +55,10 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="../modules/services_verify.html">services/verify</a>
+					<a href="../modules/services_userstatuschange.html">services/userStatusChange</a>
 				</li>
 				<li>
-					<a href="services_verify.verify.html">Verify</a>
+					<a href="services_userstatuschange.userstatuschange.html">UserStatusChange</a>
 				</li>
 			</ul>
 		</div>
@@ -73,23 +73,23 @@
 						<a href="../modules.html">Modules</a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="../modules/services_verify.html">services/verify</a>
+						<a href="../modules/services_userstatuschange.html">services/userStatusChange</a>
 					</li>
 				</ul>
 			</nav>
 		</div>
 		<div class="col-7 offset-3 col-content">
-			<h1>Interface Verify</h1>
+			<h1>Interface UserStatusChange</h1>
 			<section class="tsd-panel tsd-comment"><div class="tsd-comment tsd-typography tsd-comment-shorttext">
 					<div class="lead">
-						<p>Verify architecture.</p>
+						<p>User status change architecture.</p>
 					</div>
 			</div></section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Verify</span>
+						<span class="target">UserStatusChange</span>
 					</li>
 				</ul>
 			</section>
@@ -99,9 +99,10 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="services_verify.verify.html#createtime" class="tsd-kind-icon">create<wbr>Time</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="services_verify.verify.html#email" class="tsd-kind-icon">email</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="services_verify.verify.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="services_userstatuschange.userstatuschange.html#createtime" class="tsd-kind-icon">create<wbr>Time</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="services_userstatuschange.userstatuschange.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="services_userstatuschange.userstatuschange.html#newstatusid" class="tsd-kind-icon">new<wbr>StatusID</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="services_userstatuschange.userstatuschange.html#userid" class="tsd-kind-icon">userID</a></li>
 							</ul>
 						</section>
 					</div>
@@ -115,17 +116,7 @@
 					<div class="tsd-signature tsd-kind-icon">create<wbr>Time<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in services/verify.ts:20</li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="email" class="tsd-anchor"></a>
-					<h3>email</h3>
-					<div class="tsd-signature tsd-kind-icon">email<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in services/verify.ts:19</li>
+							<li>Defined in services/userStatusChange.ts:16</li>
 						</ul>
 					</aside>
 				</section>
@@ -135,7 +126,27 @@
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in services/verify.ts:18</li>
+							<li>Defined in services/userStatusChange.ts:13</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="newstatusid" class="tsd-anchor"></a>
+					<h3>new<wbr>StatusID</h3>
+					<div class="tsd-signature tsd-kind-icon">new<wbr>StatusID<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in services/userStatusChange.ts:15</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="userid" class="tsd-anchor"></a>
+					<h3>userID</h3>
+					<div class="tsd-signature tsd-kind-icon">userID<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in services/userStatusChange.ts:14</li>
 						</ul>
 					</aside>
 				</section>
@@ -146,21 +157,24 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module root">
-						<a href="../classes/services_verify.verifyservice.html" class="tsd-kind-icon">Verify<wbr>Service</a>
+						<a href="../classes/services_userstatuschange.userstatuschangeservice.html" class="tsd-kind-icon">User<wbr>Status<wbr>Change<wbr>Service</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module root">
-						<a href="services_verify.verify.html" class="tsd-kind-icon">Verify</a>
+						<a href="services_userstatuschange.userstatuschange.html" class="tsd-kind-icon">User<wbr>Status<wbr>Change</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="services_verify.verify.html#createtime" class="tsd-kind-icon">create<wbr>Time</a>
+								<a href="services_userstatuschange.userstatuschange.html#createtime" class="tsd-kind-icon">create<wbr>Time</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="services_verify.verify.html#email" class="tsd-kind-icon">email</a>
+								<a href="services_userstatuschange.userstatuschange.html#id" class="tsd-kind-icon">id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="services_verify.verify.html#id" class="tsd-kind-icon">id</a>
+								<a href="services_userstatuschange.userstatuschange.html#newstatusid" class="tsd-kind-icon">new<wbr>StatusID</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="services_userstatuschange.userstatuschange.html#userid" class="tsd-kind-icon">userID</a>
 							</li>
 						</ul>
 					</li>
