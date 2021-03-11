@@ -15,18 +15,15 @@
   padding: 5px 0px;
 }
 
-/* .a-location > img:hover {
-  opacity: 70%;
-} */
-
-.a-location:hover {
-  opacity: 60%;
+* > .a-location:hover > img {
+  box-shadow: 0 0px 10px 1px #8a8a8b; /*, off-center, blur edges, radius*/
+  opacity: 65%;
 }
 
 .a-location > img {
   width: inherit;
   border-radius: 10px;
-  opacity: 50%;
+  opacity: 35%;
 }
 
 /* link for the post */

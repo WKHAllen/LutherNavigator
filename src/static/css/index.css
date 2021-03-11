@@ -48,7 +48,7 @@
 	margin:  0 auto;
 	background-color: #d8e5ff; /*48ADF0*/
 	border-radius: 999px;
-	/* box-shadow: 0 10px 40px #0061a3, 0 0 0 20px #ffffff; */
+	box-shadow: 0 10px 40px 0 #0061a3, 0 0 0 0px #ffffff; /*, off-center, blur edges, radius*/
 	transform: scale(0.6);
 }
 
@@ -61,6 +61,7 @@
 	height: 48px;
 	font-size: 22pt;
 	margin-left: 10px;
+  outline: none;
 }
 
 .search-bar-input[type="text"]::placeholder {
@@ -68,7 +69,7 @@
 }
 
 /* typing in the search bar */
-input:focus::-webkit-input-placeholder { 
+.search-bar-input:focus::-webkit-input-placeholder { 
   color: #66a0c7; 
 }
 
