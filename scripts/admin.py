@@ -137,14 +137,14 @@ def main() -> None:
     """Process the command line arguments."""
 
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="A testing utility.")
+    parser = argparse.ArgumentParser(description="An admin utility.")
 
     # Register as an admin
     parser.add_argument(
         "-a",
         "--add",
-        type=int,
-        default=-1,
+        type=str,
+        default="",
         help="add user as an admin",
     )
 
@@ -152,8 +152,8 @@ def main() -> None:
     parser.add_argument(
         "-r",
         "--remove",
-        type=int,
-        default=-1,
+        type=str,
+        default="",
         help="remove user's admin status",
     )
 
@@ -169,12 +169,12 @@ def main() -> None:
     args = parser.parse_args()
 
     # Handle the add case
-    if args.add >= 0:
+    if args.add != "":
         err = add_admin(args.add)
         print(f"Error: {err}" if err else "Added user as admin")
 
     # Handle the remove case next
-    elif args.remove >= 0:
+    elif args.remove != "":
         err = remove_admin(args.remove)
         print(f"Error: {err}" if err else "Removed user's admin status")
 
