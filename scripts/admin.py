@@ -1,3 +1,4 @@
+import argparse
 import sys
 
 import mysql.connector
@@ -35,12 +36,16 @@ def add_admin(email: str) -> str:
     if len(res) == 0:
         err = "a user with the specified email does not exist"
     else:
-        cur.execute(f"SELECT id FROM User WHERE email = '{email}' AND admin = FALSE;")
+        cur.execute(
+            f"SELECT id FROM User WHERE email = '{email}' AND admin = FALSE;"
+        )
         res = cur.fetchall()
         if len(res) == 0:
             err = "the user is already an admin"
         else:
-            cur.execute(f"UPDATE User SET admin = TRUE WHERE email = '{email}';")
+            cur.execute(
+                f"UPDATE User SET admin = TRUE WHERE email = '{email}';"
+            )
             conn.commit()
 
     cur.close()
@@ -60,12 +65,16 @@ def remove_admin(email: str) -> str:
     if len(res) == 0:
         err = "a user with the specified email does not exist"
     else:
-        cur.execute(f"SELECT id FROM User WHERE email = '{email}' AND admin = TRUE;")
+        cur.execute(
+            f"SELECT id FROM User WHERE email = '{email}' AND admin = TRUE;"
+        )
         res = cur.fetchall()
         if len(res) == 0:
             err = "the user is not an admin"
         else:
-            cur.execute(f"UPDATE User SET admin = FALSE WHERE email = '{email}';")
+            cur.execute(
+                f"UPDATE User SET admin = FALSE WHERE email = '{email}';"
+            )
             conn.commit()
 
     cur.close()
@@ -80,7 +89,9 @@ def list_admins() -> List[str]:
 
     err = ""
 
-    cur.execute(f"SELECT {', '.join(ADMIN_FIELDS)} FROM User WHERE admin = TRUE;")
+    cur.execute(
+        f"SELECT {', '.join(ADMIN_FIELDS)} FROM User WHERE admin = TRUE;"
+    )
     res = cur.fetchall()
 
     cur.close()
@@ -100,35 +111,75 @@ def max_length(list: List[Any], index: int) -> int:
 
 
 def display_admins(admins: List[Any]) -> None:
-    maxlens = { ADMIN_FIELDS[i]: max(max_length(admins, i), len(ADMIN_FIELDS[i])) for i in range(len(ADMIN_FIELDS)) }
+    maxlens = {
+        ADMIN_FIELDS[i]: max(max_length(admins, i), len(ADMIN_FIELDS[i]))
+        for i in range(len(ADMIN_FIELDS))
+    }
 
     print("   ".join([field.ljust(maxlens[field]) for field in ADMIN_FIELDS]))
     print("-" * (sum(list(maxlens.values())) + (3 * (len(maxlens) - 1))))
 
     for admin in admins:
-        admin_fields = { ADMIN_FIELDS[i]: admin[i] for i in range(len(ADMIN_FIELDS)) }
-        print("   ".join([admin_fields[field].ljust(maxlens[field]) for field in ADMIN_FIELDS]))
+        admin_fields = {
+            ADMIN_FIELDS[i]: admin[i] for i in range(len(ADMIN_FIELDS))
+        }
+        print(
+            "   ".join(
+                [
+                    admin_fields[field].ljust(maxlens[field])
+                    for field in ADMIN_FIELDS
+                ]
+            )
+        )
 
 
 def main() -> None:
-    args = sys.argv[2:]
-    if not ((len(args) == 1 and args[0] == "list") or (len(args) == 2 and args[0] in ("add", "remove"))):
-        print(f"Usage: {sys.argv[1].strip()} <add | remove | list> [user email]")
-        sys.exit(1)
+    """Process the command line arguments."""
 
-    if args[0] == "add":
-        err = add_admin(args[1])
-        if err != "":
-            print(f"Error: {err}")
-        else:
-            print("Added user as an admin")
-    elif args[0] == "remove":
-        err = remove_admin(args[1])
-        if err != "":
-            print(f"Error: {err}")
-        else:
-            print("Removed user's admin status")
-    elif args[0] == "list":
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(description="A testing utility.")
+
+    # Register as an admin
+    parser.add_argument(
+        "-a",
+        "--add",
+        type=int,
+        default=-1,
+        help="add user as an admin",
+    )
+
+    # Remove admin status
+    parser.add_argument(
+        "-r",
+        "--remove",
+        type=int,
+        default=-1,
+        help="remove user's admin status",
+    )
+
+    # List all admins
+    parser.add_argument(
+        "-l",
+        "--list",
+        action="store_true",
+        help="list all admins",
+    )
+
+    # Get the values of the arguments
+    args = parser.parse_args()
+
+    # Handle the add case
+    if args.add >= 0:
+        err = add_admin(args.add)
+        print(f"Error: {err}" if err else "Added user as admin")
+
+    # Handle the remove case next
+    elif args.remove >= 0:
+        err = remove_admin(args.remove)
+        print(f"Error: {err}" if err else "Removed user's admin status")
+
+    # Handle the list case last
+    elif args.list:
         admins = list_admins()
         display_admins(admins)
 
