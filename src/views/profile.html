@@ -3,7 +3,7 @@
 
 <div class="container tablet-content">
   <div class="mt-5">
-    <div class="profile-summary clear-card mb-5">
+    <div class="profile-summary mb-5">
       <img
         class="image-circle mb-2"
         id="user-image"
@@ -23,9 +23,9 @@
     <div class="alert alert-danger" role="alert">{{ error }}</div>
     {{/if}}
 
-    <div id="your-posts" class="clear-card mb-5">
+    <div id="your-posts" class="mb-5">
       <div class="col mt-2 mb-2">
-        <h3 class="posts">Your posts</h3>
+        <h4 class="posts">Your posts</h4>
         {{#if hasPosts}}
         <table class="table">
           <thead>
@@ -57,10 +57,10 @@
       </div>
     </div>
 
-    <div class="clear-card mb-5">
+    <div class="mb-5">
       <form method="POST" enctype="multipart/form-data">
         <div class="col mt-1">
-          <h3>Set image</h3>
+          <h4>Set image</h4>
         </div>
         <div class="row">
           <div class="form-group col-12">
@@ -90,10 +90,10 @@
       </form>
     </div>
 
-    <div class="clear-card mb-5">
+    <div class="mb-5">
       <form method="POST">
         <div class="col mt-1">
-          <h3>Change password</h3>
+          <h4>Change password</h4>
         </div>
         <div class="row">
           <div class="form-group col-12 col-md-4">

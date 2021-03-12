@@ -16,6 +16,19 @@
   color: #ffffff;
 }
 
+.intro-text p {
+  text-align: left;
+}
+
+.intro-text i {
+  font-size: 48pt;
+}
+
+.intro-text i:hover {
+  color:#e88900;
+}
+
+
 .home-card {
 	padding: 10px;
 }
@@ -52,7 +65,7 @@
 	margin:  0 auto;
 	background-color: #d8e5ff; /*48ADF0*/
 	border-radius: 999px;
-	box-shadow: 0 8px 15px 0 #0061a3, 0 0 0 0px #ffffff; /*, off-center, blur edges, radius*/
+	/* box-shadow: 0 8px 15px 0 #8a8a8b, 0 0 0 0px #ffffff; , off-center, blur edges, radius */
 	transform: scale(0.6);
 }
 
@@ -85,7 +98,7 @@
 .search-bar-button {
 	position: relative;
 	display: block;
-	width: 64px; /* change mobile!*/
+	width: 64px;
 	height: 48px;
 	cursor: pointer;
 }
@@ -172,6 +185,10 @@
 
 @media screen and (min-width: 768px) {
   .home-card {
-	padding: 20px;
+	  padding: 20px;
+  }
+
+  .intro-text i {
+    font-size: 36pt;
   }
 }

@@ -2,23 +2,22 @@ h1 {
   font-size: 36pt;
 }
 
-.info {
-  margin: 0px 0px 40px 0px;
-}
-
-.review {
-  margin: 40px 0px 10px 0px;
-}
-
 h4 {
   font-size: medium;
 }
 
-.im {
-  text-align: center;
+.post-header h1,
+.post-header h4,
+.post-header th,
+.post-header td {
+  color: #ffffff;
 }
 
-img {
+.post-header h1 {
+  padding-left: 15px;
+}
+
+.post-img > img {
   max-width: 300px;
   width: inherit;
   height: 200px;

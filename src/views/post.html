@@ -6,77 +6,87 @@
 <link rel="stylesheet" type="text/css" href="/css/main.css" />
 <link rel="stylesheet" type="text/css" href="/css/post.css" />
 
-<div class="div-center">
-  <div class="tablet-content">
-    <div class="col">
-      <h1>{{ location }}</h1>
-      <h4 class="info">the_address | the_phone_number | the_website</h4>
-
-      {{#if error}}
-      <div class="alert alert-danger" role="alert">{{error}}</div>
-      {{/if}}
-    </div>
-    <div class="im">
-      {{#each images}}
-      <img
-        src="/image/post/{{../postID}}/{{@index}}"
-        alt="uploaded photo from user"
-      />
-      {{/each}}
-      <!-- <img
-        src="http://playfoursquare.s3.amazonaws.com/pix/130277_9pfvgu8sfK3xoD7-YLqMjWGCpOVyAJl-aGDql5Y53dU.jpg"
-        alt="pepperioni pizza pie"
-      />
-      <img
-        src="https://media-cdn.tripadvisor.com/media/photo-s/10/cf/1e/3d/photo0jpg.jpg"
-        alt="Mabe's inside seating"
-      />
-      <img
-        src="https://media-cdn.tripadvisor.com/media/photo-s/06/b6/54/64/mabe-s-pizza.jpg"
-        alt="olive pizza"
-      /> -->
-    </div>
-    <div class="review col">
-      <h3 class="tagline">{{ threeWords }}</h3>
-      <h4>{{ firstname }} {{ lastname }} | {{ status }}</h4>
-      <h4>
-        {{ program }} | <span class="timestamp">{{ createTime }}</span>
-      </h4>
-      <div class="post">
-        <p>{{ content }}</p>
+<div class="div-center background-blue">
+  <div class="div-center lg-width post-header">
+    <h1 class="pt-3 mb-2">{{ location }}</h1>
+    <div class="row">
+      <h4 class="mb-4 col-12 col-md-8">111 W. Water St | Decorah, IA | 563-222-2225 | mabespizza.com</h4>
+      <!-- <h4 class="col-7">the_address | the_phone_number | the_website</h4> -->
+      <div class="mb-3 col-9 col-md-4">
+        <table>
+          <tr>
+            <th class="">Rating</th>
+          </tr>
+          <tr>
+            <td>Overall</td>
+            <td class="align-top">
+              <i class="fa fa-star checked"></i>
+              <i class="fa fa-star checked"></i>
+              <i class="fa fa-star checked"></i>
+              <i class="fa fa-star checked"></i>
+              <i class="fa fa-star checked"></i>
+            </td>
+          </tr>
+          <tr>
+            <td>Cleanliness</td>
+            <td class="align-top">
+              <i class="fa fa-star checked"></i>
+              <i class="fa fa-star checked"></i>
+              <i class="fa fa-star checked"></i>
+              <i class="fa fa-star checked"></i>
+              <i class="fa fa-star"></i>
+            </td>
+          </tr>
+          <tr>
+            <td>Customer Service</td>
+            <td class="align-top">
+              <i class="fa fa-star checked"></i>
+              <i class="fa fa-star checked"></i>
+              <i class="fa fa-star checked"></i>
+              <i class="fa fa-star checked"></i>
+              <i class="fa fa-star"></i>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
-    <div class="row review">
-      <div class="col-8 col-sm-4 col-md-4">
-        <h3>Rating</h3>
-        <p>Overall</p>
-        <p>Cleanliness</p>
-        <p>Customer Service</p>
-      </div>
-      <div class="col-4 col-sm-4 col-md-2">
-        <h3></h3>
-        <div>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star"></span>
-        </div>
-        <div>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star"></span>
-        </div>
-        <div>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star checked"></span>
-          <span class="fa fa-star"></span>
-        </div>
-      </div>
+  </div>
+  
+</div>
+<div class="div-center tablet-content">
+  <div class="mb-5">
+    {{#if error}}
+    <div class="alert alert-danger" role="alert">{{error}}</div>
+    {{/if}}
+  </div>
+  <div class="center post-img mb-5">
+    {{#each images}}
+    <img
+      src="/image/post/{{../postID}}/{{@index}}"
+      alt="uploaded photo from user"
+    />
+    {{/each}}
+    <!-- <img
+      src="http://playfoursquare.s3.amazonaws.com/pix/130277_9pfvgu8sfK3xoD7-YLqMjWGCpOVyAJl-aGDql5Y53dU.jpg"
+      alt="pepperioni pizza pie"
+    />
+    <img
+      src="https://media-cdn.tripadvisor.com/media/photo-s/10/cf/1e/3d/photo0jpg.jpg"
+      alt="Mabe's inside seating"
+    />
+    <img
+      src="https://media-cdn.tripadvisor.com/media/photo-s/06/b6/54/64/mabe-s-pizza.jpg"
+      alt="olive pizza"
+    /> -->
+  </div>
+  <div class="col mb-5">
+    <h3 class="tagline mb-3">{{ threeWords }}</h3>
+    <h4>{{ firstname }} {{ lastname }} | {{ status }}</h4>
+    <h4 class="mb-4">
+      {{ program }} | <span class="timestamp">{{ createTime }}</span>
+    </h4>
+    <div class="post">
+      <p>{{ content }}</p>
     </div>
   </div>
 </div>

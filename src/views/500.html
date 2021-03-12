@@ -1,13 +1,15 @@
-<h1>Internal Server Error</h1>
-<p class="center">An internal server error occurred</p>
+<div class="div-center tablet-content">
+  <h1 class="center">Internal Server Error</h1>
+  <p class="center">An internal server error occurred</p>
 
-{{#if name}}
-<div class="err-info">
-  <div><span class="err-header">Type:</span> <code>{{name}}</code></div>
-  <div><span class="err-header">Message:</span> <code>{{message}}</code></div>
-  <div>
-    <span class="err-header">Stack trace:</span><br />
-    <code>{{stack}}</code>
+  {{#if name}}
+  <div class="err-info">
+    <div><span class="err-header">Type:</span> <code>{{name}}</code></div>
+    <div><span class="err-header">Message:</span> <code>{{message}}</code></div>
+    <div>
+      <span class="err-header">Stack trace:</span><br />
+      <code>{{stack}}</code>
+    </div>
   </div>
+  {{/if}}
 </div>
-{{/if}}
