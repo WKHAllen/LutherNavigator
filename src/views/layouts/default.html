@@ -105,6 +105,7 @@
           </ul>
           {{#if loggedIn}}
           <a class="nav-link" href="/post">Post</a>
+          <a class="nav-link" href="/profile">Profile</a>
           <a class="nav-link" href="/logout?after={{url}}">Logout</a>
           {{else}}
           <a class="nav-link" href="/post">Post</a>
@@ -116,15 +117,9 @@
         </div>
       </nav>
     </header>
-    {{#if noBG}}
-    <main>
-      <div class="clearfix" id="content">{{{body}}}</div>
-    </main>
-    {{else}}
     <main class="bg-img">
-      <div class="clearfix" id="content">{{{body}}}</div>
+      {{{body}}}
     </main>
-    {{/if}}
     <footer>
       <div class="row">
         <a href="/about" class="col-sm-4">About Luther Navigator</a>

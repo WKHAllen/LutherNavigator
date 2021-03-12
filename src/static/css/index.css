@@ -12,6 +12,10 @@
   border: solid 1px #0061a3;
 }
 
+.adv-search, .intro-text {
+  color: #ffffff;
+}
+
 .home-card {
 	padding: 10px;
 }
@@ -64,7 +68,7 @@
   outline: none;
 }
 
-.search-bar-input[type="text"]::placeholder, .adv-search {
+.search-bar-input[type="text"]::placeholder {
 	color: #0061a3;
 }
 
