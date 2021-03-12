@@ -2,13 +2,37 @@
   rel="stylesheet"
   href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
 />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
 <link rel="stylesheet" type="text/css" href="/css/main.css" />
 <link rel="stylesheet" type="text/css" href="/css/post.css" />
 
 <div class="div-center background-blue">
   <div class="div-center lg-width post-header">
-    <h1 class="pt-3 mb-2">{{ location }}</h1>
+    <div class="flex-between">
+      <h1>{{ location }}</h1>
+      {{#if userPost}}
+      <div class="dropdown">
+        <button
+          class="btn btn-secondary"
+          type="button"
+          id="post-dropdown"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <i class="fas fa-ellipsis-h" aria-hidden="true"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="post-dropdown">
+          <form method="POST">
+            <button class="dropdown-item" type="submit" formaction="/post/{{postID}}/delete">Delete post</a>
+          </form>
+        </div>
+      </div>
+      {{/if}}
+    </div>
     <div class="row">
       <h4 class="mb-4 col-12 col-md-8">111 W. Water St | Decorah, IA | 563-222-2225 | mabespizza.com</h4>
       <!-- <h4 class="mb-4 col-12 col-md-8">Address | Phone | Website</h4> -->
@@ -17,42 +41,44 @@
           <tr>
             <th class="">Rating</th>
           </tr>
-          <tr>
-            <td>Overall</td>
-            <td class="align-top">
-              <i class="fa fa-star checked"></i>
-              <i class="fa fa-star checked"></i>
-              <i class="fa fa-star checked"></i>
-              <i class="fa fa-star checked"></i>
-              <i class="fa fa-star checked"></i>
-            </td>
-          </tr>
-          <tr>
-            <td>Cleanliness</td>
-            <td class="align-top">
-              <i class="fa fa-star checked"></i>
-              <i class="fa fa-star checked"></i>
-              <i class="fa fa-star checked"></i>
-              <i class="fa fa-star checked"></i>
-              <i class="fa fa-star"></i>
-            </td>
-          </tr>
-          <tr>
-            <td>Customer Service</td>
-            <td class="align-top">
-              <i class="fa fa-star checked"></i>
-              <i class="fa fa-star checked"></i>
-              <i class="fa fa-star checked"></i>
-              <i class="fa fa-star checked"></i>
-              <i class="fa fa-star"></i>
-            </td>
-          </tr>
+          {{#each ratings}}
+            <tr>
+              <td>{{ this.name }}</td>
+              <td class="align-top">
+                {{#greaterThanEqual this.value 1}}
+                  <i class="fa fa-star checked"></i>
+                {{else}}
+                  <i class="fa fa-star"></i>
+                {{/greaterThanEqual}}
+                {{#greaterThanEqual this.value 2}}
+                  <i class="fa fa-star checked"></i>
+                {{else}}
+                  <i class="fa fa-star"></i>
+                {{/greaterThanEqual}}
+                {{#greaterThanEqual this.value 3}}
+                  <i class="fa fa-star checked"></i>
+                {{else}}
+                  <i class="fa fa-star"></i>
+                {{/greaterThanEqual}}
+                {{#greaterThanEqual this.value 4}}
+                  <i class="fa fa-star checked"></i>
+                {{else}}
+                  <i class="fa fa-star"></i>
+                {{/greaterThanEqual}}
+                {{#greaterThanEqual this.value 5}}
+                  <i class="fa fa-star checked"></i>
+                {{else}}
+                  <i class="fa fa-star"></i>
+                {{/greaterThanEqual}}
+              </td>
+            </tr>
+          {{/each}}
         </table>
       </div>
     </div>
   </div>
-  
 </div>
+
 <div class="div-center tablet-content">
   <div class="mb-5">
     {{#if error}}

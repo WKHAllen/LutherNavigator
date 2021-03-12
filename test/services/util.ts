@@ -50,3 +50,23 @@ export function getByID<T extends { id: any }>(objects: T[], objectID: any): T {
     }
   }
 }
+
+/**
+ * Get an object with a specified property from a list of objects.
+ *
+ * @param objects A list of objects.
+ * @param prop The object's property name.
+ * @param value The object's property value.
+ * @returns The object with the specified property.
+ */
+export function getByProp<T extends { [prop: string]: any }>(
+  objects: T[],
+  prop: string,
+  value: any
+): T {
+  for (const obj of objects) {
+    if (obj[prop] === value) {
+      return obj;
+    }
+  }
+}

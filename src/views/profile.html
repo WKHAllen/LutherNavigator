@@ -7,7 +7,6 @@
       <img
         class="image-circle mb-2"
         id="user-image"
-        height="200px"
         src="/image/user/{{userID}}"
         alt="User image"
       />
@@ -27,7 +26,7 @@
       <div class="col mt-2 mb-2">
         <h4 class="posts">Your posts</h4>
         {{#if hasPosts}}
-        <table class="table">
+        <table class="table table-responsive-sm">
           <thead>
             <tr>
               <th scope="col">Location</th>
@@ -137,6 +136,43 @@
             formaction="/profile/changePassword"
           >
             Change password
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="clear-card mb-5">
+      <form method="POST">
+        <div class="col mt-1">
+          <h3>Change status</h3>
+        </div>
+        <div class="col">
+          Your current status is: <b><i>{{ userStatus }}</i></b
+          >. You can request to change your status below.
+        </div>
+        <div class="row">
+          <div class="form-group col-12">
+            <label for="newUserStatus">New status</label>
+            <select
+              class="form-control clear-select"
+              id="newUserStatus"
+              name="newUserStatus"
+              required
+            >
+              <option value="">Select...</option>
+              {{#each userStatuses}}
+              <option value="{{this.id}}">{{this.name}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+        <div class="col">
+          <button
+            type="submit"
+            class="btn clear-button mb-2"
+            formaction="/profile/changeUserStatus"
+          >
+            Request status change
           </button>
         </div>
       </form>

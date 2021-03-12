@@ -1,0 +1,8 @@
+Hello, your status change request has been approved!
+
+You can always change your user status by accessing your profile using the link below.
+
+{host}/profile
+
+Sincerely,
+The Luther Navigator Team

@@ -236,7 +236,7 @@ export default async function initDB(
       email      VARCHAR(63)  NOT NULL,
       createTime INT UNSIGNED NOT NULL,
 
-      PRIMARY KEY(id)
+      PRIMARY KEY (id)
     );
   `;
   const passwordResetTable = `
@@ -246,6 +246,22 @@ export default async function initDB(
       createTime INT UNSIGNED NOT NULL,
 
       PRIMARY KEY (id)
+    );
+  `;
+  const userStatusChangeTable = `
+    CREATE TABLE IF NOT EXISTS UserStatusChange (
+      id          CHAR(4)      NOT NULL,
+      userID      CHAR(4)      NOT NULL,
+      newStatusID INT          NOT NULL,
+      createTime  INT UNSIGNED NOT NULL,
+
+      PRIMARY KEY (id),
+
+      FOREIGN KEY (userID)
+        REFERENCES User (id),
+
+      FOREIGN KEY (newStatusID)
+        REFERENCES UserStatus (id)
     );
   `;
   const metaTable = `
@@ -268,6 +284,7 @@ export default async function initDB(
     sessionTable,
     verifyTable,
     passwordResetTable,
+    userStatusChangeTable,
     metaTable,
   ]);
 

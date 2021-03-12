@@ -101,7 +101,7 @@ test("Query", async () => {
   expect(result?.id).toBe(postID);
   expect(result["rating"]).toBe(generalRating);
 
-  // Advanced query by status
+  // Advanced query by user status
   results = await dbm.queryService.advancedQuery(
     { statusIDs: [statusID] },
     "program"
@@ -144,6 +144,13 @@ test("Query", async () => {
 
   // Advanced query sort by rating
   results = await dbm.queryService.advancedQuery({}, "rating");
+  expect(results.length).toBeGreaterThan(0);
+  result = getByID(results, postID);
+  expect(result?.id).toBe(postID);
+  expect(result["rating"]).toBe(generalRating);
+
+  // Advanced query sort by timestamp
+  results = await dbm.queryService.advancedQuery({}, "timestamp");
   expect(results.length).toBeGreaterThan(0);
   result = getByID(results, postID);
   expect(result?.id).toBe(postID);

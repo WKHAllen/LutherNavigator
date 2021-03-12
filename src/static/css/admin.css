@@ -6,6 +6,7 @@
 
 #admin-tabs .nav-link {
   color: #007bff;
+  font-size: 1rem;
 }
 
 #admin-tabs .nav-link.active {
@@ -35,4 +36,9 @@ h1 {
 #program-table-head {
   font-weight: bold;
   font-style: italic;
+}
+
+#content {
+  max-width: 9999px;
+  padding: 16px 20px;
 }

@@ -18,6 +18,7 @@ import { RatingService } from "./services/rating";
 import { SessionService } from "./services/session";
 import { UserService } from "./services/user";
 import { UserStatusService } from "./services/userStatus";
+import { UserStatusChangeService } from "./services/userStatusChange";
 import { VerifyService } from "./services/verify";
 
 export default class DatabaseManager {
@@ -35,6 +36,7 @@ export default class DatabaseManager {
   readonly sessionService: SessionService;
   readonly userService: UserService;
   readonly userStatusService: UserStatusService;
+  readonly userStatusChangeService: UserStatusChangeService;
   readonly verifyService: VerifyService;
 
   constructor(dbURL: string) {
@@ -52,6 +54,7 @@ export default class DatabaseManager {
     this.sessionService = new SessionService(this);
     this.userService = new UserService(this);
     this.userStatusService = new UserStatusService(this);
+    this.userStatusChangeService = new UserStatusChangeService(this);
     this.verifyService = new VerifyService(this);
   }
 

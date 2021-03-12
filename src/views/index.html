@@ -1,16 +1,18 @@
 <link rel="stylesheet" type="text/css" href="/css/query.css" />
 <link rel="stylesheet" type="text/css" href="/css/index.css" />
+<script type="text/javascript" src="/js/index.js"></script>
 
 <div class="div-center background-blue">
   <div class="search-cover" id="cover">
-    <form method="get" action="" class="search-bar-form">
+    <form class="search-bar-form" onsubmit="basicSearch(event);">
       <div class="td">
-        <input 
-          class="search-bar-input" 
-          type="text" 
-          placeholder="Search" 
+        <input
+          type="text"
+          class="search-bar-input"
+          id="basic-search"
+          placeholder="Search"
           required
-          />
+        />
       </div>
       <div class="td" id="s-cover">
         <button type="submit" class="search-bar-button">

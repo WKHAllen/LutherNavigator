@@ -1,40 +1,137 @@
 <link rel="stylesheet" type="text/css" href="/css/query.css" />
+<script type="text/javascript" src="/js/query.js"></script>
+
 <div class="div-center tablet-content">
-  <h1 class="mb-3">Filter By</h1>
+  <h1 class="text-center mb-3">Search Posts</h1>
   <!-- <hr /> -->
   <form>
+    <div class="search-cover" id="cover">
+      <div class="search-bar-div">
+        <input
+          type="text"
+          class="search-bar-input"
+          id="search"
+          name="search"
+          placeholder="Search"
+        />
+      </div>
+    </div>
     <div class="filter-menu clearfix row">
       <div class="col-6 col-md-3">
         <h5>Categories</h5>
+        {{#each locationTypes}}
         <label class="checkbox-option">
-          <input type="checkbox" value="" />
-          <span class="checkbox-words">Cafe & Bakery</span>
+          <input type="checkbox" id="loc-{{this.id}}" name="loc-{{this.id}}" />
+          <span class="checkbox-words">{{this.name}}</span>
         </label>
-        <label class="checkbox-option">
-          <input type="checkbox" />
-          <span class="checkbox-words">Bar & Pub</span>
-        </label>
+        {{/each}}
       </div>
       <div class="col-6 col-md-3">
         <h5>Programs</h5>
+        {{#each programs}}
         <label class="checkbox-option">
-          <input type="checkbox" />
-          <span class="checkbox-words">Nottingham</span>
+          <input type="checkbox" id="prog-{{this.id}}" name="prog-{{this.id}}" />
+          <span class="checkbox-words">{{this.name}}</span>
         </label>
+        {{/each}}
       </div>
       <div class="col-6 col-md-3">
-        <h5>Status</h5>
+        <h5>Posted by</h5>
+        {{#each userStatuses}}
         <label class="checkbox-option">
-          <input type="checkbox" />
-          <span class="checkbox-words">Student</span>
+          <input type="checkbox" id="user-{{this.id}}" name="user-{{this.id}}" />
+          <span class="checkbox-words">{{this.name}}</span>
         </label>
+        {{/each}}
       </div>
       <div class="col-6 col-md-3">
         <h5>Rating</h5>
         <label class="checkbox-option">
-          <input type="checkbox" />
-          <span class="checkbox-words">5 Stars</span>
+          <input type="checkbox" id="star-5" name="star-5" />
+          <span class="checkbox-words">
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+          </span>
         </label>
+        <label class="checkbox-option">
+          <input type="checkbox" id="star-4" name="star-4" />
+          <span class="checkbox-words">
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star"></span>
+          </span>
+        </label>
+        <label class="checkbox-option">
+          <input type="checkbox" id="star-3" name="star-3" />
+          <span class="checkbox-words">
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+          </span>
+        </label>
+        <label class="checkbox-option">
+          <input type="checkbox" id="star-2" name="star-2" />
+          <span class="checkbox-words">
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+          </span>
+        </label>
+        <label class="checkbox-option">
+          <input type="checkbox" id="star-1" name="star-1" />
+          <span class="checkbox-words">
+            <span class="fa fa-star checked"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6 col-sm-3 mb-3 form-group">
+        <label for="sortBy">Sort by</label>
+        <select
+          class="form-control clear-select"
+          id="sortBy"
+          name="sortBy"
+          required
+        >
+          <option value="locationType">Category</option>
+          <option value="program">Program</option>
+          <option value="userStatus">User type</option>
+          <option value="rating">Rating</option>
+          <option value="timestamp">Post date</option>
+        </select>
+      </div>
+      <div class="col-6 col-sm-3 mb-3 form-group">
+        <label for="sortOrder">Sort order</label>
+        <select
+          class="form-control clear-select"
+          id="sortOrder"
+          name="sortOrder"
+          required
+        >
+          <option value="1">Ascending</option>
+          <option value="0">Descending</option>
+        </select>
+      </div>
+      <div class="col-6 col-sm-3 mb-3 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary btn-block">Search</button>
+      </div>
+      <div class="col-6 col-sm-3 mb-3 d-flex align-items-end">
+        <a href="/query" class="btn btn-light btn-block">Clear</a>
       </div>
     </div>
   </form>
@@ -50,6 +147,14 @@
       <a href="/post/0000" class="a-location col-12 col-sm-6 col-lg-4">
         <img src="/img/vienna.jpg" alt="Vienna" /><span>Hello Kitty World</span>
       </a>
+      {{#each posts}}
+        <div class="fav-place clear-card col-12 col-md-6 col-lg-3">
+          <a href="/post/{{this.id}}" class="sample-3">
+            <img src="/image/post/{{this.id}}/0" alt="{{this.location}}" />
+            <span>{{this.location}}</span>
+          </a>
+        </div>
+      {{/each}}
     </div>
   </div>
 </div>

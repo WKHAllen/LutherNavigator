@@ -280,3 +280,61 @@ apiRouter.get(
     }
   })
 );
+
+// Get user status change requests
+apiRouter.get(
+  "/statusChangeRequests",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const requests = await dbm.userStatusChangeService.getUserRequests();
+
+    res.json(requests);
+  })
+);
+
+// Approve/deny a status change request
+apiRouter.get(
+  "/approveStatusChangeRequest",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const requestID = req.query.requestID as string;
+    const approved =
+      req.query.approved === undefined || req.query.approved === "true";
+
+    const request = await dbm.userStatusChangeService.getStatusChangeRequest(
+      requestID
+    );
+
+    if (request) {
+      const user = await dbm.userService.getUser(request.userID);
+
+      if (approved) {
+        await dbm.userStatusChangeService.approveStatusChangeRequest(requestID);
+        await sendFormattedEmail(
+          user.email,
+          "Luther Navigator - Status Change Approved",
+          "statusChangeApproved",
+          {
+            host: getHostname(req),
+          }
+        );
+      } else {
+        await dbm.userStatusChangeService.denyStatusChangeRequest(requestID);
+        await sendFormattedEmail(
+          user.email,
+          "Luther Navigator - Status Change Not Approved",
+          "statusChangeNotApproved",
+          {
+            host: getHostname(req),
+          }
+        );
+      }
+    }
+
+    res.end();
+  })
+);
