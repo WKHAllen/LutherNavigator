@@ -14,7 +14,7 @@ def main() -> None:
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description="A testing utility.")
 
-    # UI and Mobile Device Emulation Tests
+    # Backend testing
     parser.add_argument(
         "-b",
         "--backend",
@@ -22,7 +22,7 @@ def main() -> None:
         help="backend testing mode",
     )
 
-    # UI and Mobile Device Emulation Tests
+    # UI and mobile device emulation testing
     parser.add_argument(
         "-e",
         "--emulation",
