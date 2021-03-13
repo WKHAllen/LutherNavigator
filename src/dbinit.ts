@@ -8,6 +8,7 @@ import {
   pruneSessions,
   pruneVerifyRecords,
   prunePasswordResetRecords,
+  pruneSuspensions,
 } from "./services/util";
 import { metaConfig } from "./config";
 
@@ -359,5 +360,6 @@ export default async function initDB(
     await pruneSessions(dbm);
     await pruneVerifyRecords(dbm);
     await prunePasswordResetRecords(dbm);
+    await pruneSuspensions(dbm);
   }
 }

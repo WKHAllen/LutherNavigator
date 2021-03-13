@@ -9,6 +9,7 @@ import * as bcrypt from "bcrypt";
 import { Session } from "./session";
 import { Verify } from "./verify";
 import { PasswordReset } from "./passwordReset";
+import { Suspended } from "./suspended";
 import { metaConfig } from "../config";
 
 /**
@@ -325,11 +326,28 @@ export async function pruneSuspension(
   dbm: DatabaseManager,
   suspensionID: string,
   timeRemaining: number = null
-): Promise<void> {}
+): Promise<void> {
+  const suspension = await dbm.suspendedService.getSuspension(suspensionID);
+
+  if (timeRemaining === null) {
+    timeRemaining = (suspension.suspendedUntil - getTime()) * 1000;
+  }
+
+  setTimeout(async () => {
+    await dbm.suspendedService.deleteSuspension(suspensionID);
+  }, timeRemaining);
+}
 
 /**
  * Delete all active suspension records when the time comes.
  *
  * @param dbm The database manager.
  */
-export async function pruneSuspensions(dbm: DatabaseManager): Promise<void> {}
+export async function pruneSuspensions(dbm: DatabaseManager): Promise<void> {
+  const sql = `SELECT id FROM Suspended;`;
+  const rows: Suspended[] = await dbm.execute(sql);
+
+  rows.forEach((row) => {
+    pruneSession(dbm, row.id);
+  });
+}
