@@ -104,25 +104,33 @@
     <div class="alert alert-danger" role="alert">{{error}}</div>
     {{/if}}
   </div>
-  <div class="center post-img mb-5">
+  <div class="row post-img mb-5">
     {{#each images}}
-    <img
-      src="/image/post/{{../postID}}/{{@index}}"
-      alt="uploaded photo from user"
-    />
+    <div class="col-6 col-sm-4">
+      <img
+        src="/image/post/{{../postID}}/{{@index}}"
+        alt="uploaded photo from user"
+      />
+    </div>
     {{/each}}
-    <!-- <img
-      src="http://playfoursquare.s3.amazonaws.com/pix/130277_9pfvgu8sfK3xoD7-YLqMjWGCpOVyAJl-aGDql5Y53dU.jpg"
-      alt="pepperioni pizza pie"
-    />
-    <img
-      src="https://media-cdn.tripadvisor.com/media/photo-s/10/cf/1e/3d/photo0jpg.jpg"
-      alt="Mabe's inside seating"
-    />
-    <img
-      src="https://media-cdn.tripadvisor.com/media/photo-s/06/b6/54/64/mabe-s-pizza.jpg"
-      alt="olive pizza"
-    /> -->
+    <div class="col-6 col-sm-4">
+      <img
+        src="http://playfoursquare.s3.amazonaws.com/pix/130277_9pfvgu8sfK3xoD7-YLqMjWGCpOVyAJl-aGDql5Y53dU.jpg"
+        alt="pepperioni pizza pie"
+      />
+    </div>
+    <div class="col-6 col-sm-4">
+      <img
+        src="https://media-cdn.tripadvisor.com/media/photo-s/10/cf/1e/3d/photo0jpg.jpg"
+        alt="Mabe's inside seating"
+      />
+    </div>
+    <div class="col-6 col-sm-4">
+      <img
+        src="https://media-cdn.tripadvisor.com/media/photo-s/06/b6/54/64/mabe-s-pizza.jpg"
+        alt="olive pizza"
+      />
+    </div>
   </div>
   <div class="col mb-5">
     <h3 class="tagline mb-3">{{ threeWords }}</h3>
