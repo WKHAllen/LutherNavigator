@@ -10,8 +10,13 @@ const PAGEMAP = {
   "https://www.luthernavigator.com": "landing.png",
   "https://www.luthernavigator.com/about": "about.png",
   "https://www.luthernavigator.com/login": "login.png",
+  "https://www.luthernavigator.com/password-reset": "password.png",
   "https://www.luthernavigator.com/post": "post.png",
+  "https://www.luthernavigator.com/privacy": "privacy.png",
+  "https://www.luthernavigator.com/query": "query.png",
+  "https://www.luthernavigator.com/register": "register.png",
   "https://www.luthernavigator.com/restaurant": "restaurant.png",
+  "https://www.luthernavigator.com/terms": "terms.png",
 };
 
 (async () => {
