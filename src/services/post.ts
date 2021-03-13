@@ -173,9 +173,7 @@ export class PostService extends BaseService {
    */
   public async getUserPosts(userID: string): Promise<Post[]> {
     const sql = `
-      SELECT
-          Post.id AS id, location, threeWords, Program.name AS program,
-          approved
+      SELECT Post.*, Program.name AS program
         FROM Post
         JOIN Program ON Post.programID = Program.id
       WHERE Post.userID = ?
