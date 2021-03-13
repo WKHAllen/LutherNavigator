@@ -122,3 +122,4 @@ screenshots/
 
 # Coverage
 coverage/coverage-summary.json
+coverage/badge-branches.svg
