@@ -184,7 +184,7 @@ export default async function initDB(
       ratingID       CHAR(4)      NOT NULL,
       threeWords     VARCHAR(63)  NOT NULL,
       address        VARCHAR(255),
-      phone          INT UNSIGNED,
+      phone          VARCHAR(13),
       website        VARCHAR(255),
       approved       BOOL         NOT NULL DEFAULT FALSE,
       createTime     INT UNSIGNED NOT NULL,

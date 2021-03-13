@@ -92,6 +92,9 @@ postRouter.post(
       req.body.wordTwo,
       req.body.wordThree,
     ].join(", ");
+    const address: string = req.body.address || null;
+    const phone: string = req.body.phone.replace(/[\(\) \-\+]/g, "") || null;
+    const website: string = req.body.website || null;
     const ratings = ratingTypes.map(
       (ratingType) => parseInt(req.body[`${ratingType}Rating`]) || 0
     );
@@ -127,6 +130,11 @@ postRouter.post(
         res,
         "Three word description must total to less than 64 characters"
       );
+    } else if (
+      phone &&
+      (isNaN(parseInt(phone)) || phone.length < 10 || phone.length > 13)
+    ) {
+      setErrorMessage(res, "Invalid phone number");
     } else if (ratingsGood.includes(false)) {
       setErrorMessage(res, "Invalid rating");
     } else if (parseInt(req.body.generalRating) === 0) {
@@ -149,7 +157,10 @@ postRouter.post(
         locationTypeID,
         programID,
         rating,
-        threeWords
+        threeWords,
+        address,
+        phone,
+        website
       );
 
       res.redirect(`/post/${postID}`);

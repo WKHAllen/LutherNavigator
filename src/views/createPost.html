@@ -109,7 +109,7 @@
         <label>Three Word Description *</label>
       </div>
       <div class="row align-items-center">
-        <div class="col-4 mb-3 form-group">
+        <div class="col-12 col-sm-4 mb-3 form-group">
           {{#if form}}
           <input
             type="text"
@@ -131,7 +131,7 @@
           />
           {{/if}}
         </div>
-        <div class="col-4 mb-3 form-group">
+        <div class="col-12 col-sm-4 mb-3 form-group">
           {{#if form}}
           <input
             type="text"
@@ -153,7 +153,7 @@
           />
           {{/if}}
         </div>
-        <div class="col-4 mb-3 form-group">
+        <div class="col-12 col-sm-4 mb-3 form-group">
           {{#if form}}
           <input
             type="text"
@@ -172,6 +172,73 @@
             name="wordThree"
             maxlength="19"
             required
+          />
+          {{/if}}
+        </div>
+      </div>
+
+      <!-- Address, phone number, website -->
+      <div class="row align-items-center">
+        <div class="col-12 mb-3 form-group">
+          <label for="address">Address</label>
+          {{#if form}}
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="address"
+            name="address"
+            maxlength="255"
+            value="{{form.address}}"
+          />
+          {{else}}
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="address"
+            name="address"
+            maxlength="255"
+          />
+          {{/if}}
+        </div>
+        <div class="col-12 col-sm-4 mb-3 form-group">
+          <label for="phone">Phone number</label>
+          {{#if form}}
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="phone"
+            name="phone"
+            maxlength="19"
+            value="{{form.phone}}"
+          />
+          {{else}}
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="phone"
+            name="phone"
+            maxlength="19"
+          />
+          {{/if}}
+        </div>
+        <div class="col-12 col-sm-8 mb-3 form-group">
+          <label for="website">Website</label>
+          {{#if form}}
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="website"
+            name="website"
+            maxlength="255"
+            value="{{form.website}}"
+          />
+          {{else}}
+          <input
+            type="text"
+            class="form-control clear-input"
+            id="website"
+            name="website"
+            maxlength="255"
           />
           {{/if}}
         </div>

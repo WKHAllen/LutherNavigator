@@ -21,7 +21,7 @@ export interface Post {
   ratingID: string;
   threeWords: string;
   address: string | null;
-  phone: number | null;
+  phone: string | null;
   website: string | null;
   approved: boolean;
   createTime: number;
@@ -43,6 +43,9 @@ export class PostService extends BaseService {
    * @param programID The ID of the program the user is in.
    * @param rating The user's rating of the location.
    * @param threeWords Three words to describe the location.
+   * @param address The location's address.
+   * @param phone The location's phone number.
+   * @param website The location's website.
    * @returns The new post's ID.
    */
   public async createPost(
@@ -55,7 +58,7 @@ export class PostService extends BaseService {
     rating: RatingParams,
     threeWords: string,
     address: string = null,
-    phone: number = null,
+    phone: string = null,
     website: string = null
   ): Promise<string> {
     const postID = await newUniqueID(this.dbm, "Post");
