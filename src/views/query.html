@@ -30,7 +30,11 @@
         <h5>Programs</h5>
         {{#each programs}}
         <label class="checkbox-option">
-          <input type="checkbox" id="prog-{{this.id}}" name="prog-{{this.id}}" />
+          <input
+            type="checkbox"
+            id="prog-{{this.id}}"
+            name="prog-{{this.id}}"
+          />
           <span class="checkbox-words">{{this.name}}</span>
         </label>
         {{/each}}
@@ -39,7 +43,11 @@
         <h5>Posted by</h5>
         {{#each userStatuses}}
         <label class="checkbox-option">
-          <input type="checkbox" id="user-{{this.id}}" name="user-{{this.id}}" />
+          <input
+            type="checkbox"
+            id="user-{{this.id}}"
+            name="user-{{this.id}}"
+          />
           <span class="checkbox-words">{{this.name}}</span>
         </label>
         {{/each}}
@@ -138,22 +146,12 @@
 
   <div class="query-page">
     <div class="row">
-      <a href="/post/{{id}}" class="a-location col-12 col-sm-6 col-lg-4">
-        <img src="/img/vienna.jpg" alt="{{locationTitle}}" /><span>?{{locationTitle}}</span>
-      </a>
-      <a href="/post/0000" class="a-location col-12 col-sm-6 col-lg-4">
-        <img src="/img/vienna.jpg" alt="Vienna" /><span>Hai Di Lao</span>
-      </a>
-      <a href="/post/0000" class="a-location col-12 col-sm-6 col-lg-4">
-        <img src="/img/vienna.jpg" alt="Vienna" /><span>Hello Kitty World</span>
-      </a>
       {{#each posts}}
-        <div class="fav-place clear-card col-12 col-md-6 col-lg-3">
-          <a href="/post/{{this.id}}" class="sample-3">
-            <img src="/image/post/{{this.id}}/0" alt="{{this.location}}" />
-            <span>{{this.location}}</span>
-          </a>
-        </div>
+      <a href="/post/{{this.id}}" class="a-location col-12 col-sm-6 col-lg-4">
+        <img src="/image/post/{{this.id}}/0" alt="{{this.location}}" /><span
+          >{{this.location}}</span
+        >
+      </a>
       {{/each}}
     </div>
   </div>
