@@ -1,9 +1,7 @@
 /*
  * Tests pages using three major browser engines: Chromium, Firefox, and
  * WebKit. The tests can be deployed using `npx ts-node uitest.ts` command.
- * However, it is already automated so that every times tests are run, this
- * command also gets executed. Therefore, it suffices to run `sh script.sh
- * test`.
+ * These tests are when the `--emulation` argument is passed to `test.py`.
  *
  */
 import { chromium, firefox, webkit } from "playwright";

@@ -145,7 +145,7 @@ def main() -> None:
         "--add",
         type=str,
         default="",
-        help="add user as an admin",
+        help="add user as admin",
     )
 
     # Remove admin status
@@ -169,12 +169,12 @@ def main() -> None:
     args = parser.parse_args()
 
     # Handle the add case
-    if args.add != "":
+    if args.add:
         err = add_admin(args.add)
         print(f"Error: {err}" if err else "Added user as admin")
 
     # Handle the remove case next
-    elif args.remove != "":
+    elif args.remove:
         err = remove_admin(args.remove)
         print(f"Error: {err}" if err else "Removed user's admin status")
 
