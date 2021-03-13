@@ -19,7 +19,7 @@ body {
 }
 
 h1 {
-  font-size: 22pt;
+  font-size: 24pt;
 }
 
 p {
@@ -50,6 +50,14 @@ a:hover {
   line-height: normal;
 }
 
+.background-blue {
+  background-color: #0061a3;
+}
+
+.background-white {
+  background-color: #ffffff;
+}
+
 /* Error */
 .err-info {
   padding: 16px 32px;
@@ -66,10 +74,10 @@ a:hover {
 }
 
 /* content same as main */
-#content {
+.tablet-content {
   display: block;
   margin: auto;
-  padding: 16px 0px;
+  padding: 16px;
 }
 
 main {
@@ -83,7 +91,6 @@ main {
 
 main.bg-img::after {
   content: "";
-  background-color: #a3c4da; /*CEDFEA 6bbaef*/
   top: 0;
   left: 0;
   bottom: 0;
@@ -116,6 +123,24 @@ header {
 .nav-logo {
   width: 35px;
   height: 35px;
+}
+
+.err-logo {
+  width: 45px;
+  height: 45px;
+}
+
+/* spinning logos */
+@keyframes spinning {
+  from { transform: rotate(0deg) }
+  to { transform: rotate(360deg) }
+}
+
+.spin {
+  animation-name: spinning;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
 }
 
 .toggle-menu-img {
@@ -200,9 +225,8 @@ table {
 
 /*tablet 768px*/
 @media screen and (min-width: 425px) {
-  #content {
+  .tablet-content {
     max-width: 728px;
-    padding: 16px 0px;
   }
 
   .mainbody {
@@ -228,5 +252,9 @@ table {
   .mainbody {
     width: 865px;
     display: inline-table;
+  }
+
+  .tablet-content {
+    padding: 16px 0px;
   }
 }

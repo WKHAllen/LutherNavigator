@@ -1,15 +1,8 @@
+<link rel="stylesheet" type="text/css" href="/css/query.css" />
 <link rel="stylesheet" type="text/css" href="/css/index.css" />
 <script type="text/javascript" src="/js/index.js"></script>
-<!-- <div class="menus row">
-  <a class="btn menu-button col-md-4 col-sm-12" href="/"> Accommodations </a>
-  <a class="btn menu-button col-md-4 col-sm-12" href="/query">
-    Restaurants
-  </a>
-  <a class="btn menu-button col-md-4 col-sm-12" href="/post/test">
-    Attractions
-  </a>
-</div> -->
-<div class="homepage">
+
+<div class="div-center background-blue">
   <div class="search-cover" id="cover">
     <form class="search-bar-form" onsubmit="basicSearch(event);">
       <div class="td">
@@ -30,50 +23,62 @@
     </form>
   </div>
 
-  <div class="center">
-    <a href="/query">Advanced search</a>
+  <div class="center mb-4">
+    <a class="adv-search" href="/query">Advanced search</a>
   </div>
 
-  <div class="home-card mb-4">
-    <h1>Where will you go?</h1>
-    <p>
-      Find Luther's favorite places around the globe. All locations are
-      hand-picked by your fellow Luther students, faculty, staff, parents, and
-      neighbors.
-    </p>
-  </div>
-  <div class="home-card home-filter mb-4">
-    <h3>Popular Luther Programs</h3>
-    <div class="row">
-      <div class="fav-place clear-card col-md-4 col-12">
-        <a href="/search?program=nottingham" class="sample-3">Nottingham</a>
-        <img src="/img/vienna.jpg" alt="Vienna" />
+  <div class="home-card intro-text mb-4">
+    <h1 class="center mb-4">Navigation Through Luther's Eyes</h1>
+    <div class="tablet-content">
+      <div class="row mb-3">
+        <p class="col-6">Rate, review, and share your favorite locations around the globe</p>
+        <div class="col-6 div-center center">
+          <i class="fas fa-star-half-alt"></i>
+        </div>
       </div>
-      <div class="fav-place clear-card col-md-4 col-12">
-        <a href="/search?program=malta" class="sample-3">Malta</a>
-        <img src="/img/vienna.jpg" alt="Vienna" />
+      <div class="row mb-3">
+        <div class="col-6 div-center center">
+          <i class="fas fa-globe-europe"></i>
+        </div>
+        <p class="col-6">Explore exciting locations through students, alumni, and others in the Luther community</p>
       </div>
-      <div class="fav-place clear-card col-md-4 col-12">
-        <a href="/search?program=music" class="sample-3">Vienna</a>
-        <img src="/img/vienna.jpg" alt="Vienna" />
+      <div class="row mb-3">
+        <p class="col-6">Choose your own study abroad experience</p>
+        <div class="col-6 div-center center">
+          <i class="fas fa-atlas"></i>
+        </div>
       </div>
     </div>
   </div>
-  <div class="home-card home-filter mb-4">
+</div>
+
+<div class="div-center background-white tablet-content">
+  <div class="home-card home-suggestions mb-4">
+    <h3>Popular Luther Programs</h3>
+    <div class="row">
+      <a href="/query?program=nottingham" class="a-location col-12 col-md-4">
+        <img src="/img/nottingham.jpg" alt="Bestwood Lodge Hotel, Nottingham, England" /><span>Nottingham</span>
+      </a>
+      <a href="/query?program=malta" class="a-location col-12 col-md-4">
+        <img src="/img/malta.jpg" alt="Multiple living complexes in Malta" /><span>Malta</span>
+      </a>
+      <a href="/query?program=münster" class="a-location col-12 col-md-4">
+        <img src="/img/münster.jpg" alt="Street View of Münster at night" /><span>M&#252nster</span>
+      </a>
+    </div>
+  </div>
+  <div class="home-card home-suggestions mb-2">
     <h3>Developer Favorites</h3>
     <div class="row">
-      <div class="fav-place clear-card col-md-4 col-12">
-        <a href="/post/test" class="sample-3">Somewhere</a>
-        <img src="/img/vienna.jpg" alt="Vienna" />
-      </div>
-      <div class="fav-place clear-card col-md-4 col-12">
-        <a href="/post/test" class="sample-3">Hai Di Lao</a>
-        <img src="/img/vienna.jpg" alt="Vienna" />
-      </div>
-      <div class="fav-place clear-card col-md-4 col-12">
-        <a href="/post/test" class="sample-3">Somewhere</a>
-        <img src="/img/vienna.jpg" alt="Vienna" />
-      </div>
+      <a href="/post/test" class="a-location col-12 col-md-4">
+        <img src="/img/mabes.jpg" alt="Mabe's Pizza restaurant front" /><span>Mabe's Pizza</span>
+      </a>
+      <a href="/post/test" class="a-location col-12 col-md-4">
+        <img src="/img/mabes.jpg" alt="Mabe's Pizza restaurant front" /><span>Mabe's Pizza</span>
+      </a>
+      <a href="/post/test" class="a-location col-12 col-md-4">
+        <img src="/img/mabes.jpg" alt="Mabe's Pizza restaurant front" /><span>Mabe's Pizza</span>
+      </a>
     </div>
   </div>
 </div>

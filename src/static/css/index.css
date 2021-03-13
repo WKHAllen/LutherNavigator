@@ -12,54 +12,36 @@
   border: solid 1px #0061a3;
 }
 
-.clear-card {
-  margin: 0;
+.adv-search, .intro-text {
+  color: #ffffff;
 }
+
+.intro-text p {
+  text-align: left;
+}
+
+.intro-text i {
+  font-size: 48pt;
+}
+
+.intro-text i:hover {
+  color:#e88900;
+}
+
 
 .home-card {
-  padding: 20px;
-  /* background-color: #e5edfd; */
-  /* box-shadow: 0 10px 40px #0061a3, 0 0 0 20px #ffffff; */
+	padding: 10px;
 }
 
-h3 {
+.home-suggestions {
+  text-align: center;
+}
+
+.home-suggestions > h3 {
   text-align: left;
   padding-bottom: 10px;
   font-size: 18pt;
 }
-
-.sample-3 {
-  font-size: 14pt;
-  display: block;
-  color: #0061a3;
-}
-
-img {
-  width: inherit;
-}
-
-.home-filter {
-  text-align: center;
-}
-
-.fav-place {
-  display: inline-block;
-  /* margin: 5px 0; */
-}
-
-#welcome-im {
-  margin: 0 !important;
-}
-
-img {
-  max-width: 800px;
-}
-
-/* Home page / index */
-/* .homepage { */
-/* margin: auto; */
-/* max-width: 385px; */
-/* } */
 
 /* Search Bar */
 
@@ -78,13 +60,13 @@ img {
 }
 
 #cover {
-  max-width: 480px;
-  padding: 10px;
-  margin: 0 auto;
-  background-color: #d8e5ff; /*48ADF0*/
-  border-radius: 999px;
-  /* box-shadow: 0 10px 40px #0061a3, 0 0 0 20px #ffffff; */
-  transform: scale(0.6);
+	max-width: 480px;
+	padding: 10px;
+	margin:  0 auto;
+	background-color: #d8e5ff; /*48ADF0*/
+	border-radius: 999px;
+	/* box-shadow: 0 8px 15px 0 #8a8a8b, 0 0 0 0px #ffffff; , off-center, blur edges, radius */
+	transform: scale(0.6);
 }
 
 .search-bar-form {
@@ -92,10 +74,10 @@ img {
 }
 
 .search-bar-input[type="text"] {
-  width: 100%;
-  height: 48px;
-  font-size: 22pt;
-  margin-left: 10px;
+	width: 100%;
+	height: 48px;
+	font-size: 22pt;
+	margin-left: 10px;
   outline: none;
 }
 
@@ -104,7 +86,7 @@ img {
 }
 
 /* typing in the search bar */
-.search-bar-button[type="text"]:focus::-webkit-input-placeholder {
+.search-bar-input:focus::-webkit-input-placeholder { 
   color: #66a0c7;
 }
 
@@ -114,11 +96,11 @@ img {
 }
 
 .search-bar-button {
-  position: relative;
-  display: block;
-  width: 64px; /* change mobile!*/
-  height: 48px;
-  cursor: pointer;
+	position: relative;
+	display: block;
+	width: 64px;
+	height: 48px;
+	cursor: pointer;
 }
 
 /* magnifying glass */
@@ -201,8 +183,12 @@ img {
   background-color: #0061a3;
 }
 
-/*@media screen and (min-width: 768px) {
-  .homepage {
-     max-width: 728px;
+@media screen and (min-width: 768px) {
+  .home-card {
+	  padding: 20px;
   }
-} */
+
+  .intro-text i {
+    font-size: 36pt;
+  }
+}
