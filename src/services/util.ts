@@ -313,3 +313,23 @@ export async function prunePasswordResetRecords(
     prunePasswordResetRecord(dbm, row.id, timeRemaining * 1000);
   });
 }
+
+/**
+ * Delete a suspension record when the time comes.
+ *
+ * @param dbm The database manager.
+ * @param suspensionID A suspension record ID.
+ * @param timeRemaining The amount of time to wait before removing the record.
+ */
+export async function pruneSuspension(
+  dbm: DatabaseManager,
+  suspensionID: string,
+  timeRemaining: number = null
+): Promise<void> {}
+
+/**
+ * Delete all active suspension records when the time comes.
+ *
+ * @param dbm The database manager.
+ */
+export async function pruneSuspensions(dbm: DatabaseManager): Promise<void> {}

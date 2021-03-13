@@ -3,7 +3,7 @@
  * @packageDocumentation
  */
 
-import { BaseService, getTime, newUniqueID } from "./util";
+import { BaseService, getTime, newUniqueID, pruneSuspension } from "./util";
 import { User } from "./user";
 
 /**
@@ -25,9 +25,38 @@ export class SuspendedService extends BaseService {
    *
    * @param userID A user's ID.
    * @param until The time at which the account will no longer be suspended.
+   * @param prune Whether or not to prune the suspension when the time comes.
    * @return The new suspension record's ID.
    */
-  public async suspendUser(userID: string, until: number): Promise<string> {}
+  public async suspendUser(
+    userID: string,
+    until: number,
+    prune: boolean = true
+  ): Promise<string> {
+    const suspensionID = await newUniqueID(this.dbm, "UserStatusChange");
+
+    let sql = `SELECT id FROM Suspended WHERE userID = ?;`;
+    let params: any[] = [userID];
+    const rows: Suspended[] = await this.dbm.execute(sql, params);
+
+    if (rows.length === 0) {
+      sql = `
+        INSERT INTO Suspended (
+          id, userID, suspendedUntil, createTime
+        ) VALUES (
+          ?, ?, ?, ?
+        );
+      `;
+      params = [suspensionID, userID, until, getTime()];
+      await this.dbm.execute(sql, params);
+
+      if (prune) {
+        pruneSuspension(this.dbm, suspensionID);
+      }
+
+      return suspensionID;
+    }
+  }
 
   /**
    * Check if a suspension record exists.
@@ -35,7 +64,13 @@ export class SuspendedService extends BaseService {
    * @param suspensionID A suspension record's ID.
    * @returns Whether or not the suuspension record exists.
    */
-  public async suspensionExists(suspensionID: string): Promise<boolean> {}
+  public async suspensionExists(suspensionID: string): Promise<boolean> {
+    const sql = `SELECT id FROM Suspension WHERE id = ?;`;
+    const params = [suspensionID];
+    const rows: Suspended[] = await this.dbm.execute(sql, params);
+
+    return rows.length > 0;
+  }
 
   /**
    * Get a suspension record.
@@ -43,14 +78,24 @@ export class SuspendedService extends BaseService {
    * @param suspensionID A suspension record's ID.
    * @returns The suspension record.
    */
-  public async getSuspension(suspensionID: string): Promise<Suspended> {}
+  public async getSuspension(suspensionID: string): Promise<Suspended> {
+    const sql = `SELECT * FROM Suspended WHERE id = ?;`;
+    const params = [suspensionID];
+    const rows: Suspended[] = await this.dbm.execute(sql, params);
+
+    return rows[0];
+  }
 
   /**
    * Delete a suspension record.
    *
    * @param suspensionID A suspension record's ID.
    */
-  public async deleteSuspension(suspensionID: string): Promise<void> {}
+  public async deleteSuspension(suspensionID: string): Promise<void> {
+    const sql = `DELETE FROM Suspended WHERE id = ?;`;
+    const params = [suspensionID];
+    await this.dbm.execute(sql, params);
+  }
 
   /**
    * Check whether or not a user's account has been suspended.
@@ -58,12 +103,27 @@ export class SuspendedService extends BaseService {
    * @param userID A user's ID.
    * @returns Whether or not the user's account has been suspended.
    */
-  public async userIsSuspended(userID: string): Promise<boolean> {}
+  public async userIsSuspended(userID: string): Promise<boolean> {
+    const sql = `SELECT id FROM Suspended WHERE userID = ?;`;
+    const params = [userID];
+    const rows: Suspended[] = await this.dbm.execute(sql, params);
+
+    return rows.length > 0;
+  }
 
   /**
    * Get all suspended users.
    *
    * @returns All suspended users
    */
-  public async suspendedUsers(): Promise<User[]> {}
+  public async suspendedUsers(): Promise<User[]> {
+    const sql = `
+      SELECT * FROM User WHERE id IN (
+        SELECT userID FROM Suspended
+      );
+    `;
+    const rows: User[] = await this.dbm.execute(sql);
+
+    return rows;
+  }
 }
