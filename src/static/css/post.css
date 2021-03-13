@@ -43,3 +43,11 @@ h4 {
 #ratings > div {
   margin-bottom: 4px;
 }
+
+#location-info a {
+  color: #6ab2ff;
+}
+
+#location-info a:hover {
+  color: #1c8aff;
+}

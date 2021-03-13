@@ -25,16 +25,39 @@
         >
           <i class="fas fa-ellipsis-h" aria-hidden="true"></i>
         </button>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="post-dropdown">
+        <div
+          class="dropdown-menu dropdown-menu-right"
+          aria-labelledby="post-dropdown"
+        >
           <form method="POST">
-            <button class="dropdown-item" type="submit" formaction="/post/{{postID}}/delete">Delete post</a>
+            <button
+              class="dropdown-item"
+              type="submit"
+              formaction="/post/{{ postID }}/delete"
+            >
+              Delete post
+            </button>
           </form>
         </div>
       </div>
       {{/if}}
     </div>
     <div class="row">
-      <h4 class="mb-4 col-12 col-md-8">111 W. Water St | Decorah, IA | 563-222-2225 | mabespizza.com</h4>
+      <h4 class="mb-4 col-12 col-md-8" id="location-info">
+        <div class="row mb-2">
+          <a
+            href="https://www.google.com/maps/place/111+W+Water+St,+Decorah,+IA+52101"
+            target="_blank"
+            >111 W. Water St, Decorah, IA</a
+          >
+        </div>
+        <div class="row mb-2">
+          <a href="tel:5632222225">(563) 222-2225</a>
+        </div>
+        <div class="row mb-2">
+          <a href="https://mabespizza.com/" target="_blank">mabespizza.com</a>
+        </div>
+      </h4>
       <!-- <h4 class="mb-4 col-12 col-md-8">Address | Phone | Website</h4> -->
       <div class="mb-3 col-9 col-md-4">
         <table>
@@ -42,36 +65,32 @@
             <th class="">Rating</th>
           </tr>
           {{#each ratings}}
-            <tr>
-              <td>{{ this.name }}</td>
-              <td class="align-top">
-                {{#greaterThanEqual this.value 1}}
-                  <i class="fa fa-star checked"></i>
-                {{else}}
-                  <i class="fa fa-star"></i>
-                {{/greaterThanEqual}}
-                {{#greaterThanEqual this.value 2}}
-                  <i class="fa fa-star checked"></i>
-                {{else}}
-                  <i class="fa fa-star"></i>
-                {{/greaterThanEqual}}
-                {{#greaterThanEqual this.value 3}}
-                  <i class="fa fa-star checked"></i>
-                {{else}}
-                  <i class="fa fa-star"></i>
-                {{/greaterThanEqual}}
-                {{#greaterThanEqual this.value 4}}
-                  <i class="fa fa-star checked"></i>
-                {{else}}
-                  <i class="fa fa-star"></i>
-                {{/greaterThanEqual}}
-                {{#greaterThanEqual this.value 5}}
-                  <i class="fa fa-star checked"></i>
-                {{else}}
-                  <i class="fa fa-star"></i>
-                {{/greaterThanEqual}}
-              </td>
-            </tr>
+          <tr>
+            <td>{{ this.name }}</td>
+            <td class="align-top">
+              {{#greaterThanEqual this.value 1}}
+              <i class="fa fa-star checked"></i>
+              {{else}}
+              <i class="fa fa-star"></i>
+              {{/greaterThanEqual}} {{#greaterThanEqual this.value 2}}
+              <i class="fa fa-star checked"></i>
+              {{else}}
+              <i class="fa fa-star"></i>
+              {{/greaterThanEqual}} {{#greaterThanEqual this.value 3}}
+              <i class="fa fa-star checked"></i>
+              {{else}}
+              <i class="fa fa-star"></i>
+              {{/greaterThanEqual}} {{#greaterThanEqual this.value 4}}
+              <i class="fa fa-star checked"></i>
+              {{else}}
+              <i class="fa fa-star"></i>
+              {{/greaterThanEqual}} {{#greaterThanEqual this.value 5}}
+              <i class="fa fa-star checked"></i>
+              {{else}}
+              <i class="fa fa-star"></i>
+              {{/greaterThanEqual}}
+            </td>
+          </tr>
           {{/each}}
         </table>
       </div>
