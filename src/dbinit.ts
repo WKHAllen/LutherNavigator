@@ -264,6 +264,19 @@ export default async function initDB(
         REFERENCES UserStatus (id)
     );
   `;
+  const suspendedTable = `
+    CREATE TABLE IF NOT EXISTS Suspended (
+      id             CHAR(4)      NOT NULL,
+      userID         CHAR(4)      NOT NULL,
+      suspendedUntil INT UNSIGNED NOT NULL,
+      createTime     INT UNSIGNED NOT NULL,
+
+      PRIMARY KEY (id),
+
+      FOREIGN KEY (userID)
+        REFERENCES User (id)
+    );
+  `;
   const metaTable = `
     CREATE TABLE IF NOT EXISTS Meta (
       name  VARCHAR(255) NOT NULL,
@@ -285,6 +298,7 @@ export default async function initDB(
     verifyTable,
     passwordResetTable,
     userStatusChangeTable,
+    suspendedTable,
     metaTable,
   ]);
 
