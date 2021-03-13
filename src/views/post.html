@@ -25,53 +25,71 @@
         >
           <i class="fas fa-ellipsis-h" aria-hidden="true"></i>
         </button>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="post-dropdown">
+        <div
+          class="dropdown-menu dropdown-menu-right"
+          aria-labelledby="post-dropdown"
+        >
           <form method="POST">
-            <button class="dropdown-item" type="submit" formaction="/post/{{postID}}/delete">Delete post</a>
+            <button
+              class="dropdown-item"
+              type="submit"
+              formaction="/post/{{postID}}/delete"
+            >
+              Delete post
+            </button>
           </form>
         </div>
       </div>
       {{/if}}
     </div>
     <div class="row">
-      <h4 class="mb-4 col-12 col-md-8">111 W. Water St | Decorah, IA | 563-222-2225 | mabespizza.com</h4>
-      <!-- <h4 class="mb-4 col-12 col-md-8">Address | Phone | Website</h4> -->
+      <h4 class="mb-4 col-12 col-md-8">
+        {{#if address}}
+        <div class="row mb-2">
+          <a href="{{ addressURL }}" target="_blank">{{ address }}</a>
+        </div>
+        {{/if}} {{#if phone}}
+        <div class="row mb-2">
+          <a href="tel:{{ phone }}">{{ phoneFormatted }}</a>
+        </div>
+        {{/if}} {{#if website}}
+        <div class="row mb-2">
+          <a href="{{ websiteURL }}" target="_blank">{{ website }}</a>
+        </div>
+        {{/if}}
+      </h4>
       <div class="mb-3 col-9 col-md-4">
         <table>
           <tr>
             <th class="">Rating</th>
           </tr>
           {{#each ratings}}
-            <tr>
-              <td>{{ this.name }}</td>
-              <td class="align-top">
-                {{#greaterThanEqual this.value 1}}
-                  <i class="fa fa-star checked"></i>
-                {{else}}
-                  <i class="fa fa-star"></i>
-                {{/greaterThanEqual}}
-                {{#greaterThanEqual this.value 2}}
-                  <i class="fa fa-star checked"></i>
-                {{else}}
-                  <i class="fa fa-star"></i>
-                {{/greaterThanEqual}}
-                {{#greaterThanEqual this.value 3}}
-                  <i class="fa fa-star checked"></i>
-                {{else}}
-                  <i class="fa fa-star"></i>
-                {{/greaterThanEqual}}
-                {{#greaterThanEqual this.value 4}}
-                  <i class="fa fa-star checked"></i>
-                {{else}}
-                  <i class="fa fa-star"></i>
-                {{/greaterThanEqual}}
-                {{#greaterThanEqual this.value 5}}
-                  <i class="fa fa-star checked"></i>
-                {{else}}
-                  <i class="fa fa-star"></i>
-                {{/greaterThanEqual}}
-              </td>
-            </tr>
+          <tr>
+            <td>{{ this.name }}</td>
+            <td class="align-top">
+              {{#greaterThanEqual this.value 1}}
+              <i class="fa fa-star checked"></i>
+              {{else}}
+              <i class="fa fa-star"></i>
+              {{/greaterThanEqual}} {{#greaterThanEqual this.value 2}}
+              <i class="fa fa-star checked"></i>
+              {{else}}
+              <i class="fa fa-star"></i>
+              {{/greaterThanEqual}} {{#greaterThanEqual this.value 3}}
+              <i class="fa fa-star checked"></i>
+              {{else}}
+              <i class="fa fa-star"></i>
+              {{/greaterThanEqual}} {{#greaterThanEqual this.value 4}}
+              <i class="fa fa-star checked"></i>
+              {{else}}
+              <i class="fa fa-star"></i>
+              {{/greaterThanEqual}} {{#greaterThanEqual this.value 5}}
+              <i class="fa fa-star checked"></i>
+              {{else}}
+              <i class="fa fa-star"></i>
+              {{/greaterThanEqual}}
+            </td>
+          </tr>
           {{/each}}
         </table>
       </div>
@@ -92,18 +110,6 @@
       alt="uploaded photo from user"
     />
     {{/each}}
-    <!-- <img
-      src="http://playfoursquare.s3.amazonaws.com/pix/130277_9pfvgu8sfK3xoD7-YLqMjWGCpOVyAJl-aGDql5Y53dU.jpg"
-      alt="pepperioni pizza pie"
-    />
-    <img
-      src="https://media-cdn.tripadvisor.com/media/photo-s/10/cf/1e/3d/photo0jpg.jpg"
-      alt="Mabe's inside seating"
-    />
-    <img
-      src="https://media-cdn.tripadvisor.com/media/photo-s/06/b6/54/64/mabe-s-pizza.jpg"
-      alt="olive pizza"
-    /> -->
   </div>
   <div class="col mb-5">
     <h3 class="tagline mb-3">{{ threeWords }}</h3>

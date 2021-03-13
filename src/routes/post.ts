@@ -222,6 +222,24 @@ postRouter.get(
       }
     }
 
+    const addressURL = post.address
+      ? "https://www.google.com/maps/place/" + post.address.replace(/ /g, "+")
+      : null;
+    const phoneFormatted = post.phone
+      ? `${
+          post.phone.length > 10 ? `+${post.phone.slice(0, -10)} ` : ""
+        }(${post.phone.slice(-10, -7)}) ${post.phone.slice(
+          -7,
+          -4
+        )}-${post.phone.slice(-4)}`
+      : null;
+    const websiteURL = post.website
+      ? post.website.startsWith("http://") ||
+        post.website.startsWith("https://")
+        ? post.website
+        : "http://" + post.website
+      : null;
+
     await renderPage(req, res, "post", {
       title: post.location,
       error,
@@ -234,6 +252,12 @@ postRouter.get(
       createTime: post.createTime,
       threeWords: post.threeWords,
       content: post.content,
+      address: post.address,
+      addressURL,
+      phone: post.phone,
+      phoneFormatted,
+      website: post.website,
+      websiteURL,
       images,
       ratings,
       userPost: postUser.id === userID,
