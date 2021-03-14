@@ -12,7 +12,8 @@
   border: solid 1px #0061a3;
 }
 
-.adv-search, .intro-text {
+.adv-search,
+.intro-text {
   color: #ffffff;
 }
 
@@ -25,12 +26,11 @@
 }
 
 .intro-text i:hover {
-  color:#e88900;
+  color: #ffe100;
 }
 
-
 .home-card {
-	padding: 10px;
+  padding: 10px;
 }
 
 .home-suggestions {
@@ -60,13 +60,13 @@
 }
 
 #cover {
-	max-width: 480px;
-	padding: 10px;
-	margin:  0 auto;
-	background-color: #d8e5ff; /*48ADF0*/
-	border-radius: 999px;
-	/* box-shadow: 0 8px 15px 0 #8a8a8b, 0 0 0 0px #ffffff; , off-center, blur edges, radius */
-	transform: scale(0.6);
+  max-width: 480px;
+  padding: 10px;
+  margin: 0 auto;
+  background-color: #d8e5ff; /*48ADF0*/
+  border-radius: 999px;
+  /* box-shadow: 0 8px 15px 0 #8a8a8b, 0 0 0 0px #ffffff; , off-center, blur edges, radius */
+  transform: scale(0.6);
 }
 
 .search-bar-form {
@@ -74,10 +74,10 @@
 }
 
 .search-bar-input[type="text"] {
-	width: 100%;
-	height: 48px;
-	font-size: 22pt;
-	margin-left: 10px;
+  width: 100%;
+  height: 48px;
+  font-size: 22pt;
+  margin-left: 10px;
   outline: none;
 }
 
@@ -86,7 +86,7 @@
 }
 
 /* typing in the search bar */
-.search-bar-input:focus::-webkit-input-placeholder { 
+.search-bar-input:focus::-webkit-input-placeholder {
   color: #66a0c7;
 }
 
@@ -96,11 +96,11 @@
 }
 
 .search-bar-button {
-	position: relative;
-	display: block;
-	width: 64px;
-	height: 48px;
-	cursor: pointer;
+  position: relative;
+  display: block;
+  width: 64px;
+  height: 48px;
+  cursor: pointer;
 }
 
 /* magnifying glass */
@@ -185,7 +185,7 @@
 
 @media screen and (min-width: 768px) {
   .home-card {
-	  padding: 20px;
+    padding: 20px;
   }
 
   .intro-text i {
