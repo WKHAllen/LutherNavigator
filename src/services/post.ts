@@ -20,6 +20,9 @@ export interface Post {
   programID: number;
   ratingID: string;
   threeWords: string;
+  address: string | null;
+  phone: string | null;
+  website: string | null;
   approved: boolean;
   createTime: number;
   editTime: number | null;
@@ -40,6 +43,9 @@ export class PostService extends BaseService {
    * @param programID The ID of the program the user is in.
    * @param rating The user's rating of the location.
    * @param threeWords Three words to describe the location.
+   * @param address The location's address.
+   * @param phone The location's phone number.
+   * @param website The location's website.
    * @returns The new post's ID.
    */
   public async createPost(
@@ -50,7 +56,10 @@ export class PostService extends BaseService {
     locationTypeID: number,
     programID: number,
     rating: RatingParams,
-    threeWords: string
+    threeWords: string,
+    address: string = null,
+    phone: string = null,
+    website: string = null
   ): Promise<string> {
     const postID = await newUniqueID(this.dbm, "Post");
     const ratingID = await this.dbm.ratingService.createRating(rating);
@@ -58,10 +67,10 @@ export class PostService extends BaseService {
     const sql = `
       INSERT INTO Post (
         id, userID, content, location, locationTypeID, programID, ratingID,
-        threeWords, createTime
+        threeWords, address, phone, website, createTime
       ) VALUES (
         ?, ?, ?, ?, ?, ?, ?,
-        ?, ?
+        ?, ?, ?, ?, ?
       );
     `;
     const params = [
@@ -73,6 +82,9 @@ export class PostService extends BaseService {
       programID,
       ratingID,
       threeWords,
+      address,
+      phone,
+      website,
       getTime(),
     ];
     await this.dbm.execute(sql, params);

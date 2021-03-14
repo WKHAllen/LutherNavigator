@@ -16,7 +16,7 @@
       {{#if userPost}}
       <div class="dropdown">
         <button
-          class="btn btn-secondary"
+          class="btn btn-light"
           type="button"
           id="post-dropdown"
           data-toggle="dropdown"
@@ -43,22 +43,21 @@
       {{/if}}
     </div>
     <div class="row">
-      <h4 class="mb-4 col-12 col-md-8" id="location-info">
+      <h4 class="mb-4 col-12 col-md-8">
+        {{#if address}}
         <div class="row mb-2">
-          <a
-            href="https://www.google.com/maps/place/111+W+Water+St,+Decorah,+IA+52101"
-            target="_blank"
-            >111 W. Water St, Decorah, IA</a
-          >
+          <a href="{{ addressURL }}" target="_blank">{{ address }}</a>
         </div>
+        {{/if}} {{#if phone}}
         <div class="row mb-2">
-          <a href="tel:5632222225">(563) 222-2225</a>
+          <a href="tel:{{ phone }}">{{ phoneFormatted }}</a>
         </div>
+        {{/if}} {{#if website}}
         <div class="row mb-2">
-          <a href="https://mabespizza.com/" target="_blank">mabespizza.com</a>
+          <a href="{{ websiteURL }}" target="_blank">{{ website }}</a>
         </div>
+        {{/if}}
       </h4>
-      <!-- <h4 class="mb-4 col-12 col-md-8">Address | Phone | Website</h4> -->
       <div class="mb-3 col-9 col-md-4">
         <table>
           <tr>
@@ -113,24 +112,6 @@
       />
     </div>
     {{/each}}
-    <!-- <div class="col-6 col-sm-4">
-      <img
-        src="http://playfoursquare.s3.amazonaws.com/pix/130277_9pfvgu8sfK3xoD7-YLqMjWGCpOVyAJl-aGDql5Y53dU.jpg"
-        alt="pepperioni pizza pie"
-      />
-    </div>
-    <div class="col-6 col-sm-4">
-      <img
-        src="https://media-cdn.tripadvisor.com/media/photo-s/10/cf/1e/3d/photo0jpg.jpg"
-        alt="Mabe's inside seating"
-      />
-    </div>
-    <div class="col-6 col-sm-4">
-      <img
-        src="https://media-cdn.tripadvisor.com/media/photo-s/06/b6/54/64/mabe-s-pizza.jpg"
-        alt="olive pizza"
-      />
-    </div> -->
   </div>
   <div class="col mb-5">
     <h3 class="tagline mb-3">{{ threeWords }}</h3>
