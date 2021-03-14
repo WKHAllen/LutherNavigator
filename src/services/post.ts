@@ -172,7 +172,13 @@ export class PostService extends BaseService {
    * @returns A list of all posts made by the user.
    */
   public async getUserPosts(userID: string): Promise<Post[]> {
-    const sql = `SELECT * FROM Post WHERE userID = ? ORDER BY createTime;`;
+    const sql = `
+      SELECT Post.*, Program.name AS program
+        FROM Post
+        JOIN Program ON Post.programID = Program.id
+      WHERE Post.userID = ?
+      ORDER BY Post.createTime;
+    `;
     const params = [userID];
     const rows: Post[] = await this.dbm.execute(sql, params);
 
