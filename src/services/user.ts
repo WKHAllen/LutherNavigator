@@ -13,6 +13,15 @@ import {
 import { Image } from "./image";
 
 /**
+ * Login status codes.
+ */
+export enum LoginStatus {
+  Success,
+  BadLogin,
+  AccountSuspended,
+}
+
+/**
  * User architecture.
  */
 export interface User {
@@ -153,24 +162,31 @@ export class UserService extends BaseService {
    *
    * @param email The user's email address.
    * @param password The user's password.
-   * @returns Whether or not the login was successful.
+   * @returns A login status code.
    */
-  public async login(email: string, password: string): Promise<boolean> {
-    let sql = `SELECT password FROM User WHERE email = ? AND verified = TRUE AND approved = TRUE;`;
+  public async login(email: string, password: string): Promise<LoginStatus> {
+    let sql = `SELECT id, password FROM User WHERE email = ? AND verified = TRUE AND approved = TRUE;`;
     let params: any[] = [email];
     let rows: User[] = await this.dbm.execute(sql, params);
 
     const hash = rows[0]?.password || "";
     const same = await checkPassword(password, hash);
     if (rows.length === 0 || !same) {
-      return false;
+      return LoginStatus.BadLogin;
+    }
+
+    const suspended = await this.dbm.suspendedService.userIsSuspended(
+      rows[0].id
+    );
+    if (suspended) {
+      return LoginStatus.AccountSuspended;
     }
 
     sql = `UPDATE User SET lastLoginTime = ? WHERE email = ?;`;
     params = [getTime(), email];
     await this.dbm.execute(sql, params);
 
-    return true;
+    return LoginStatus.Success;
   }
 
   /**

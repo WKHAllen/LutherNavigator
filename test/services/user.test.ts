@@ -1,6 +1,7 @@
 import { getDBM, closeDBM } from "./util";
 import * as crypto from "crypto";
 import { getTime, checkPassword } from "../../src/services/util";
+import { LoginStatus } from "../../src/services/user";
 
 // Test user service
 test("User", async () => {
@@ -82,7 +83,7 @@ test("User", async () => {
   await dbm.userService.setVerified(userID);
   await dbm.userService.setApproved(userID);
   let success = await dbm.userService.login(email, password);
-  expect(success).toBe(true);
+  expect(success).toBe(LoginStatus.Success);
   unapproved = await dbm.userService.getUnapproved();
   expect(unapproved.length).toBe(0);
 
@@ -92,11 +93,11 @@ test("User", async () => {
 
   // Attempt login with invalid email
   success = await dbm.userService.login(email + "a", password);
-  expect(success).toBe(false);
+  expect(success).toBe(LoginStatus.BadLogin);
 
   // Attempt login with invalid password
   success = await dbm.userService.login(email, password + "a");
-  expect(success).toBe(false);
+  expect(success).toBe(LoginStatus.BadLogin);
 
   // Get user status name
   const userStatusName = await dbm.userService.getUserStatusName(userID);
@@ -168,11 +169,11 @@ test("User", async () => {
 
   // Check login with new password
   success = await dbm.userService.login(email, newPassword);
-  expect(success).toBe(true);
+  expect(success).toBe(LoginStatus.Success);
 
   // Check login with old password fails
   success = await dbm.userService.login(email, password);
-  expect(success).toBe(false);
+  expect(success).toBe(LoginStatus.BadLogin);
 
   // Update post timestamp
   let lastPostTime = (await dbm.userService.getUser(userID)).lastPostTime;
