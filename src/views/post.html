@@ -33,7 +33,7 @@
             <button
               class="dropdown-item"
               type="submit"
-              formaction="/post/{{postID}}/delete"
+              formaction="/post/{{ postID }}/delete"
             >
               Delete post
             </button>
@@ -103,12 +103,14 @@
     <div class="alert alert-danger" role="alert">{{error}}</div>
     {{/if}}
   </div>
-  <div class="center post-img mb-5">
+  <div class="row post-img mb-5">
     {{#each images}}
-    <img
-      src="/image/post/{{../postID}}/{{@index}}"
-      alt="uploaded photo from user"
-    />
+    <div class="col-6 col-sm-4">
+      <img
+        src="/image/post/{{../postID}}/{{@index}}"
+        alt="uploaded photo from user"
+      />
+    </div>
     {{/each}}
   </div>
   <div class="col mb-5">
