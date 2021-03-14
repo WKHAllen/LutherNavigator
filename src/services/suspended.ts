@@ -50,6 +50,8 @@ export class SuspendedService extends BaseService {
       params = [suspensionID, userID, until, getTime()];
       await this.dbm.execute(sql, params);
 
+      await this.dbm.sessionService.deleteUserSessions(userID);
+
       if (prune) {
         pruneSuspension(this.dbm, suspensionID);
       }
