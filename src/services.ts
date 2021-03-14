@@ -16,6 +16,7 @@ import { ProgramService } from "./services/program";
 import { QueryService } from "./services/query";
 import { RatingService } from "./services/rating";
 import { SessionService } from "./services/session";
+import { SuspendedService } from "./services/suspended";
 import { UserService } from "./services/user";
 import { UserStatusService } from "./services/userStatus";
 import { UserStatusChangeService } from "./services/userStatusChange";
@@ -34,6 +35,7 @@ export default class DatabaseManager {
   readonly queryService: QueryService;
   readonly ratingService: RatingService;
   readonly sessionService: SessionService;
+  readonly suspendedService: SuspendedService;
   readonly userService: UserService;
   readonly userStatusService: UserStatusService;
   readonly userStatusChangeService: UserStatusChangeService;
@@ -52,6 +54,7 @@ export default class DatabaseManager {
     this.queryService = new QueryService(this);
     this.ratingService = new RatingService(this);
     this.sessionService = new SessionService(this);
+    this.suspendedService = new SuspendedService(this);
     this.userService = new UserService(this);
     this.userStatusService = new UserStatusService(this);
     this.userStatusChangeService = new UserStatusChangeService(this);
