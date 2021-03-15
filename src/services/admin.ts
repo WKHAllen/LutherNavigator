@@ -31,8 +31,8 @@ export class AdminService extends BaseService {
   public async getUsers(): Promise<User[]> {
     const sql = `
       SELECT
-          User.id AS userID, firstname, lastname, email, UserStatus.name AS status,
-          verified, approved, admin, joinTime
+          User.id AS userID, firstname, lastname, email,
+          UserStatus.name AS status, verified, approved, admin, joinTime
         FROM User
         JOIN UserStatus ON User.statusID = UserStatus.id
       ORDER BY User.joinTime;
