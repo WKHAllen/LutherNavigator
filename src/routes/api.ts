@@ -338,3 +338,16 @@ apiRouter.get(
     res.end();
   })
 );
+
+// Get suspended users
+apiRouter.get(
+  "/suspendedUsers",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const suspended = await dbm.suspendedService.suspendedUsers();
+
+    res.json(suspended);
+  })
+);

@@ -42,13 +42,17 @@ function endSuspension(userID, thisElement) {
 
 // Create a row in the suspended users table
 function createSuspensionRow(user) {
-  const userID = newElement("td").text(user.userID);
+  console.log(user);
+  const userID = newElement("td").text(user.id);
   const firstname = newElement("td").text(user.firstname);
   const lastname = newElement("td").text(user.lastname);
   const email = newElement("td").text(user.email);
   const status = newElement("td").text(user.status);
   const joinTime = newElement("td").text(
     new Date(parseInt(user.joinTime) * 1000).toLocaleString()
+  );
+  const suspendedUntil = newElement("td").text(
+    new Date(parseInt(user.suspendedUntil) * 1000).toLocaleString()
   );
   const endSuspensionButton = newElement("button")
     .addClass("btn btn-light")
@@ -67,6 +71,7 @@ function createSuspensionRow(user) {
     email,
     status,
     joinTime,
+    suspendedUntil,
     endSuspensionCell
   );
   return row;
