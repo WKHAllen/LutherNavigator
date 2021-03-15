@@ -5,6 +5,7 @@
 
 import { Router } from "express";
 import { adminAuth, getDBM, getHostname } from "./util";
+import { getTime } from "../services/util";
 import wrapRoute from "../asyncCatch";
 import { metaConfig } from "../config";
 import { sendFormattedEmail } from "../emailer";
@@ -334,6 +335,55 @@ apiRouter.get(
         );
       }
     }
+
+    res.end();
+  })
+);
+
+// Get suspended users
+apiRouter.get(
+  "/suspendedUsers",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const suspended = await dbm.suspendedService.suspendedUsers();
+
+    res.json(suspended);
+  })
+);
+
+// Suspend a user's account
+apiRouter.get(
+  "/suspendAccount",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const userID = req.query.userID as string;
+    const duration = req.query.duration as string;
+
+    const suspendUntil = getTime() + parseInt(duration) * 60 * 60 * 24;
+
+    const suspensionID = await dbm.suspendedService.suspendUser(
+      userID,
+      suspendUntil
+    );
+
+    res.send(suspensionID).end();
+  })
+);
+
+// End an account suspension
+apiRouter.get(
+  "/endSuspension",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const suspensionID = req.query.suspensionID as string;
+
+    await dbm.suspendedService.deleteSuspension(suspensionID);
 
     res.end();
   })

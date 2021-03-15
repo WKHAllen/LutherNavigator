@@ -120,9 +120,13 @@ export class SuspendedService extends BaseService {
    */
   public async suspendedUsers(): Promise<User[]> {
     const sql = `
-      SELECT * FROM User WHERE id IN (
-        SELECT userID FROM Suspended
-      );
+      SELECT
+          User.*, UserStatus.name AS status, Suspended.id AS suspensionID,
+          suspendedUntil
+        FROM User
+        JOIN Suspended  ON User.id = Suspended.userID
+        JOIN UserStatus ON User.statusID = UserStatus.id
+      ORDER BY Suspended.suspendedUntil;
     `;
     const rows: User[] = await this.dbm.execute(sql);
 

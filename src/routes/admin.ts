@@ -22,6 +22,16 @@ const adminPages = {
   posts: "Posts",
   programs: "Programs",
   status: "User status",
+  suspension: "Suspension",
+};
+
+/**
+ * Suspension duration options.
+ */
+const durations = {
+  1: "1 day",
+  7: "7 days",
+  30: "30 days",
 };
 
 // Admin home page
@@ -47,6 +57,7 @@ adminRouter.get(
         pages: adminPages,
         page: pageName,
         noBG: true,
+        durations,
       });
     } else {
       next(); // 404, invalid subpage
