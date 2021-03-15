@@ -1,5 +1,4 @@
 import argparse
-import sys
 
 import mysql.connector
 
@@ -137,7 +136,7 @@ def main() -> None:
     """Process the command line arguments."""
 
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="An admin utility.")
+    parser = argparse.ArgumentParser(description="An admin utility")
 
     # Register as an admin
     parser.add_argument(

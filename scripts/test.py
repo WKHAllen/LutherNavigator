@@ -1,6 +1,5 @@
 import argparse
 import os
-import sys
 
 import env
 
@@ -12,7 +11,7 @@ def main() -> None:
     env.load_env(".env")
 
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="A testing utility.")
+    parser = argparse.ArgumentParser(description="A testing utility")
 
     # Backend testing
     parser.add_argument(
@@ -20,6 +19,16 @@ def main() -> None:
         "--backend",
         action="store_true",
         help="backend testing mode",
+    )
+
+    # Run specific backend tests
+    parser.add_argument(
+        "-t",
+        "--test",
+        type=str,
+        default="",
+        metavar="testname",
+        help="run specific backend tests",
     )
 
     # UI and mobile device emulation testing
@@ -37,6 +46,10 @@ def main() -> None:
     if args.backend:
         os.system("npx jest --runInBand")
         os.system("npx jest-coverage-badges")
+
+    # If run with `-t` or `--test` argument
+    elif args.test:
+        os.system(f"npx jest -t {args.test}")
 
     # If run with `-e` or `--emulation` argument
     if args.emulation:
