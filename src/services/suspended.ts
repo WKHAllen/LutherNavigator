@@ -50,6 +50,8 @@ export class SuspendedService extends BaseService {
       params = [suspensionID, userID, until, getTime()];
       await this.dbm.execute(sql, params);
 
+      await this.dbm.sessionService.deleteUserSessions(userID);
+
       if (prune) {
         pruneSuspension(this.dbm, suspensionID);
       }
@@ -65,7 +67,7 @@ export class SuspendedService extends BaseService {
    * @returns Whether or not the suuspension record exists.
    */
   public async suspensionExists(suspensionID: string): Promise<boolean> {
-    const sql = `SELECT id FROM Suspension WHERE id = ?;`;
+    const sql = `SELECT id FROM Suspended WHERE id = ?;`;
     const params = [suspensionID];
     const rows: Suspended[] = await this.dbm.execute(sql, params);
 
