@@ -333,6 +333,11 @@ export async function pruneSuspension(
     timeRemaining = (suspension.suspendedUntil - getTime()) * 1000;
   }
 
+  // setTimeout will not allow more than a 32-bit signed integer for the timeout argument
+  if (timeRemaining >= 2 ** 31) {
+    return;
+  }
+
   setTimeout(async () => {
     await dbm.suspendedService.deleteSuspension(suspensionID);
   }, timeRemaining);

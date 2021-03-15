@@ -15,19 +15,19 @@ function suspendAccount(event) {
     },
     success: () => {
       hideError();
+      populateSuspension();
     },
     error: () => {
       showError("Failed to suspend user account");
     },
   });
-  updateNotifications();
 }
 
-function endSuspension(userID, thisElement) {
+function endSuspension(suspensionID, thisElement) {
   $.ajax({
     url: "/api/endSuspension",
     data: {
-      userID,
+      suspensionID,
     },
     success: () => {
       hideError();
@@ -42,15 +42,12 @@ function endSuspension(userID, thisElement) {
 
 // Create a row in the suspended users table
 function createSuspensionRow(user) {
-  console.log(user);
+  const suspensionID = newElement("td").text(user.suspensionID);
   const userID = newElement("td").text(user.id);
   const firstname = newElement("td").text(user.firstname);
   const lastname = newElement("td").text(user.lastname);
   const email = newElement("td").text(user.email);
   const status = newElement("td").text(user.status);
-  const joinTime = newElement("td").text(
-    new Date(parseInt(user.joinTime) * 1000).toLocaleString()
-  );
   const suspendedUntil = newElement("td").text(
     new Date(parseInt(user.suspendedUntil) * 1000).toLocaleString()
   );
@@ -61,16 +58,16 @@ function createSuspensionRow(user) {
     })
     .html('<i class="fas fa-check"></i>')
     .click(function () {
-      endSuspension(user.userID, $(this));
+      endSuspension(user.suspensionID, $(this));
     });
   const endSuspensionCell = newElement("td").append(endSuspensionButton);
   const row = newElement("tr").append(
+    suspensionID,
     userID,
     firstname,
     lastname,
     email,
     status,
-    joinTime,
     suspendedUntil,
     endSuspensionCell
   );
@@ -85,7 +82,7 @@ async function populateSuspension() {
   try {
     suspended = await fetchJSON(suspensionURL);
   } catch (err) {
-    showError("Failed to suspended users");
+    showError("Failed to update suspended users");
   }
 
   if (suspended) {

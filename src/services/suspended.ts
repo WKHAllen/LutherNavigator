@@ -120,7 +120,9 @@ export class SuspendedService extends BaseService {
    */
   public async suspendedUsers(): Promise<User[]> {
     const sql = `
-      SELECT User.*, UserStatus.name AS status, suspendedUntil
+      SELECT
+          User.*, UserStatus.name AS status, Suspended.id AS suspensionID,
+          suspendedUntil
         FROM User
         JOIN Suspended  ON User.id = Suspended.userID
         JOIN UserStatus ON User.statusID = UserStatus.id
