@@ -1,0 +1,6 @@
+Hello, your account has been temporarily suspended.
+
+Your account has been suspended for {duration}. If you would like to contact us, you can do so through our website.
+
+Sincerely,
+The Luther Navigator Team
