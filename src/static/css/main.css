@@ -112,7 +112,6 @@ table {
 main {
   /* sticky footer */
   flex: 1 0 auto;
-  max-width: 2000px;
   /* stationary background */
   display: block;
   position: relative;
