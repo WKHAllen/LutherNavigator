@@ -2,11 +2,9 @@
 <script type="text/javascript" src="/js/query.js"></script>
 
 <div class="div-center tablet-content">
-  <h1 class="text-center mb-3">Search Posts</h1>
-  <!-- <hr /> -->
   <form>
     <div class="search-cover" id="cover">
-      <div class="search-bar-div">
+      <div class="search-bar-div td">
         <input
           type="text"
           class="search-bar-input"
@@ -15,7 +13,14 @@
           placeholder="Search"
         />
       </div>
+      <div class="td" id="s-cover">
+        <button type="submit" class="search-bar-button">
+          <div id="s-circle"></div>
+          <span></span>
+        </button>
+      </div>
     </div>
+    <h1 class="text-center mt-3 mb-3">Search Posts</h1>
     <div class="filter-menu clearfix row">
       <div class="col-6 col-md-3">
         <h5>Categories</h5>
