@@ -12,18 +12,23 @@
 <div class="div-center background-blue">
   <div class="div-center lg-width post-header">
     <div class="flex-between">
-      <h1>{{ location }}</h1>
+      <h1 class="mt-3">{{ location }}</h1>
       {{#if userPost}}
-      <div class="dropdown">
+      <div class="dropdown mt-3 mr-3">
         <button
-          class="btn btn-light"
+          class="btn delete-btn mt-1"
           type="button"
           id="post-dropdown"
           data-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded="false"
         >
-          <i class="fas fa-ellipsis-h" aria-hidden="true"></i>
+        <img
+          src="/img/toggle_menu.png"
+          class="delete-post-img"
+          alt="Three dots"
+        />
+          <!-- <i class="fas fa-ellipsis-h" aria-hidden="true"></i> -->
         </button>
         <div
           class="dropdown-menu dropdown-menu-right"
@@ -43,7 +48,7 @@
       {{/if}}
     </div>
     <div class="row">
-      <h4 class="mb-4 col-12 col-md-8">
+      <h4 class="location-info mb-4 col-12 col-md-8">
         {{#if address}}
         <div class="row mb-2">
           <a href="{{ addressURL }}" target="_blank">{{ address }}</a>
@@ -58,10 +63,10 @@
         </div>
         {{/if}}
       </h4>
-      <div class="mb-3 col-9 col-md-4">
+      <div class="mb-4 col-9 col-md-4">
         <table>
           <tr>
-            <th class="">Rating</th>
+            <th>Rating</th>
           </tr>
           {{#each ratings}}
           <tr>
@@ -98,7 +103,7 @@
 </div>
 
 <div class="div-center tablet-content">
-  <div class="mb-5">
+  <div class="mb-4">
     {{#if error}}
     <div class="alert alert-danger" role="alert">{{error}}</div>
     {{/if}}
@@ -115,9 +120,9 @@
   </div>
   <div class="col mb-5">
     <h3 class="tagline mb-3">{{ threeWords }}</h3>
-    <h4>{{ firstname }} {{ lastname }} | {{ status }}</h4>
+    <h4>{{ firstname }} {{ lastname }}, {{ status }}</h4>
     <h4 class="mb-4">
-      {{ program }} | <span class="timestamp">{{ createTime }}</span>
+      {{ program }} | Posted on <span class="timestamp">{{ createTime }}</span>
     </h4>
     <div class="post">
       <p>{{ content }}</p>

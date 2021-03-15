@@ -42,14 +42,21 @@ h4 {
   color: #e88900;
 }
 
-#ratings > div {
-  margin-bottom: 4px;
+.location-info a {
+  color:#ffffff;
+  font-size: 11pt;
 }
 
-#location-info a {
-  color: #6ab2ff;
+.dropdown {
+  vertical-align: middle;
 }
 
-#location-info a:hover {
-  color: #1c8aff;
+.delete-btn {
+  border: 1px #bdbdbd solid;
+}
+
+.delete-post-img {
+  width: 25px;
+  height: 25px;
+  transform: rotate(90deg);
 }
