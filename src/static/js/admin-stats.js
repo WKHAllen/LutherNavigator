@@ -15,8 +15,13 @@ async function populateStats() {
     hideError();
     clearElement("stats");
 
-    for (const item of Object.keys(stats)) {
-      appendTo("stats", `<div>${item}: ${stats[item]}</div>`);
+    for (const item in stats) {
+      const statsLabel = newElement("div").addClass("stats-label").text(item);
+      const statsValue = newElement("div")
+        .addClass("stats-value")
+        .text(stats[item]);
+      const newItemDiv = newElement("div").append(statsLabel, statsValue);
+      appendTo("stats", newItemDiv);
     }
   }
 }
