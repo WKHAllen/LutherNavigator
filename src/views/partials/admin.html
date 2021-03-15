@@ -9,20 +9,21 @@
     }
   });
 </script>
-
-<h1 class="center">Admin Control Panel</h1>
-<ul class="nav nav-tabs" id="admin-tabs">
-  {{#each pages}}
-  <li class="nav-item">
-    <a
-      class="nav-link {{#is @key ../page }} active {{/is}}"
-      href="/admin/{{@key}}"
-      >{{this}}
-      <span id="admin-{{@key}}-notification" class="admin-notification hidden"
-        >0</span
-      >
-    </a>
-  </li>
-  {{/each}}
-</ul>
-<div class="alert alert-danger hidden" id="admin-error" role="alert"></div>
+<div class="tablet-content">
+  <h1 class="center">Admin Control Panel</h1>
+  <ul class="nav nav-tabs" id="admin-tabs">
+    {{#each pages}}
+    <li class="nav-item">
+      <a
+        class="nav-link {{#is @key ../page }} active {{/is}}"
+        href="/admin/{{@key}}"
+        >{{this}}
+        <span id="admin-{{@key}}-notification" class="admin-notification hidden"
+          >0</span
+        >
+      </a>
+    </li>
+    {{/each}}
+  </ul>
+  <div class="alert alert-danger hidden" id="admin-error" role="alert"></div>
+</div>
