@@ -28,10 +28,10 @@ apiRouter.get(
     const numSuspended = await dbm.adminService.getRecords("Suspended");
 
     res.json({
-      Users: numUsers,
-      Posts: numPosts,
-      Sessions: numLoggedIn,
-      Suspended: numSuspended,
+      Users: { value: numUsers, id: "users" },
+      Posts: { value: numPosts, id: "posts" },
+      Sessions: { value: numLoggedIn },
+      Suspended: { value: numSuspended },
     });
   })
 );

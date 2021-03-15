@@ -53,12 +53,12 @@ export class AdminService extends BaseService {
           Post.id AS postID, location,
           CONCAT(User.firstname, ' ', User.lastname) AS postUser,
           Program.name AS program, Rating.general AS rating,
-          Post.approved AS approved
+          Post.approved AS approved, createTime
         FROM Post
         JOIN User    ON Post.userID = User.id
         JOIN Program ON Post.programID = Program.id
         JOIN Rating  ON Post.ratingID = Rating.id
-      ORDER BY createTime;
+      ORDER BY Post.createTime;
     `;
     const rows: Post[] = await this.dbm.execute(sql);
 

@@ -65,3 +65,15 @@ h1 {
 .stats-value {
   font-size: 1.75rem;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+.fa.fa-star {
+  font-size: 16px;
+}
+
+.checked {
+  color: #e88900;
+}

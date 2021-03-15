@@ -44,6 +44,11 @@ function elementHTML(element) {
   return element.wrap("<p/>").parent().html();
 }
 
+// Set an element's HTML
+function setHTML(elementID, html) {
+  $(`#${elementID}`).html(html);
+}
+
 // Replace spaces in a variable name
 function replaceSpaces(name) {
   while (name.includes(" ")) {
