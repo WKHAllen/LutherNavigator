@@ -36,6 +36,32 @@ apiRouter.get(
   })
 );
 
+// Get all users
+apiRouter.get(
+  "/getUsers",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const users = await dbm.adminService.getUsers();
+
+    res.json(users);
+  })
+);
+
+// Get all posts
+apiRouter.get(
+  "/getPosts",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const posts = await dbm.adminService.getPosts();
+
+    res.json(posts);
+  })
+);
+
 // Admin variables
 apiRouter.get(
   "/adminVariables",
