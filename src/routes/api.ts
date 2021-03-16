@@ -25,12 +25,40 @@ apiRouter.get(
     const numUsers = await dbm.adminService.getRecords("User");
     const numPosts = await dbm.adminService.getRecords("Post");
     const numLoggedIn = await dbm.adminService.getRecords("Session");
+    const numSuspended = await dbm.adminService.getRecords("Suspended");
 
     res.json({
-      Users: numUsers,
-      Posts: numPosts,
-      Sessions: numLoggedIn,
+      Users: { value: numUsers, id: "users" },
+      Posts: { value: numPosts, id: "posts" },
+      Sessions: { value: numLoggedIn },
+      Suspended: { value: numSuspended },
     });
+  })
+);
+
+// Get all users
+apiRouter.get(
+  "/getUsers",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const users = await dbm.adminService.getUsers();
+
+    res.json(users);
+  })
+);
+
+// Get all posts
+apiRouter.get(
+  "/getPosts",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const posts = await dbm.adminService.getPosts();
+
+    res.json(posts);
   })
 );
 
