@@ -398,6 +398,18 @@ apiRouter.get(
       suspendUntil
     );
 
+    const user = await dbm.userService.getUser(userID);
+
+    await sendFormattedEmail(
+      user.email,
+      "Luther Navigator - Account Suspended",
+      "suspended",
+      {
+        host: getHostname(req),
+        duration: `${duration} day${duration === "1" ? "" : "s"}`,
+      }
+    );
+
     res.send(suspensionID).end();
   })
 );
