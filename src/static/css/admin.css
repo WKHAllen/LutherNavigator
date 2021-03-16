@@ -1,3 +1,7 @@
+main {
+  padding: 20px;
+}
+
 #admin-tabs {
   margin: 0 -20px;
   padding: 0 20px;
@@ -41,4 +45,35 @@ h1 {
 #content {
   max-width: 9999px;
   padding: 16px 20px;
+}
+
+#stats {
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+}
+
+#stats > div {
+  display: inline-block;
+  text-align: center;
+}
+
+.stats-label {
+  font-style: italic;
+}
+
+.stats-value {
+  font-size: 1.75rem;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.fa.fa-star {
+  font-size: 16px;
+}
+
+.checked {
+  color: #e88900;
 }

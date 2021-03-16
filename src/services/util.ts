@@ -9,6 +9,7 @@ import * as bcrypt from "bcrypt";
 import { Session } from "./session";
 import { Verify } from "./verify";
 import { PasswordReset } from "./passwordReset";
+import { Suspended } from "./suspended";
 import { metaConfig } from "../config";
 
 /**
@@ -311,5 +312,47 @@ export async function prunePasswordResetRecords(
   rows.forEach((row) => {
     const timeRemaining = row.createTime + passwordResetAge / 1000 - getTime();
     prunePasswordResetRecord(dbm, row.id, timeRemaining * 1000);
+  });
+}
+
+/**
+ * Delete a suspension record when the time comes.
+ *
+ * @param dbm The database manager.
+ * @param suspensionID A suspension record ID.
+ * @param timeRemaining The amount of time to wait before removing the record.
+ */
+export async function pruneSuspension(
+  dbm: DatabaseManager,
+  suspensionID: string,
+  timeRemaining: number = null
+): Promise<void> {
+  const suspension = await dbm.suspendedService.getSuspension(suspensionID);
+
+  if (timeRemaining === null) {
+    timeRemaining = (suspension.suspendedUntil - getTime()) * 1000;
+  }
+
+  // setTimeout will not allow more than a 32-bit signed integer for the timeout argument
+  if (timeRemaining >= 2 ** 31) {
+    return;
+  }
+
+  setTimeout(async () => {
+    await dbm.suspendedService.deleteSuspension(suspensionID);
+  }, timeRemaining);
+}
+
+/**
+ * Delete all active suspension records when the time comes.
+ *
+ * @param dbm The database manager.
+ */
+export async function pruneSuspensions(dbm: DatabaseManager): Promise<void> {
+  const sql = `SELECT id FROM Suspended;`;
+  const rows: Suspended[] = await dbm.execute(sql);
+
+  rows.forEach((row) => {
+    pruneSession(dbm, row.id);
   });
 }

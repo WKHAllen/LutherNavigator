@@ -1,9 +1,7 @@
 /*
  * Tests pages using three major browser engines: Chromium, Firefox, and
  * WebKit. The tests can be deployed using `npx ts-node uitest.ts` command.
- * However, it is already automated so that every times tests are run, this
- * command also gets executed. Therefore, it suffices to run `sh script.sh
- * test`.
+ * These tests are when the `--emulation` argument is passed to `test.py`.
  *
  */
 import { chromium, firefox, webkit } from "playwright";
@@ -12,8 +10,13 @@ const PAGEMAP = {
   "https://www.luthernavigator.com": "landing.png",
   "https://www.luthernavigator.com/about": "about.png",
   "https://www.luthernavigator.com/login": "login.png",
+  "https://www.luthernavigator.com/password-reset": "password.png",
   "https://www.luthernavigator.com/post": "post.png",
+  "https://www.luthernavigator.com/privacy": "privacy.png",
+  "https://www.luthernavigator.com/query": "query.png",
+  "https://www.luthernavigator.com/register": "register.png",
   "https://www.luthernavigator.com/restaurant": "restaurant.png",
+  "https://www.luthernavigator.com/terms": "terms.png",
 };
 
 (async () => {

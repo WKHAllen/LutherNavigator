@@ -92,6 +92,9 @@ postRouter.post(
       req.body.wordTwo,
       req.body.wordThree,
     ].join(", ");
+    const address: string = req.body.address || null;
+    const phone: string = req.body.phone.replace(/[\(\) \-\+]/g, "") || null;
+    const website: string = req.body.website || null;
     const ratings = ratingTypes.map(
       (ratingType) => parseInt(req.body[`${ratingType}Rating`]) || 0
     );
@@ -127,6 +130,11 @@ postRouter.post(
         res,
         "Three word description must total to less than 64 characters"
       );
+    } else if (
+      phone &&
+      (isNaN(parseInt(phone)) || phone.length < 10 || phone.length > 13)
+    ) {
+      setErrorMessage(res, "Invalid phone number");
     } else if (ratingsGood.includes(false)) {
       setErrorMessage(res, "Invalid rating");
     } else if (parseInt(req.body.generalRating) === 0) {
@@ -149,7 +157,10 @@ postRouter.post(
         locationTypeID,
         programID,
         rating,
-        threeWords
+        threeWords,
+        address,
+        phone,
+        website
       );
 
       res.redirect(`/post/${postID}`);
@@ -211,6 +222,24 @@ postRouter.get(
       }
     }
 
+    const addressURL = post.address
+      ? "https://www.google.com/maps/place/" + post.address.replace(/ /g, "+")
+      : null;
+    const phoneFormatted = post.phone
+      ? `${
+          post.phone.length > 10 ? `+${post.phone.slice(0, -10)} ` : ""
+        }(${post.phone.slice(-10, -7)}) ${post.phone.slice(
+          -7,
+          -4
+        )}-${post.phone.slice(-4)}`
+      : null;
+    const websiteURL = post.website
+      ? post.website.startsWith("http://") ||
+        post.website.startsWith("https://")
+        ? post.website
+        : "http://" + post.website
+      : null;
+
     await renderPage(req, res, "post", {
       title: post.location,
       error,
@@ -223,6 +252,12 @@ postRouter.get(
       createTime: post.createTime,
       threeWords: post.threeWords,
       content: post.content,
+      address: post.address,
+      addressURL,
+      phone: post.phone,
+      phoneFormatted,
+      website: post.website,
+      websiteURL,
       images,
       ratings,
       userPost: postUser.id === userID,

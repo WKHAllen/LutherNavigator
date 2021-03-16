@@ -1,5 +1,5 @@
+import argparse
 import os
-import sys
 
 import env
 
@@ -10,27 +10,51 @@ def main() -> None:
     # Load the environment variables
     env.load_env(".env")
 
-    # Get the arguments
-    args = sys.argv[2:]
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(description="A testing utility")
 
-    # Optionally specified `emulation-mode` argument MUST BE THE LAST in the
-    # argument list. If the emulation mode is on, in addition to the basic UI
-    # tests using three major web engines, mobile emulation tests on a variety
-    # of devices will also run. Since the emulation can take quite a bit of
-    # time, the `emulation-mode` argument is made optional.
-    if args and args[-1] == "--emulation-mode":
-        os.system(
-            f"npx jest --runInBand {' '.join(args[:-1])}"
-        )
+    # Backend testing
+    parser.add_argument(
+        "-b",
+        "--backend",
+        action="store_true",
+        help="backend testing mode",
+    )
+
+    # Run specific backend tests
+    parser.add_argument(
+        "-t",
+        "--test",
+        type=str,
+        default="",
+        metavar="testname",
+        help="run specific backend tests",
+    )
+
+    # UI and mobile device emulation testing
+    parser.add_argument(
+        "-e",
+        "--emulation",
+        action="store_true",
+        help="device emulation and UI testing mode",
+    )
+
+    # Get the values of the arguments
+    args = parser.parse_args()
+
+    # If run with `-b` or `--backend` argument
+    if args.backend:
+        os.system("npx jest --runInBand")
         os.system("npx jest-coverage-badges")
+
+    # If run with `-t` or `--test` argument
+    elif args.test:
+        os.system(f"npx jest -t {args.test}")
+
+    # If run with `-e` or `--emulation` argument
+    if args.emulation:
         os.system("npx ts-node test/ui/uitest.ts")
         os.system("npx ts-node test/ui/mobile_emulation.ts")
-    else:
-        os.system(
-            f"npx jest --runInBand {' '.join(args)}"
-        )
-        os.system("npx jest-coverage-badges")
-        os.system("npx ts-node test/ui/uitest.ts")
 
 
 if __name__ == "__main__":

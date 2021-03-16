@@ -5,6 +5,7 @@
 
 import { Router } from "express";
 import { adminAuth, getDBM, getHostname } from "./util";
+import { getTime } from "../services/util";
 import wrapRoute from "../asyncCatch";
 import { metaConfig } from "../config";
 import { sendFormattedEmail } from "../emailer";
@@ -24,12 +25,40 @@ apiRouter.get(
     const numUsers = await dbm.adminService.getRecords("User");
     const numPosts = await dbm.adminService.getRecords("Post");
     const numLoggedIn = await dbm.adminService.getRecords("Session");
+    const numSuspended = await dbm.adminService.getRecords("Suspended");
 
     res.json({
-      Users: numUsers,
-      Posts: numPosts,
-      Sessions: numLoggedIn,
+      Users: { value: numUsers, id: "users" },
+      Posts: { value: numPosts, id: "posts" },
+      Sessions: { value: numLoggedIn },
+      Suspended: { value: numSuspended },
     });
+  })
+);
+
+// Get all users
+apiRouter.get(
+  "/getUsers",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const users = await dbm.adminService.getUsers();
+
+    res.json(users);
+  })
+);
+
+// Get all posts
+apiRouter.get(
+  "/getPosts",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const posts = await dbm.adminService.getPosts();
+
+    res.json(posts);
   })
 );
 
@@ -334,6 +363,67 @@ apiRouter.get(
         );
       }
     }
+
+    res.end();
+  })
+);
+
+// Get suspended users
+apiRouter.get(
+  "/suspendedUsers",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const suspended = await dbm.suspendedService.suspendedUsers();
+
+    res.json(suspended);
+  })
+);
+
+// Suspend a user's account
+apiRouter.get(
+  "/suspendAccount",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const userID = req.query.userID as string;
+    const duration = req.query.duration as string;
+
+    const suspendUntil = getTime() + parseInt(duration) * 60 * 60 * 24;
+
+    const suspensionID = await dbm.suspendedService.suspendUser(
+      userID,
+      suspendUntil
+    );
+
+    const user = await dbm.userService.getUser(userID);
+
+    await sendFormattedEmail(
+      user.email,
+      "Luther Navigator - Account Suspended",
+      "suspended",
+      {
+        host: getHostname(req),
+        duration: `${duration} day${duration === "1" ? "" : "s"}`,
+      }
+    );
+
+    res.send(suspensionID).end();
+  })
+);
+
+// End an account suspension
+apiRouter.get(
+  "/endSuspension",
+  adminAuth,
+  wrapRoute(async (req, res) => {
+    const dbm = getDBM(req);
+
+    const suspensionID = req.query.suspensionID as string;
+
+    await dbm.suspendedService.deleteSuspension(suspensionID);
 
     res.end();
   })

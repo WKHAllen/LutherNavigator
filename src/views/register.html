@@ -1,121 +1,119 @@
-<div class="std-width div-center">
-  <div class="clear-card">
-    <form method="POST">
-      <div class="col">
-        <h1 class="center">Register</h1>
+<div class="div-center tablet-content">
+  <form method="POST">
+    <div class="col">
+      <h1 class="center">Register</h1>
 
-        {{#if error}}
-        <div class="alert alert-danger" role="alert">{{error}}</div>
-        {{/if}}
+      {{#if error}}
+      <div class="alert alert-danger" role="alert">{{error}}</div>
+      {{/if}}
 
-        <p class="text-h3">
-          Please fill out the form below. If you already have an account,
-          please <a href="/login">log in here</a>.
-        </p>
+      <p class="text-h3">
+        Please fill out the form below. If you already have an account,
+        please <a href="/login">log in here</a>.
+      </p>
+    </div>
+
+    <!-- Input first name and last name -->
+    <div class="row align-items-center mt-4">
+      <div class="col-sm-6 col-12 mb-3 form-group">
+        <label for="firstname">First name</label>
+        <input
+          type="text"
+          class="form-control clear-input"
+          id="firstname"
+          name="firstname"
+          maxlength="63"
+          required
+        />
       </div>
-
-      <!-- Input first name and last name -->
-      <div class="row align-items-center mt-4">
-        <div class="col-sm-6 col-12 mb-3 form-group">
-          <label for="firstname">First name</label>
-          <input
-            type="text"
-            class="form-control clear-input"
-            id="firstname"
-            name="firstname"
-            maxlength="63"
-            required
-          />
-        </div>
-        <div class="col-sm-6 col-12 mb-3 form-group">
-          <label for="lastname">Last name</label>
-          <input
-            type="text"
-            class="form-control clear-input"
-            id="lastname"
-            name="lastname"
-            maxlength="63"
-            required
-          />
-        </div>
+      <div class="col-sm-6 col-12 mb-3 form-group">
+        <label for="lastname">Last name</label>
+        <input
+          type="text"
+          class="form-control clear-input"
+          id="lastname"
+          name="lastname"
+          maxlength="63"
+          required
+        />
       </div>
+    </div>
 
-      <!-- Input email-->
-      <div class="row align-items-center">
-        <div class="col-12 mb-3 form-group">
-          <label for="email">Email address</label>
-          <input
-            type="email"
-            class="form-control clear-input"
-            id="email"
-            name="email"
-            maxlength="63"
-            required
-          />
-        </div>
+    <!-- Input email-->
+    <div class="row align-items-center">
+      <div class="col-12 mb-3 form-group">
+        <label for="email">Email address</label>
+        <input
+          type="email"
+          class="form-control clear-input"
+          id="email"
+          name="email"
+          maxlength="63"
+          required
+        />
       </div>
+    </div>
 
-      <!-- Input and confirm password -->
-      <div class="row align-items-center">
-        <div class="col-sm-6 col-12 mb-3 form-group">
-          <label for="password">Password</label>
-          <input
-            type="password"
-            class="form-control clear-input"
-            id="password"
-            name="password"
-            maxlength="255"
-            required
-          />
-        </div>
-        <div class="col-sm-6 col-12 mb-3 form-group">
-          <label for="confirmPassword">Confirm password</label>
-          <input
-            type="password"
-            class="form-control clear-input"
-            id="confirmPassword"
-            name="confirmPassword"
-            maxlength="255"
-            required
-          />
-        </div>
+    <!-- Input and confirm password -->
+    <div class="row align-items-center">
+      <div class="col-sm-6 col-12 mb-3 form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          class="form-control clear-input"
+          id="password"
+          name="password"
+          maxlength="255"
+          required
+        />
       </div>
+      <div class="col-sm-6 col-12 mb-3 form-group">
+        <label for="confirmPassword">Confirm password</label>
+        <input
+          type="password"
+          class="form-control clear-input"
+          id="confirmPassword"
+          name="confirmPassword"
+          maxlength="255"
+          required
+        />
+      </div>
+    </div>
 
-      <!-- User status -->
-      <div class="row align-items-center">
-        <div class="col-12 mb-3 form-group">
-          <label for="userStatus">Status</label>
-          <select
-            class="form-control clear-select"
-            id="userStatus"
-            name="userStatus"
-            required
+    <!-- User status -->
+    <div class="row align-items-center">
+      <div class="col-12 mb-3 form-group">
+        <label for="userStatus">Status</label>
+        <select
+          class="form-control clear-select"
+          id="userStatus"
+          name="userStatus"
+          required
+        >
+          <option value="">Select...</option>
+          {{#each userStatuses}}
+          <option value="{{this.id}}">{{this.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+
+    <!-- Terms and Conditions -->
+    <div class="col-12 mb-3">
+      <div class="form-check">
+        <label class="form-check-label">
+          <input type="checkbox" class="form-check-input" required />
+          I have read and accept the
+          <a href="/terms"
+            >Terms and Conditions</a
           >
-            <option value="">Select...</option>
-            {{#each userStatuses}}
-            <option value="{{this.id}}">{{this.name}}</option>
-            {{/each}}
-          </select>
-        </div>
+        </label>
       </div>
+    </div>
 
-      <!-- Terms and Conditions -->
-      <div class="col-12 mb-3">
-        <div class="form-check">
-          <label class="form-check-label">
-            <input type="checkbox" class="form-check-input" required />
-            I have read and accept the
-            <a href="https://www.luthernavigator.com/terms-and-conditions"
-              >Terms and Conditions</a
-            >
-          </label>
-        </div>
-      </div>
-
-      <!-- Submit button -->
-      <div class="col-12">
-        <button type="submit" class="btn clear-button mb-3">Register</button>
-      </div>
-    </form>
-  </div>
+    <!-- Submit button -->
+    <div class="col-12">
+      <button type="submit" class="btn clear-button mb-3">Register</button>
+    </div>
+  </form>
 </div>

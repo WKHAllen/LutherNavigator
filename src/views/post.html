@@ -9,105 +9,123 @@
 <link rel="stylesheet" type="text/css" href="/css/main.css" />
 <link rel="stylesheet" type="text/css" href="/css/post.css" />
 
-<div class="div-center">
-  <div class="">
-    <div class="col">
-      <div class="flex-between">
-        <h1>{{ location }}</h1>
-        {{#if userPost}}
-        <div class="dropdown">
-          <button
-            class="btn btn-secondary"
-            type="button"
-            id="post-dropdown"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
-            <i class="fas fa-ellipsis-h" aria-hidden="true"></i>
-          </button>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="post-dropdown">
-            <form method="POST">
-              <button class="dropdown-item" type="submit" formaction="/post/{{postID}}/delete">Delete post</a>
-            </form>
-          </div>
+<div class="div-center background-blue">
+  <div class="div-center lg-width post-header">
+    <div class="flex-between">
+      <h1 class="mt-3">{{ location }}</h1>
+      {{#if userPost}}
+      <div class="dropdown mt-3 mr-3">
+        <button
+          class="btn delete-btn mt-1"
+          type="button"
+          id="post-dropdown"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+        <img
+          src="/img/toggle_menu.png"
+          class="delete-post-img"
+          alt="Three dots"
+        />
+          <!-- <i class="fas fa-ellipsis-h" aria-hidden="true"></i> -->
+        </button>
+        <div
+          class="dropdown-menu dropdown-menu-right"
+          aria-labelledby="post-dropdown"
+        >
+          <form method="POST">
+            <button
+              class="dropdown-item"
+              type="submit"
+              formaction="/post/{{ postID }}/delete"
+            >
+              Delete post
+            </button>
+          </form>
         </div>
-        {{/if}}
       </div>
-      <h4 class="info">the_address | the_phone_number | the_website</h4>
-
-      {{#if error}}
-      <div class="alert alert-danger" role="alert">{{error}}</div>
       {{/if}}
     </div>
-    <div class="im row">
-      {{#each images}}
-      <div class="col-6 col-sm-4">
-        <img
-          src="/image/post/{{../postID}}/{{@index}}"
-          alt="uploaded photo from user"
-        />
-      </div>
-      {{/each}}
-      <!-- <div class="col-6 col-sm-4">
-        <img
-          src="http://playfoursquare.s3.amazonaws.com/pix/130277_9pfvgu8sfK3xoD7-YLqMjWGCpOVyAJl-aGDql5Y53dU.jpg"
-          alt="pepperioni pizza pie"
-        />
-      </div>
-      <div class="col-6 col-sm-4">
-        <img
-          src="https://media-cdn.tripadvisor.com/media/photo-s/10/cf/1e/3d/photo0jpg.jpg"
-          alt="Mabe's inside seating"
-        />
-      </div>
-      <div class="col-6 col-sm-4">
-        <img
-          src="https://media-cdn.tripadvisor.com/media/photo-s/06/b6/54/64/mabe-s-pizza.jpg"
-          alt="olive pizza"
-        />
-      </div> -->
-    </div>
-    <div class="review col mt-4">
-      <h3 class="tagline">{{ threeWords }}</h3>
-      <h4>{{ firstname }} {{ lastname }} | {{ status }}</h4>
-      <h4>{{ program }} | <span class="timestamp">{{ createTime }}</span></h4>
-      <div class="post">
-        <p>{{ content }}</p>
-      </div>
-    </div>
-    <h3 class="col mt-4">Rating</h3>
-    <div class="row review" id="ratings">
-      {{#each ratings}}
-        <div class="col-6 col-sm-4">{{ this.name }}</div>
-        <div class="col-6 col-sm-8">
-          {{#greaterThanEqual this.value 1}}
-            <span class="fa fa-star checked"></span>
-          {{else}}
-            <span class="fa fa-star"></span>
-          {{/greaterThanEqual}}
-          {{#greaterThanEqual this.value 2}}
-            <span class="fa fa-star checked"></span>
-          {{else}}
-            <span class="fa fa-star"></span>
-          {{/greaterThanEqual}}
-          {{#greaterThanEqual this.value 3}}
-            <span class="fa fa-star checked"></span>
-          {{else}}
-            <span class="fa fa-star"></span>
-          {{/greaterThanEqual}}
-          {{#greaterThanEqual this.value 4}}
-            <span class="fa fa-star checked"></span>
-          {{else}}
-            <span class="fa fa-star"></span>
-          {{/greaterThanEqual}}
-          {{#greaterThanEqual this.value 5}}
-            <span class="fa fa-star checked"></span>
-          {{else}}
-            <span class="fa fa-star"></span>
-          {{/greaterThanEqual}}
+    <div class="row">
+      <h4 class="location-info mb-4 col-12 col-md-8">
+        {{#if address}}
+        <div class="row mb-2">
+          <a href="{{ addressURL }}" target="_blank">{{ address }}</a>
         </div>
-      {{/each}}
+        {{/if}} {{#if phone}}
+        <div class="row mb-2">
+          <a href="tel:{{ phone }}">{{ phoneFormatted }}</a>
+        </div>
+        {{/if}} {{#if website}}
+        <div class="row mb-2">
+          <a href="{{ websiteURL }}" target="_blank">{{ website }}</a>
+        </div>
+        {{/if}}
+      </h4>
+      <div class="mb-4 col-9 col-md-4">
+        <table>
+          <tr>
+            <th>Rating</th>
+          </tr>
+          {{#each ratings}}
+          <tr>
+            <td>{{ this.name }}</td>
+            <td class="align-top">
+              {{#greaterThanEqual this.value 1}}
+              <i class="fa fa-star checked"></i>
+              {{else}}
+              <i class="fa fa-star"></i>
+              {{/greaterThanEqual}} {{#greaterThanEqual this.value 2}}
+              <i class="fa fa-star checked"></i>
+              {{else}}
+              <i class="fa fa-star"></i>
+              {{/greaterThanEqual}} {{#greaterThanEqual this.value 3}}
+              <i class="fa fa-star checked"></i>
+              {{else}}
+              <i class="fa fa-star"></i>
+              {{/greaterThanEqual}} {{#greaterThanEqual this.value 4}}
+              <i class="fa fa-star checked"></i>
+              {{else}}
+              <i class="fa fa-star"></i>
+              {{/greaterThanEqual}} {{#greaterThanEqual this.value 5}}
+              <i class="fa fa-star checked"></i>
+              {{else}}
+              <i class="fa fa-star"></i>
+              {{/greaterThanEqual}}
+            </td>
+          </tr>
+          {{/each}}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="div-center tablet-content">
+  <div class="mb-4">
+    {{#if error}}
+    <div class="alert alert-danger" role="alert">{{error}}</div>
+    {{/if}}
+  </div>
+  <div class="row post-img mb-5">
+    {{#each images}}
+    <div class="col-6 col-sm-4">
+      <img
+        src="/image/post/{{../postID}}/{{@index}}"
+        alt="uploaded photo from user"
+      />
+    </div>
+    {{/each}}
+  </div>
+  <div class="col mb-5">
+    <h3 class="tagline mb-3">{{ threeWords }}</h3>
+    <h4>{{ firstname }} {{ lastname }}, {{ status }}</h4>
+    <h4 class="mb-4">
+      {{ program }} | Posted on <span class="timestamp">{{ createTime }}</span>
+    </h4>
+    <div class="post">
+      <p>{{ content }}</p>
     </div>
   </div>
 </div>

@@ -49,7 +49,7 @@ def main() -> None:
     args = sys.argv[2:]
     if len(args) < 2:
         print(
-            f"usage: {sys.argv[1].strip()} <output path> <table name> [table fields ...]"
+            f"Usage: {sys.argv[1].strip()} <output path> <table name> [table fields ...]"
         )
         sys.exit(1)
 

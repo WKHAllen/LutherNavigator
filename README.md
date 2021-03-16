@@ -2,7 +2,6 @@
 
 ![Coverage lines](./coverage/badge-lines.svg)
 ![Coverage functions](./coverage/badge-functions.svg)
-![Coverage branches](./coverage/badge-branches.svg)
 ![Coverage statements](./coverage/badge-statements.svg)
 
 The Luther Navigator project seeks to provide students a way to share their
@@ -16,6 +15,7 @@ experiences abroad.
 - [Testing](#testing)
 - [Database](#database)
 - [Backend](#backend)
+- [Admin](#admin)
 - [Frontend](#frontend)
 - [Deployment](#deployment)
 - [Documentation](#documentation)
@@ -39,10 +39,11 @@ $ git clone https://github.com/WKHAllen/LutherNavigator.git
 
 ### Local Deployment
 
-The scripts to build and run the application are provided:
+In order to build and run the application, run the following command:
 
-- UNIX: `sh run.sh` or `chmod +x run.sh && ./run.sh`
-- Windows: `run.bat`
+```console
+heroku local web
+```
 
 After the local deployment, the built application can be accessed at
 [localhost:3000](http://localhost:3000/).
@@ -54,20 +55,20 @@ Several testing packages are used:
 - [Jest](https://www.npmjs.com/package/jest) for backend testing
 - [Playwright](https://playwright.dev/) for frontend testing
 
-The tests can be run as follows:
+For getting more help on running the tests, execute the following:
 
-- UNIX: `sh script.sh test` or `chmod +x script.sh && ./script.sh test`
-- Windows: `script test`
-
-Mobile device emulation tests can be run as follows:
-
-- UNIX: `sh script.sh test --emulation-mode` or `chmod +x script.sh && ./script.sh test --emulation-mode`
-- Windows: `script test --emulation-mode`
+```console
+python3 scripts/test.py -h
+```
 
 ### Database
 
 It is also possible to interface with the MySQL database. In order to achieve
-this, run `sh script.sh db` or `chmod +x script.sh && ./script.sh db`.
+this, run:
+
+```console
+python3 scripts/db.py
+```
 
 ### Backend
 
@@ -75,6 +76,16 @@ Our backend is divided into routes and services. The routes handle the routing
 and rendering. Routes will, if necessary, make use of the services. The
 services make database queries. This is done using the NPM package
 [mysql](https://www.npmjs.com/package/mysql).
+
+
+### Admin
+
+It is also possible to change administrators from the terminal. In order to
+get more help, run the following:
+
+```sh
+python3 scripts/admin.py -h
+```
 
 ### Frontend
 
